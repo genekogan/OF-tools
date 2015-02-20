@@ -18,6 +18,21 @@ GuiButtonBase::GuiButtonBase(string name) : GuiElement(name)
     setupButton();
 }
 
+GuiButtonBase::~GuiButtonBase()
+{
+//    buttonEvent.clear();
+//    buttonEvent.disable();
+    
+    
+    //
+    //
+    // who should delete parameter?
+    //
+    //
+    //
+    //
+}
+
 void GuiButtonBase::setupButton()
 {
     setValue(parameter->get());
@@ -27,11 +42,25 @@ void GuiButtonBase::setupButton()
 
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
+    bool valueChanged = (value != parameter->get());
     parameter->set(value);
-    if (sendChangeNotification) {
-        GuiButtonEventArgs args(name, value);
-        ofNotifyEvent(buttonEvent, args, this);
+    if (sendChangeNotification && valueChanged)
+    {
+        GuiElementEventArgs args(name, 0, value ? 1.0 : 0.0);
+        ofNotifyEvent(elementEvent, args, this);
     }
+}
+
+void GuiButtonBase::lerpTo(float nextValue, int numFrames)
+{
+    this->lerpNextValue = nextValue;
+    this->lerpNumFrames = numFrames;
+    lerpFrame = 0;
+}
+
+void GuiButtonBase::setValueFromSequence(Sequence &sequence)
+{
+    setValue(sequence.getValueAtCurrentIndex() > 0.5, true);
 }
 
 void GuiButtonBase::mouseMoved(int mouseX, int mouseY)
@@ -61,48 +90,60 @@ bool GuiButtonBase::getValue()
 
 void GuiButtonBase::update()
 {
+    if (lerpFrame < lerpNumFrames)
+    {
+        lerpFrame++;
+        if (lerpFrame == lerpNumFrames)
+        {
+            setValue(lerpNextValue > 0.5, true);
+            previous = parameter->get();
+        }
+    }
     if (previous != parameter->get())
     {
-        setValue(parameter->get());
+        setValue(parameter->get(), false);
         previous = parameter->get();
     }
 }
 
 void GuiButtonBase::draw()
 {
-	ofPushMatrix();
 	ofPushStyle();
     
-	ofFill();
-    ofSetLineWidth(lineWidthActive);
-	parameter->get() ? ofSetColor(colorFore) : ofSetColor(colorBack);
-	ofRect(rectangle);
-    
-    ofNoFill();
-    ofSetLineWidth(lineWidthActive);
-    parameter->get() ? ofSetColor(colorBack) : ofSetColor(colorFore);
+    ofFill();
+    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
+    parameter->get() ? ofSetColor(style.colorForeground) : ofSetColor(style.colorBackground);
     ofRect(rectangle);
     
-	if (active)
+    ofNoFill();
+    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
+    ofSetColor(style.colorText, 150);
+    ofRect(rectangle);
+
+    
+	if (mouseOver)
 	{
 	    ofNoFill();
-	    ofSetLineWidth(lineWidthActive);
-	    ofSetColor(colorActive);
+	    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
+	    ofSetColor(style.colorActive);
 	    ofRect(rectangle);
 	}
     
-	ofSetColor(colorText);
-	ofDrawBitmapString(name,
-                       rectangle.x + 0.5 * (rectangle.width - stringWidth),
-                       rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
+    if (stringWidth < rectangle.width)
+    {
+        ofSetColor(style.colorText);
+        ofDrawBitmapString(name,
+                           rectangle.x + 0.5 * (rectangle.width - stringWidth),
+                           rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
+    }
+    
 	ofPopStyle();
-	ofPopMatrix();
 }
 
 void GuiButton::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
-    if (active)
+    if (mouseOver)
     {
         setValue(true, true);
     }
@@ -110,7 +151,7 @@ void GuiButton::mousePressed(int mouseX, int mouseY)
 
 void GuiButton::mouseReleased(int mouseX, int mouseY)
 {
-    if (active)
+    if (mouseOver)
     {
         GuiElement::mouseReleased(mouseX, mouseY);
         setValue(false, true);
@@ -120,7 +161,7 @@ void GuiButton::mouseReleased(int mouseX, int mouseY)
 void GuiToggle::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
-    if (active)
+    if (mouseOver)
     {
         bool value = !parameter->get();
         previous = value;

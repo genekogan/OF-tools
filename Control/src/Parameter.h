@@ -1,10 +1,25 @@
 #pragma once
 
+/*
+ 
+ 
+ move warp to just GUI?
+ 
+ xml / midi / osc
+  - save to
+  - load from
+ 
+ */
+
+
 
 
 class ParameterBase
 {
 public:
+    
+    virtual ~ParameterBase() { }
+    
     // name
     string getName() {return name; }
     void setName(string name) {this->name = name;}
@@ -48,7 +63,7 @@ template <typename T>
 class Parameter : public ParameterBase
 {
 public:
-    Parameter(string name, T *val)
+    Parameter(string name, T *val) : minValue(*val), maxValue(*val)
     {
         this->name = name;
         setOscAddress("/"+name);
@@ -64,49 +79,23 @@ public:
         warp = warp_;
     }
     
+    //value
     T get() {return *value;}
     void set(const T& val) {*value=val;}
     T* getReference() {return value;}
     
+    // min
     T getMin() {return minValue;}
     void setMin(T min) {minValue=min;}
     
+    // max
     T getMax() {return maxValue;}
     void setMax(T max) {maxValue=max;}
-    
-    void lerpTo(T val, int nf)
-    {
-        if (nf == 0)
-        {
-            this->set(val);
-            return;
-        }
-        endValue = val;
-        startValue = *value;
-        numFrames = nf;
-        frame = 0;
-        ofAddListener(ofEvents().update, this, &Parameter::update);
-    }
-    
-    void update(ofEventArgs &data)
-    {
-        if (++frame <= numFrames)
-        {
-            float t = (float) frame / numFrames;
-            this->set(startValue*(1.0f-t)+endValue*t);
-        }
-        else
-        {
-            ofRemoveListener(ofEvents().update, this, &Parameter::update);
-        }
-    }
     
 protected:
     
     T *value;
     T minValue, maxValue;
-    T startValue, endValue;
-    int frame, numFrames;
 };
 
 
@@ -125,3 +114,4 @@ template<class T> void ParameterBase::setMin(T min) { return dynamic_cast<Parame
 // max
 template<class T> T ParameterBase::getMax() { return dynamic_cast<Parameter<T>&>(*this).getMax(); }
 template<class T> void ParameterBase::setMax(T max) { return dynamic_cast<Parameter<T>&>(*this).setMax(); }
+

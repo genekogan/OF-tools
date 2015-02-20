@@ -14,5 +14,5 @@ public:
     void update();
     void draw();
     
-    Sequencer seq;
+    Sequencer *seq;
 };

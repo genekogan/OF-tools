@@ -14,19 +14,19 @@ public:
     void update();
     void draw();
     
-    void toggleNotifier(GuiButtonEventArgs & s) {
+    void toggleNotifier(GuiElementEventArgs & s) {
         cout << "toggle notifier ! " << s.name << " : " << s.value << endl;
     }
     
-    void buttonNotifier(GuiButtonEventArgs & s) {
+    void buttonNotifier(GuiElementEventArgs & s) {
         cout << "button notifier ! " << s.name << " : " << s.value << endl;
     }
     
-    void menuNotifier(GuiButtonEventArgs & s) {
+    void menuNotifier(GuiElementEventArgs & s) {
         cout << "menu select:: "<<s.name<< " : " << s.value << endl;
     }
 
-    void menuNotifierMultiChoice(GuiButtonEventArgs & s) {
+    void menuNotifierMultiChoice(GuiElementEventArgs & s) {
         cout << "menu (multiple choice) select:: "<< s.name << " : " << s.value << endl;
     }
     

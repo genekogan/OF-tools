@@ -14,6 +14,9 @@
 		B09127241A80CEC7006458B0 /* GuiPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091271B1A80CE7E006458B0 /* GuiPanel.cpp */; };
 		B09127251A80CEC7006458B0 /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091271D1A80CE7E006458B0 /* GuiSlider.cpp */; };
 		B09127401A80EC9E006458B0 /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091273E1A80EC9E006458B0 /* GuiColor.cpp */; };
+		B091274D1A812391006458B0 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091274B1A812391006458B0 /* Sequencer.cpp */; };
+		B0B6CD831A8DC3C7001BB268 /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0B6CD811A8DC3C7001BB268 /* Bpm.cpp */; };
+		B0C3A1981A834E2600AE55CC /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0C3A1961A834E2500AE55CC /* Sequence.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -83,6 +86,12 @@
 		B091271F1A80CEAB006458B0 /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
 		B091273E1A80EC9E006458B0 /* GuiColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuiColor.cpp; sourceTree = "<group>"; };
 		B091273F1A80EC9E006458B0 /* GuiColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
+		B091274B1A812391006458B0 /* Sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
+		B091274C1A812391006458B0 /* Sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
+		B0B6CD811A8DC3C7001BB268 /* Bpm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
+		B0B6CD821A8DC3C7001BB268 /* Bpm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
+		B0C3A1961A834E2500AE55CC /* Sequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
+		B0C3A1971A834E2600AE55CC /* Sequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -146,6 +155,8 @@
 		B09127101A80CE7E006458B0 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B0B6CD811A8DC3C7001BB268 /* Bpm.cpp */,
+				B0B6CD821A8DC3C7001BB268 /* Bpm.h */,
 				B09127111A80CE7E006458B0 /* Control.h */,
 				B091271F1A80CEAB006458B0 /* Parameter.h */,
 				B09127141A80CE7E006458B0 /* GuiConstants.h */,
@@ -163,6 +174,10 @@
 				B09127181A80CE7E006458B0 /* GuiWidget.h */,
 				B091271B1A80CE7E006458B0 /* GuiPanel.cpp */,
 				B091271C1A80CE7E006458B0 /* GuiPanel.h */,
+				B0C3A1961A834E2500AE55CC /* Sequence.cpp */,
+				B0C3A1971A834E2600AE55CC /* Sequence.h */,
+				B091274B1A812391006458B0 /* Sequencer.cpp */,
+				B091274C1A812391006458B0 /* Sequencer.h */,
 			);
 			name = src;
 			path = ../src;
@@ -344,10 +359,13 @@
 				B09127201A80CEC7006458B0 /* GuiButton.cpp in Sources */,
 				B09127211A80CEC7006458B0 /* GuiElement.cpp in Sources */,
 				B09127401A80EC9E006458B0 /* GuiColor.cpp in Sources */,
+				B0B6CD831A8DC3C7001BB268 /* Bpm.cpp in Sources */,
 				B09127221A80CEC7006458B0 /* GuiWidget.cpp in Sources */,
 				B09127231A80CEC7006458B0 /* GuiMenu.cpp in Sources */,
 				B09127241A80CEC7006458B0 /* GuiPanel.cpp in Sources */,
+				B0C3A1981A834E2600AE55CC /* Sequence.cpp in Sources */,
 				B09127251A80CEC7006458B0 /* GuiSlider.cpp in Sources */,
+				B091274D1A812391006458B0 /* Sequencer.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 			);

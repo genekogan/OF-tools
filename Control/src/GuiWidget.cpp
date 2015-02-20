@@ -1,91 +1,117 @@
 #include "GuiWidget.h"
 
 
-GuiWidgetBase::GuiWidgetBase(string name)
+GuiWidget::GuiWidget(string name) : GuiElement(name)
 {
-    this->name = name;
+
+}
+
+GuiWidget::GuiWidget(string name, ParameterBase *parameter_) : GuiElement(name)
+{
+    parameters.push_back(parameter_);
+    setupWidget();
+}
+
+GuiWidget::GuiWidget(string name, vector<ParameterBase*> & parameters_) : GuiElement(name)
+{
+    this->parameters = parameters_;
+    setupWidget();
+}
+
+void GuiWidget::setupWidget()
+{
     header = name;
-    active = false;
-    headerActive = false;
-}
-
-void GuiWidgetBase::setRectanglePosition(ofPoint position)
-{
-    rectangle.x = position.x;
-    rectangle.y = position.y;
+    headerStringHeight = ofBitmapStringGetBoundingBox(header, 0, 0).height;
+    isList = parameters.size() > 1;
+    
+    for (int i=0; i<parameters.size(); i++)
+    {
+        if      (dynamic_cast<Parameter<bool>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<bool> *) parameters[i]);
+        }
+        else if (dynamic_cast<Parameter<int>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<int> *) parameters[i]);
+        }
+        else if (dynamic_cast<Parameter<float>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<float> *) parameters[i]);
+        }
+        else if (dynamic_cast<Parameter<double>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<double> *) parameters[i]);
+        }
+        else if (dynamic_cast<Parameter<ofVec2f>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<ofVec2f> *) parameters[i]);
+            if (isList && i<parameters.size()-1) elements[elements.size()-1]->setExtraMargin(true);
+        }
+        else if (dynamic_cast<Parameter<ofVec3f>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<ofVec3f> *) parameters[i]);
+            if (isList && i<parameters.size()-1) elements[elements.size()-1]->setExtraMargin(true);
+        }
+        else if (dynamic_cast<Parameter<ofVec4f>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<ofVec4f> *) parameters[i]);
+            if (isList && i<parameters.size()-1) elements[elements.size()-1]->setExtraMargin(true);
+        }
+        else if (dynamic_cast<Parameter<ofFloatColor>*>(parameters[i]) != NULL)
+        {
+            createElements((Parameter<ofFloatColor> *) parameters[i]);
+            if (isList && i<parameters.size()-1) elements[elements.size()-1]->setExtraMargin(true);
+        }
+    }
+    
+    setAutoUpdate(false);
+    setAutoDraw(false);
+    setCollapsed(false);
     setupGuiComponents();
 }
 
-void GuiWidgetBase::setRectangle(ofRectangle rectangle)
+GuiWidget::~GuiWidget()
 {
-    this->rectangle = rectangle;
-    setupGuiComponents();
+    widgetChanged.clear();
+    widgetChanged.disable();
+    setAutoUpdate(false);
+    setAutoDraw(false);
+    for (auto e : elements) {
+        delete e;
+    }
+    elements.clear();
+    parameters.clear();
 }
 
-ofRectangle GuiWidgetBase::getRectangle()
-{
-    return rectangle;
-}
-
-ofPoint GuiWidgetBase::getGuiElementSize()
-{
-    return ofPoint(GUI_WIDTH - 2*GUI_MARGIN_OUTER - 2*GUI_MARGIN_INNER, GUI_ELEMENT_HEIGHT);
-}
-
-string GuiWidgetBase::getName()
-{
-    return name;
-}
-
-string GuiWidgetBase::getHeader()
-{
-    return header;
-}
-
-vector<GuiElement*> & GuiWidgetBase::getElements()
+vector<GuiElement*> & GuiWidget::getElements()
 {
     return elements;
 }
 
-void GuiWidgetBase::setName(string name)
+void GuiWidget::setAutoUpdate(bool autoUpdate)
 {
-    this->name = name;
-}
-
-void GuiWidgetBase::setHeader(string header)
-{
-    this->header = header;
-}
-
-void GuiWidgetBase::setAutoUpdate(bool autoUpdate)
-{
+    GuiElement::setAutoUpdate(autoUpdate);
     for (auto e : elements) {
         e->setAutoUpdate(autoUpdate);
     }
 }
 
-void GuiWidgetBase::setAutoDraw(bool autoDraw)
+void GuiWidget::setAutoDraw(bool autoDraw)
 {
+    GuiElement::setAutoDraw(autoDraw);
     for (auto e : elements) {
         e->setAutoDraw(autoDraw);
     }
 }
 
-void GuiWidgetBase::setup()
+void GuiWidget::setupGuiComponents()
 {
-    
-}
-
-void GuiWidgetBase::setupGuiComponents()
-{
-    ofPoint topLeft = ofPoint(rectangle.x + GUI_MARGIN_INNER, rectangle.y + GUI_MARGIN_INNER);
-
-    if (isList) {
-        headerRectangle = ofRectangle(rectangle.x+2, rectangle.y+1, rectangle.width-4, GUI_HEADER_HEIGHT);
-        topLeft.y += GUI_HEADER_HEIGHT;
+    ofPoint topLeft = ofPoint(rectangle.x + style.marginInner, rectangle.y + style.marginInner);
+    if (isList)
+    {
+        headerRectangle = ofRectangle(rectangle.x + 2, rectangle.y + 1, rectangle.width - 4, GUI_DEFAULT_LIST_HEADER_HEIGHT);
+        topLeft.y += GUI_DEFAULT_LIST_HEADER_HEIGHT + 1 + style.marginInner;
     }
-    
-    ofPoint guiElementSize = getGuiElementSize();
     for (auto e : elements)
     {
         if (collapsed) {
@@ -93,131 +119,167 @@ void GuiWidgetBase::setupGuiComponents()
         }
         else
         {
-            e->setRectangle(ofRectangle(topLeft.x, topLeft.y, guiElementSize.x, guiElementSize.y));
-            topLeft += ofPoint(0, guiElementSize.y + (e->getExtraMargin() ? 3 * GUI_MARGIN_BETWEEN : GUI_MARGIN_BETWEEN));
+            e->setRectangle(ofRectangle(topLeft.x, topLeft.y, style.elementWidth, style.elementHeight));
+            topLeft += ofPoint(0, style.elementHeight + (e->getExtraMargin() ? 2 * style.marginBetween : style.marginBetween));
         }
     }
- 
-    rectangle.width = guiElementSize.x + 2*GUI_MARGIN_INNER;
-    rectangle.height = collapsed ? topLeft.y - rectangle.y : topLeft.y + GUI_MARGIN_OUTER - GUI_MARGIN_BETWEEN - rectangle.y;
+    rectangle.width = style.elementWidth + 2 * style.marginInner;
+    rectangle.height = collapsed ? topLeft.y - rectangle.y : topLeft.y + 2 * style.marginInner - style.marginBetween - rectangle.y;
 }
 
-void GuiWidgetBase::update()
+void GuiWidget::update()
 {
-    for (auto e : elements)
-    {
+    GuiElement::update();
+    for (auto e : elements) {
         e->update();
     }
 }
-/*
-void GuiWidgetBase::updateParameter(string &s)
+
+void GuiWidget::mouseMoved(int mouseX, int mouseY)
 {
-    
-}
-*/
-void GuiWidgetBase::mouseMoved(int mouseX, int mouseY)
-{
-    setActive(rectangle.inside(mouseX, mouseY));
+    GuiElement::mouseMoved(mouseX, mouseY);
+    mouseOver = rectangle.inside(mouseX, mouseY);
     headerActive = headerRectangle.inside(mouseX, mouseY);
-    if (active)
+    //if (mouseOver)
     {
-        for (auto e : elements)
-        {
+        for (auto e : elements) {
             e->mouseMoved(mouseX, mouseY);
         }
     }
 }
 
-void GuiWidgetBase::mousePressed(int mouseX, int mouseY)
+void GuiWidget::mousePressed(int mouseX, int mouseY)
 {
-    if (active)
+    GuiElement::mousePressed(mouseX, mouseY);
+    if (mouseOver)
     {
         if (isList && headerRectangle.inside(mouseX, mouseY))
         {
-            collapsed = !collapsed;
+            setCollapsed(!collapsed);
+            setupGuiComponents();
             ofNotifyEvent(widgetChanged, name, this);
             return;
         }
-        for (auto e : elements)
-        {
+        for (auto e : elements) {
             e->mousePressed(mouseX, mouseY);
         }
     }
 }
 
-void GuiWidgetBase::mouseReleased(int mouseX, int mouseY)
+void GuiWidget::mouseReleased(int mouseX, int mouseY)
 {
-    if (active)
+    GuiElement::mouseReleased(mouseX, mouseY);
+    if (mouseOver)
     {
-        for (auto e : elements)
-        {
+        for (auto e : elements) {
             e->mouseReleased(mouseX, mouseY);
         }
     }
 }
 
-void GuiWidgetBase::mouseDragged(int mouseX, int mouseY)
+void GuiWidget::mouseDragged(int mouseX, int mouseY)
 {
-    if (active)
+    GuiElement::mouseDragged(mouseX, mouseY);
+    if (mouseOver)
     {
-        for (auto e : elements)
-        {
+        for (auto e : elements) {
             e->mouseDragged(mouseX, mouseY);
         }
     }
 }
 
-void GuiWidgetBase::draw()
+void GuiWidget::draw()
 {
-    ofPushMatrix();
     ofPushStyle();
     
-    active ? ofSetColor(GUI_COLOR_ACTIVE) : ofSetColor(GUI_COLOR_INACTIVE);
+    mouseOver ? ofSetColor(style.colorBackground, 150) : ofSetColor(style.colorBackground, 100);
     ofFill();
     ofSetLineWidth(0);
-    ofRect(rectangle);
-    
-    ofNoFill();
-    ofSetColor(255, 50);
-    ofSetLineWidth(1);
     ofRect(rectangle);
     
     if (isList)
     {
         ofFill();
-        ofSetColor(0, 0, 255);
+        ofSetColor(GUI_DEFAULT_HEADER_COLOR);
         ofRect(headerRectangle);
         if (headerActive)
         {
-            ofSetColor(255, 255, 0);
+            ofSetColor(style.colorActive);
             ofNoFill();
             ofRect(headerRectangle);
         }
-        ofSetColor(255);
-        ofDrawBitmapString(header, rectangle.x+4, rectangle.y+GUI_HEADER_HEIGHT-3);
-        ofDrawBitmapString(collapsed ? "+" : "-", rectangle.x + rectangle.width - 16, rectangle.y + GUI_HEADER_HEIGHT-3);
+        ofSetColor(style.colorText);
+        ofDrawBitmapString(header,
+                           rectangle.x + 4,
+                           rectangle.y + 1 + 0.5 * (GUI_DEFAULT_LIST_HEADER_HEIGHT + 0.5 * headerStringHeight));
+        ofDrawBitmapString(collapsed ? "+" : "-",
+                           rectangle.x + rectangle.width - 16,
+                           rectangle.y + 1 + 0.5 * (GUI_DEFAULT_LIST_HEADER_HEIGHT + 0.5 * headerStringHeight));
     }
     
     if (!collapsed)
     {
-        for (auto e : elements)
-        {
+        for (auto e : elements) {
             e->draw();
         }
     }
     
     ofPopStyle();
-    ofPopMatrix();
 }
 
-void GuiWidgetBase::setActive(bool active)
+GuiColor::GuiColor(string name, Parameter<ofFloatColor> *parameter) : GuiWidget(name, parameter)
 {
-    this->active = active;
+    isList = true;
+    collapsed = false;
+    GuiElement::setAutoUpdate(true);
+    GuiElement::setAutoDraw(true);
 }
 
-bool GuiWidgetBase::getActive()
+GuiColor::GuiColor(string name, ofFloatColor *color): GuiWidget(name, new Parameter<ofFloatColor>(name, color, ofFloatColor(0, 0, 0, 0), ofFloatColor(1, 1, 1, 1)))
 {
-    return active;
+    isList = true;
+    collapsed = false;
+    GuiElement::setAutoUpdate(true);
+    GuiElement::setAutoDraw(true);
 }
+
+GuiEvent::GuiEvent(string name, Parameter<bool> *parameter) : GuiWidget(name)
+{
+    parameters.push_back(parameter);
+    GuiElement::setAutoUpdate(true);
+    GuiElement::setAutoDraw(true);
+    setupWidget();
+}
+
+void GuiEvent::setupWidget()
+{
+    header = name;
+    headerStringHeight = ofBitmapStringGetBoundingBox(header, 0, 0).height;
+    isList = false;
+    collapsed = false;
+    GuiButton *button = new GuiButton(parameters[0]->getName(), (Parameter<bool> *) parameters[0]);
+    elements.push_back(button);
+    setAutoUpdate(false);
+    setAutoDraw(false);
+    setCollapsed(false);
+    setupGuiComponents();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

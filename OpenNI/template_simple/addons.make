@@ -1,0 +1,4 @@
+ofxOpenCv
+ofxCv
+ofxKinectFeatures
+ofxOpenNI

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B01DA21E1A834D87001D9C55 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B01DA21C1A834D87001D9C55 /* Sequencer.cpp */; };
 		B09127381A80CEFE006458B0 /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091272A1A80CEEA006458B0 /* GuiButton.cpp */; };
 		B09127391A80CEFE006458B0 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B091272D1A80CEEA006458B0 /* GuiElement.cpp */; };
 		B091273B1A80CEFE006458B0 /* GuiMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127311A80CEEA006458B0 /* GuiMenu.cpp */; };
@@ -14,7 +15,7 @@
 		B091273D1A80CEFE006458B0 /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127351A80CEEA006458B0 /* GuiSlider.cpp */; };
 		B09127451A80F812006458B0 /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127411A80F812006458B0 /* GuiColor.cpp */; };
 		B09127461A80F812006458B0 /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127431A80F812006458B0 /* GuiWidget.cpp */; };
-		B09127491A81226C006458B0 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127471A81226C006458B0 /* Sequencer.cpp */; };
+		B09127491A81226C006458B0 /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09127471A81226C006458B0 /* Sequence.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -67,6 +68,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B01DA21C1A834D87001D9C55 /* Sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
+		B01DA21D1A834D87001D9C55 /* Sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
 		B09127291A80CEEA006458B0 /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
 		B091272A1A80CEEA006458B0 /* GuiButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiButton.cpp; sourceTree = "<group>"; };
 		B091272B1A80CEEA006458B0 /* GuiButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiButton.h; sourceTree = "<group>"; };
@@ -84,8 +87,8 @@
 		B09127421A80F812006458B0 /* GuiColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
 		B09127431A80F812006458B0 /* GuiWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
 		B09127441A80F812006458B0 /* GuiWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
-		B09127471A81226C006458B0 /* Sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
-		B09127481A81226C006458B0 /* Sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
+		B09127471A81226C006458B0 /* Sequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
+		B09127481A81226C006458B0 /* Sequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -166,8 +169,10 @@
 				B09127441A80F812006458B0 /* GuiWidget.h */,
 				B09127331A80CEEA006458B0 /* GuiPanel.cpp */,
 				B09127341A80CEEA006458B0 /* GuiPanel.h */,
-				B09127471A81226C006458B0 /* Sequencer.cpp */,
-				B09127481A81226C006458B0 /* Sequencer.h */,
+				B09127471A81226C006458B0 /* Sequence.cpp */,
+				B09127481A81226C006458B0 /* Sequence.h */,
+				B01DA21C1A834D87001D9C55 /* Sequencer.cpp */,
+				B01DA21D1A834D87001D9C55 /* Sequencer.h */,
 			);
 			name = src;
 			path = ../src;
@@ -353,7 +358,8 @@
 				B091273C1A80CEFE006458B0 /* GuiPanel.cpp in Sources */,
 				B091273D1A80CEFE006458B0 /* GuiSlider.cpp in Sources */,
 				B09127461A80F812006458B0 /* GuiWidget.cpp in Sources */,
-				B09127491A81226C006458B0 /* Sequencer.cpp in Sources */,
+				B01DA21E1A834D87001D9C55 /* Sequencer.cpp in Sources */,
+				B09127491A81226C006458B0 /* Sequence.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 			);

@@ -5,6 +5,7 @@ void ofApp::setup(){
     
     // Toggles & buttons
     
+    
     toggle = new GuiToggle("toggle bgColor", &myToggle);
     toggle->setPosition(10, 10);
     
@@ -29,7 +30,7 @@ void ofApp::setup(){
     
     // Color picker
     
-    colorPicker = new GuiColor("my menu", &bgColor);
+    colorPicker = new GuiColor("my color", &bgColor);
     colorPicker->setPosition(620, 200);
 
     
@@ -43,10 +44,12 @@ void ofApp::setup(){
     
     menu = new GuiMenu("my menu", menuItems, this, &ofApp::menuNotifier);
     menu->setPosition(20, 200);
+    menu->setAutoClose(true);
 
-    menuMultiChoice = new GuiMenu("my menu", menuItems, this, &ofApp::menuNotifierMultiChoice);
+    menuMultiChoice = new GuiMenu("my menu mc", menuItems, this, &ofApp::menuNotifierMultiChoice);
     menuMultiChoice->setPosition(320, 200);
     menuMultiChoice->setMultipleChoice(true);
+    
     
     
     myToggle = true;

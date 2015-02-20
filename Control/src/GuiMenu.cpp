@@ -1,148 +1,78 @@
 #include "GuiMenu.h"
 
 
-GuiMenu::GuiMenu(string name, vector<string> choices) : GuiElement(name)
+GuiMenu::GuiMenu(string name, vector<string> choices, bool multipleChoice, bool autoClose) : GuiWidget(name)
 {
+    this->multipleChoice = multipleChoice;
+    this->autoClose = autoClose;
     setupMenu(choices);
 }
 
-void GuiMenu::setupMenu(vector<string> choices)
+void GuiMenu::setupMenu(vector<string> & choices)
 {
-    for (auto c : choices)
+    for (auto choice : choices)
     {
-        Parameter<bool> *parameter = new Parameter<bool>(c, new bool());
-        GuiToggle *toggle = new GuiToggle(c, parameter);
-        parameters.push_back(parameter);
-        toggles.push_back(toggle);
-        ofAddListener(toggle->buttonEvent, this, &GuiMenu::updateParameter);
+        GuiToggle *toggle = new GuiToggle(choice, new bool());
+        toggle->setAutoUpdate(false);
+        toggle->setAutoDraw(false);
+        toggles[choice] = toggle;
+        elements.push_back(toggle);
+        ofAddListener(toggle->elementEvent, this, &GuiMenu::updateParameter);
     }
-    rectangle.set(0, 0, GUI_WIDTH, toggles.size() * (GUI_ELEMENT_HEIGHT + GUI_MARGIN_BETWEEN) + GUI_ELEMENT_HEIGHT);
-    setupGuiComponents();
-    setAutoUpdate(true);
-    setAutoDraw(true);
-    multipleChoice = false;
-}
-
-void GuiMenu::setAutoUpdate(bool autoUpdate)
-{
-    this->autoUpdate = autoUpdate;
-    GuiElement::setAutoUpdate(autoUpdate);
-    for (auto t : toggles) {
-        t->setAutoUpdate(false);
-    }
-}
-
-void GuiMenu::setAutoDraw(bool autoDraw)
-{
-    this->autoDraw = autoDraw;
-    GuiElement::setAutoDraw(autoDraw);
-    for (auto t : toggles) {
-        t->setAutoDraw(false);
-    }
-}
-
-void GuiMenu::updateParameter(GuiButtonEventArgs & button)
-{
-    for (auto t : toggles)
-    {
-        if (!multipleChoice)
-        {
-            t->setValue(t->getName() == button.name, false);
-        }
-    }
-    GuiButtonEventArgs args(button.name, multipleChoice ? button.value : true);
-    ofNotifyEvent(menuEvent, args, this);
-}
-
-void GuiMenu::setupGuiComponents()
-{
-    for (int i=0; i<toggles.size(); i++)
-    {
-        toggles[i]->setRectangle(rectangle.x,
-                                 rectangle.y + i * (GUI_ELEMENT_HEIGHT + GUI_MARGIN_BETWEEN),
-                                 GUI_WIDTH - 2*GUI_MARGIN_INNER - 2*GUI_MARGIN_OUTER,
-                                 GUI_ELEMENT_HEIGHT);
-    }
-}
-
-void GuiMenu::mouseMoved(int mouseX, int mouseY)
-{
-    GuiElement::mouseMoved(mouseX, mouseY);
-    for (auto t : toggles) {
-        t->mouseMoved(mouseX, mouseY);
-    }
-}
-
-void GuiMenu::mousePressed(int mouseX, int mouseY)
-{
-    GuiElement::mousePressed(mouseX, mouseY);
-    if (active)
-    {
-        for (auto t : toggles) {
-            t->mousePressed(mouseX, mouseY);
-        }
-    }
-}
-
-void GuiMenu::mouseReleased(int mouseX, int mouseY)
-{
-    GuiElement::mouseReleased(mouseX, mouseY);
-    for (auto t : toggles) {
-        t->mouseReleased(mouseX, mouseY);
-    }
-}
-
-void GuiMenu::mouseDragged(int mouseX, int mouseY)
-{
-    GuiElement::mouseDragged(mouseX, mouseY);
-    for (auto t : toggles) {
-        t->mouseDragged(mouseX, mouseY);
-    }
-}
-
-void GuiMenu::draw()
-{
-    ofPushMatrix();
-	ofPushStyle();
-    for (auto t : toggles)
-    {
-        t->draw();
-    }
-	ofPopStyle();
-	ofPopMatrix();
-}
-
-
-GuiMenuEntry::GuiMenuEntry(string name, vector<string> choices) : GuiWidgetBase(name)
-{
     isList = true;
     collapsed = false;
-    autoClose = false;
-    menu = new GuiMenu(name, choices, this, &GuiMenuEntry::updateParameter);
-    elements.push_back(menu);
     setupGuiComponents();
-    setAutoUpdate(false);
-    setAutoDraw(false);
+    GuiElement::setAutoUpdate(true);
+    GuiElement::setAutoDraw(true);
 }
 
-void GuiMenuEntry::setAutoClose(bool autoClose)
+void GuiMenu::setToggle(string toggleName, bool value)
 {
-    this->autoClose = autoClose;
+    if (toggles.count(toggleName) > 0)
+    {
+        if (toggles[toggleName]->getValue() != value)
+        {
+            toggles[toggleName]->setValue(value);
+            GuiElementEventArgs args(toggleName, 0, value ? 1.0 : 0.0);
+            updateParameter(args);
+        }
+    }
+    else {
+        ofLog(OF_LOG_ERROR, "Warning: no toggle named "+toggleName+" found");
+    }
 }
 
-bool GuiMenuEntry::getAutoClose()
+bool GuiMenu::getToggle(string toggleName)
 {
-    return autoClose;
+    if (toggles.count(toggleName) > 0) {
+        return toggles[toggleName]->getValue();
+    }
+    else {
+        ofLog(OF_LOG_ERROR, "Warning: no toggle named "+toggleName+" found");
+        return false;
+    }
 }
 
-ofPoint GuiMenuEntry::getGuiElementSize()
+void GuiMenu::updateParameter(GuiElementEventArgs & button)
 {
-    return ofPoint(GUI_WIDTH - 2*GUI_MARGIN_OUTER - 2*GUI_MARGIN_INNER, menu->getParameters()->size() * (GUI_ELEMENT_HEIGHT + GUI_MARGIN_BETWEEN));
+    for (auto e : elements)
+    {
+        if (!multipleChoice) {
+            ((GuiToggle *) e)->setValue(e->getName() == button.name, false);
+        }
+    }
+    GuiElementEventArgs args(button.name, 0, multipleChoice ? (button.value ? 1.0 : 0.0) : 1.0);
+    ofNotifyEvent(elementEvent, args, this);
+    if (autoClose)
+    {
+        collapsed = !collapsed;
+        header = button.name;
+        setupGuiComponents();
+        ofNotifyEvent(widgetChanged, name, this);
+    }
 }
 
-void GuiMenuEntry::updateParameter(GuiButtonEventArgs & button)
+GuiMenu::~GuiMenu()
 {
-    setHeader(button.name);
-    if (autoClose)  collapsed = true;
-    ofNotifyEvent(widgetChanged, button.name, this);
+    toggles.clear();
 }

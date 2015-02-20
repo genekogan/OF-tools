@@ -1,9 +1,7 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofBitmapFont.h"
-#include "Parameter.h"
-#include "GuiElement.h"
+#include "Sequence.h"
 
 
 class GuiButtonBase : public GuiElement
@@ -22,25 +20,33 @@ public:
     GuiButtonBase(string name, bool *value);
     GuiButtonBase(string name);
     
+    ~GuiButtonBase();
+    
     virtual void mouseMoved(int mouseX, int mouseY);
     virtual void mousePressed(int mouseX, int mouseY);
     virtual void mouseReleased(int mouseX, int mouseY);
     virtual void mouseDragged(int mouseX, int mouseY);
     
-    void setValue(bool value, bool sendChangeNotification=false);
+    bool isDiscrete() {return true;}
+
     bool getValue();
+    void setValue(bool value, bool sendChangeNotification=false);
+    void setValueFromSequence(Sequence &sequence);
+    void lerpTo(float nextValue, int numFrames);
     
     virtual void update();
     virtual void draw();
     
-    ofEvent<GuiButtonEventArgs> buttonEvent;
-    
 protected:
+    
     void setupButton();
     
     Parameter<bool> *parameter;
     bool previous;
     float stringWidth, stringHeight;
+    
+    float lerpNextValue;;
+    int lerpFrame, lerpNumFrames;
 };
 
 
@@ -49,7 +55,7 @@ GuiButtonBase::GuiButtonBase(string name, Parameter<bool> *parameter, L *listene
 {
     this->parameter = parameter;
     setupButton();
-    ofAddListener(buttonEvent, listener, method);
+    ofAddListener(elementEvent, listener, method);
 }
 
 template <typename L, typename M>
@@ -57,7 +63,7 @@ GuiButtonBase::GuiButtonBase(string name, bool *value, L *listener, M method) : 
 {
     parameter = new Parameter<bool>(name, value);
     setupButton();
-    ofAddListener(buttonEvent, listener, method);
+    ofAddListener(elementEvent, listener, method);
 }
 
 template <typename L, typename M>
@@ -65,7 +71,7 @@ GuiButtonBase::GuiButtonBase(string name, L *listener, M method) : GuiElement(na
 {
     parameter = new Parameter<bool>(name, new bool());
     setupButton();
-    ofAddListener(buttonEvent, listener, method);
+    ofAddListener(elementEvent, listener, method);
 }
 
 
@@ -85,7 +91,7 @@ public:
     GuiButton(string name, Parameter<bool> *parameter) : GuiButtonBase(name, parameter) { }
     GuiButton(string name, bool *value) : GuiButtonBase(name, value) { }
     GuiButton(string name) : GuiButtonBase(name, new bool()) { }
-
+    
     void mousePressed(int mouseX, int mouseY);
     void mouseReleased(int mouseX, int mouseY);
 };

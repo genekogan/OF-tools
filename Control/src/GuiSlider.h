@@ -1,31 +1,38 @@
 #pragma once
 
-#include "ofMain.h"
 #include "ofBitmapFont.h"
-#include "Parameter.h"
-#include "GuiElement.h"
+#include "Sequence.h"
 
 
 class GuiSliderBase : public GuiElement
 {
 public:
-    GuiSliderBase(string name) : GuiElement(name) { }
+    GuiSliderBase(string name);
+    ~GuiSliderBase();
     
     virtual void mouseMoved(int mouseX, int mouseY) { }
     virtual void mousePressed(int mouseX, int mouseY) { }
     virtual void mouseReleased(int mouseX, int mouseY) { }
     virtual void mouseDragged(int mouseX, int mouseY) { }
 
-    float getSliderValue() {return sliderValue;}
+    virtual void setValue(float sliderValue);
+    float getValue() {return sliderValue;}
+    
+    void lerpTo(float nextValue, int numFrames);
+    void setValueFromSequence(Sequence &sequence);
 
-    virtual void update() { }
+    virtual void update();
     virtual void draw();
 
 protected:
-    void setValueString(string valueString);
+    
+    void setValueString(string _valueString);
 
     float sliderValue;
-    string valueString;
+    string valueString, valueStringNext;
+    float lerpPrevValue, lerpNextValue;;
+    int lerpFrame, lerpNumFrames;
+    bool toUpdateValueString;
     float valueStringWidth, stringHeight;
 };
 
@@ -36,11 +43,11 @@ class GuiSlider : public GuiSliderBase
 public:
     GuiSlider(string name, Parameter<T> *parameter);
     GuiSlider(string name, T *value, T min, T max);
-
-    void update();
     
+    void update();
     void setValue(float sliderValue);
-    T getValue() {return parameter->get();}
+
+    T getParameterValue() {return parameter->get();}
     
     void mouseMoved(int mouseX, int mouseY);
     void mousePressed(int mouseX, int mouseY);
@@ -78,11 +85,14 @@ void GuiSlider<T>::setValue(float sliderValue)
     parameter->set(sliderValue * parameter->getMax() + (1.0-sliderValue) * parameter->getMin());
     setValueString(ofToString(parameter->get(), floor(parameter->get()) == parameter->get() ? 0 : 2));
     adjustSliderValue();
+    GuiElementEventArgs args(name, 0, (float) parameter->get());
+    ofNotifyEvent(elementEvent, args, this);
 }
 
 template<typename T>
 void GuiSlider<T>::update()
 {
+    GuiSliderBase::update();
     if (previous != parameter->get())
     {
         this->sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
@@ -91,7 +101,6 @@ void GuiSlider<T>::update()
         previous = parameter->get();
     }
 }
-
 
 template<typename T> inline void GuiSlider<T>::adjustSliderValue() { }
 
@@ -108,7 +117,7 @@ template<typename T> inline void GuiSlider<T>::mouseMoved(int mouseX, int mouseY
 template<typename T> inline void GuiSlider<T>::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
-    if (active)
+    if (mouseOver)
     {
         setValue(ofClamp((float)(mouseX - rectangle.x) / rectangle.width, 0, 1));
     }
@@ -122,11 +131,8 @@ template<typename T> inline void GuiSlider<T>::mouseReleased(int mouseX, int mou
 template<typename T> inline void GuiSlider<T>::mouseDragged(int mouseX, int mouseY)
 {
     GuiElement::mouseDragged(mouseX, mouseY);
-    if (dragging)
+    if (mouseDragging)
     {
         setValue(ofClamp((float)(mouseX - rectangle.x) / rectangle.width, 0, 1));
     }
 }
-
-
-
