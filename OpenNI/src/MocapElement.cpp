@@ -6,18 +6,7 @@
 
 MocapElement::MocapElement()
 {
-    //return;
-    
-    ofPoint zeros = ofPoint(0.0,0.0,0.0);
-    for (int i = 0; i < historyDepth_; i++)
-    {
-        setPosition(zeros);
-        setPositionFiltered(zeros);
-        setVelocity(zeros);
-        setAcceleration(zeros);
-        setAccelerationTrajectory(0.0);
-        setRelativePositionToTorso(zeros);
-    }
+    initialize();
 }
 
 MocapElement::MocapElement(int elementId, int depth)
@@ -25,15 +14,24 @@ MocapElement::MocapElement(int elementId, int depth)
     elementId_ = elementId;
     historyDepth_ = depth;
     historyWeight_ = 1.0 / (float) historyDepth_;
-    //return;
-    
+    initialize();
+}
+
+void MocapElement::initialize()
+{
     ofPoint zeros = ofPoint(0.0,0.0,0.0);
-    for (int i = 0; i < historyDepth_; i++) {
+    for (int i = 0; i < historyDepth_; i++)
+    {
         setPosition(zeros);
         setPositionFiltered(zeros);
         setVelocity(zeros);
+        setVelocityMagnitude(0.0);
+        setVelocityMean(0.0);
         setAcceleration(zeros);
+        setAccelerationMagnitude(0.0);
+        setAccelerationMean(0.0);
         setAccelerationTrajectory(0.0);
+        setDistanceToTorso(0.0);
         setRelativePositionToTorso(zeros);
     }
 }
@@ -159,9 +157,3 @@ void MocapElement::setRelativePositionToTorso(ofPoint relativePositionToTorso)
 		relativePositionToTorso_.pop_back();
 	}
 }
-
-
-//Getters & setters
-
-
-

@@ -2,71 +2,68 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-        
-    for (int i=0; i<3; i++) {
-        floatValues.push_back(ofRandom(3,8));
-        floatMins.push_back(ofRandom(0,3));
-        floatMaxs.push_back(ofRandom(8,10));
-        vec3Values.push_back(ofVec3f(ofRandom(2,4), ofRandom(2,4), ofRandom(2,4)));
-        vec3Mins.push_back(ofVec3f(ofRandom(2), ofRandom(2), ofRandom(2)));
-        vec3Maxs.push_back(ofVec3f(ofRandom(4,10), ofRandom(4,10), ofRandom(4,10)));
-    }
-
-    vector<string> items;
-    items.push_back("hello menu");
-    items.push_back("new item");
-    items.push_back("another item");
     
-    panel.setName("hello world");
+    panel.setName("panel");
     panel.setPosition(20, 20);
     
-    panel.addParameter("float slider", &floatValue, 20.0f, 220.0f);
-    panel.addParameter("vec2", &vec2, ofVec2f(200, 0), ofVec2f(1024, 768));
-    panel.addParameter("vector (floats)", &floatValues, floatMins, floatMaxs);
-    panel.addParameter("my button", &boolValue);
-    panel.addParameter("vec3", &vec3, ofVec3f(0, 0, 0), ofVec3f(4,3,5));
-    panel.addParameter("vector (vec3)", &vec3Values, vec3Mins, vec3Maxs);
-    panel.addColor("fore color", &color);
-    panel.addMenu("my menu mc", items, this, &ofApp::menuSelect, true);
-    panel.addMenu("my menu", items, this, &ofApp::menuSelect2, false, false);
+    panel.addSlider("radius", &radius, 50.0f, 250.0f);
+    panel.addSlider("resolution", &resolution, 3, 16);
+    panel.addSlider("line width", &lineWidth, 4.0f, 12.0f);
+    
+    panel.addToggle("filled", &filled);
+    panel.addSlider("position", &position, ofVec2f(500, 400), ofVec2f(ofGetWidth(), ofGetHeight()));
+    panel.addColor("my color", &myColor);
 
-    
-    
+    GuiMenu *menu1 = panel.addMenu("multi choice menu", this, &ofApp::multiChoiceMenuSelect);
+    menu1->setMultipleChoice(true);
+    menu1->addToggle("new york", &b1);
+    menu1->addToggle("los angeles", &b2);
+    menu1->addToggle("chicago", &b3);
+
+    GuiMenu *menu2 = panel.addMenu("single choice menu", this, &ofApp::menuSelect);
+    menu2->addToggle("kamusta mundo");
+    menu2->addToggle("xin chao the gioi");
+    menu2->addToggle("namaste varlda");
+    menu2->addToggle("suesday piphoplok");
+    menu2->addToggle("suwati lok");
     
 
-    floatValue = 100;
-    vec2.set(500, 400);
-    color.set(0.1, 0.14, 0.21);
-    
-    seq = new Sequencer("seq", &panel, 16);
+    // enable sequencer (can be done through gui also)
+    panel.enableSequencer();
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    //panel.update();
-    
-    
-    //floatValue = ofMap(ofGetMouseX(), 0 ,ofGetWidth(), 20, 220);
-    
-    // make auto update true
-    //seq->update();
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(color);
     
-    ofSetColor(255);
-    if (boolValue) {
-        ofFill();
-    }
-    else {
-        ofNoFill();
-    }
-    ofCircle(vec2.x, vec2.y, floatValue);
+    ofSetCircleResolution(resolution);
+    filled ? ofFill() : ofNoFill();
+    ofSetColor(myColor);
+    ofSetLineWidth(lineWidth);
+    ofCircle(position.x, position.y, radius);
     
-    //panel.draw();
+    ofSetColor(0);
+    ofDrawBitmapString(greeting+"\n"+city, position.x, position.y);
     
-    
-    //seq->draw();
 }
+
+//--------------------------------------------------------------
+void ofApp::menuSelect(GuiElementEventArgs & e)
+{
+    ofLog(OF_LOG_NOTICE, "menu selection event: " + e.name + " = " + ofToString(e.value));
+    greeting = e.name;
+}
+
+//--------------------------------------------------------------
+void ofApp::multiChoiceMenuSelect(GuiElementEventArgs & e)
+{
+    ofLog(OF_LOG_NOTICE, "panel menu event: " + e.name + " = " + ofToString(e.value));
+    city  = b1 ? "New York " : "";
+    city += b2 ? "Los Angeles " : "";
+    city += b3 ? "Chicago" : "";
+}
+

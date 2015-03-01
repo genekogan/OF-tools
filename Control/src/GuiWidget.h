@@ -1,209 +1,346 @@
 #pragma once
 
 #include "ofMain.h"
-#include "GuiSlider.h"
 #include "GuiButton.h"
-#include "GuiWidget.h"
+#include "GuiSlider.h"
+#include "GuiRangeSlider.h"
+#include "Gui2dPad.h"
+#include "GuiWidgetBase.h"
+#include "GuiColor.h"
+#include "GuiMenu.h"
 
 
-class GuiWidget : public GuiElement
+class GuiWidget : public GuiWidgetBase
 {
 public:
+    GuiWidget();
     GuiWidget(string name);
-    GuiWidget(string name, ParameterBase *parameter_);
-    GuiWidget(string name, vector<ParameterBase*> & parameters_);
-    
-    template <typename L, typename M>
-    GuiWidget(string name, ParameterBase *parameter_, L *listener, M method);
-    
-    template <typename L, typename M>
-    GuiWidget(string name, vector<ParameterBase*> & parameters_, L *listener, M method);
-
     virtual ~GuiWidget();
     
-    virtual bool isMenu() {return false;}
+    void addButton(Parameter<bool> *parameter);
+    void addButton(string name, bool *value);
+    template<typename L, typename M>
+    void addButton(Parameter<bool> *parameter, L *listener, M method);
+    template<typename L, typename M>
+    void addButton(string name, bool *value, L *listener, M method);
+    template<typename L, typename M>
+    void addButton(string name, L *listener, M method);
     
-    virtual void setAutoUpdate(bool autoUpdate);
-    virtual void setAutoDraw(bool autoDraw);
+    void addToggle(Parameter<bool> *parameter);
+    void addToggle(string name, bool *value);
+    template<typename L, typename M>
+    void addToggle(Parameter<bool> *parameter, L *listener, M method);
+    template<typename L, typename M>
+    void addToggle(string name, bool *value, L *listener, M method);
+    template<typename L, typename M>
+    void addToggle(string name, L *listener, M method);
     
-    virtual void setupGuiComponents();
-    
-    virtual void update();
-    virtual void draw();
-    
-    virtual void mouseMoved(int mouseX, int mouseY);
-    virtual void mousePressed(int mouseX, int mouseY);
-    virtual void mouseReleased(int mouseX, int mouseY);
-    virtual void mouseDragged(int mouseX, int mouseY);
-    
-    virtual void setCollapsed(bool collapsed) {this->collapsed = isList ? collapsed : false;}
-    virtual bool getCollapsed() {return collapsed;}
-    
-    virtual vector<GuiElement*> & getElements();
-    
-    ofEvent<string> widgetChanged;
-    
-protected:
-    
-    virtual void setupWidget();
-    
-    template <typename T>
-    void createElements(Parameter<T> *parameter);
-    template <typename L, typename M>
-    void addListeners(L *listener, M method=&GuiWidget::createElements);
+    template<typename T>
+    void addSlider(Parameter<T> *parameter);
+    template<typename T>
+    void addSlider(string name, T *value, T min, T max);
+    template<typename T, typename L, typename M>
+    void addSlider(Parameter<T> *parameter, L *listener, M method);
+    template<typename T, typename L, typename M>
+    void addSlider(string name, T *value, T min, T max, L *listener, M method);
 
-    //vector<T> previous;
+    template<typename T>
+    void addRangeSlider(string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh);
+    template<typename T>
+    void addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T max);
+    template<typename T, typename L, typename M>
+    void addRangeSlider(string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh, L *listener, M method);
+    template<typename T, typename L, typename M>
+    void addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T max, L *listener, M method);
+    
+    void add2dPad(Parameter<ofPoint> *parameter);
+    void add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max);
+    template<typename L, typename M>
+    void add2dPad(Parameter<ofPoint> *parameter, L *listener, M method);
+    template<typename L, typename M>
+    void add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method);
+    
+    void addColor(Parameter<ofFloatColor> *parameter);
+    void addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max);
+    void addColor(string name, ofFloatColor * parameter);
+    template<typename L, typename M>
+    void addColor(Parameter<ofFloatColor> *parameter, L *listener, M method);
+    template<typename L, typename M>
+    void addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method);
+    template<typename L, typename M>
+    void addColor(string name, ofFloatColor * parameter, L *listener, M method);
+    
+    GuiMenu * addMenu(string name, vector<string> choices, bool multipleChoice=false, bool autoClose=false);
+    GuiMenu * addMenu(string name, bool multipleChoice=false, bool autoClose=false);
+    template<typename L, typename M>
+    GuiMenu * addMenu(string name, vector<string> choices, L *listener, M method, bool multipleChoice=false, bool autoClose=false);
+    template<typename L, typename M>
+    GuiMenu * addMenu(string name, L *listener, M method, bool multipleChoice=false, bool autoClose=false);
 
-    vector<ParameterBase*> parameters;
-    vector<GuiElement*> elements;
-    ofRectangle headerRectangle;
-    bool headerActive;
-    bool isList, collapsed;
-    string header;
-    float headerStringHeight;
+    
+private:
+    
+    template<typename T>
+    void createSliders(GuiElementGroup * elementGroup, Parameter<T> *parameter);
+    
+    template<typename T>
+    void createRangeSliders(GuiElementGroup * elementGroup, string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh);
+    
+    template<typename L, typename M>
+    void addListenersFromLastElementGroup(L *listener, M method);
+    
+    void eventWidgetChanged(string & s);
 };
 
-class GuiColor : public GuiWidget
+
+
+template<typename L, typename M>
+void GuiWidget::addButton(Parameter<bool> *parameter, L *listener, M method)
 {
-public:
-    GuiColor(string name, Parameter<ofFloatColor> *parameter);
-    GuiColor(string name, ofFloatColor *value);
-    
-    void update()
+    addButton(parameter);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addButton(string name, bool *value, L *listener, M method)
+{
+    addButton(new Parameter<bool>(name, value));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addButton(string name, L *listener, M method)
+{
+    addButton(new Parameter<bool>(name, new bool()));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addToggle(Parameter<bool> *parameter, L *listener, M method)
+{
+    addToggle(parameter);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addToggle(string name, bool *value, L *listener, M method)
+{
+    addToggle(new Parameter<bool>(name, value));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addToggle(string name, L *listener, M method)
+{
+    addToggle(new Parameter<bool>(name, new bool()));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename T>
+void GuiWidget::addSlider(Parameter<T> *parameter)
+{
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    createSliders(elementGroup, parameter);
+    setupElementGroup(elementGroup);
+}
+
+template<typename T>
+void GuiWidget::addSlider(string name, T *value, T min, T max)
+{
+    addSlider(new Parameter<T>(name, value, min, max));
+}
+
+template<typename T, typename L, typename M>
+void GuiWidget::addSlider(Parameter<T> *parameter, L *listener, M method)
+{
+    addSlider(parameter);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename T, typename L, typename M>
+void GuiWidget::addSlider(string name, T *value, T min, T max, L *listener, M method)
+{
+    addSlider(new Parameter<T>(name, value, min, max));
+	addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename T>
+void GuiWidget::addRangeSlider(string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh)
+{
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    createRangeSliders(elementGroup, name, parameterLow, parameterHigh);
+    setupElementGroup(elementGroup);
+}
+
+template<typename T>
+void GuiWidget::addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T max)
+{
+    addRangeSlider(name, new Parameter<T>(name+"-low", valueLow, min, max), new Parameter<T>(name+"-high", valueHigh, min, max));
+}
+
+template<typename T, typename L, typename M>
+void GuiWidget::addRangeSlider(string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh, L *listener, M method)
+{
+    addRangeSlider(name, parameterLow, parameterHigh);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename T, typename L, typename M>
+void GuiWidget::addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T max, L *listener, M method)
+{
+    addRangeSlider(name, new Parameter<T>(name+"-low", valueLow, min, max), new Parameter<T>(name+"-high", valueHigh, min, max));
+	addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::add2dPad(Parameter<ofPoint> *parameter, L *listener, M method)
+{
+    add2dPad(parameter);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method)
+{
+    add2dPad(new Parameter<ofPoint>(name, value, min, max));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method)
+{
+    addColor(new Parameter<ofFloatColor>(name, parameter, min, max));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addColor(string name, ofFloatColor * parameter, L *listener, M method)
+{
+    addColor(new Parameter<ofFloatColor>(name, parameter, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1)));
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+void GuiWidget::addColor(Parameter<ofFloatColor> *parameter, L *listener, M method)
+{
+    addColor(parameter);
+    addListenersFromLastElementGroup(listener, method);
+}
+
+template<typename L, typename M>
+GuiMenu * GuiWidget::addMenu(string name, vector<string> choices, L *listener, M method, bool multipleChoice, bool autoClose)
+{
+    GuiMenu *menu = new GuiMenu(name, choices, multipleChoice, autoClose);
+    menu->setParent(this);
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    elementGroup->addElement(menu);
+    setupElementGroup(elementGroup);
+    ofAddListener(menu->widgetChanged, this, &GuiWidget::eventWidgetChanged);
+    ofAddListener(menu->elementEvent, listener, method);
+    return menu;
+}
+
+template<typename L, typename M>
+GuiMenu * GuiWidget::addMenu(string name, L *listener, M method, bool multipleChoice, bool autoClose)
+{
+    vector<string> choices;
+    return addMenu(name, choices, listener, method, multipleChoice, autoClose);
+}
+
+
+
+////////////////////////////////////////////////////////
+//  Add listeners to element groups
+
+template<typename L, typename M>
+void GuiWidget::addListenersFromLastElementGroup(L *listener, M method)
+{
+    for (auto &e : elementGroups[elementGroups.size()-1]->getElements())
     {
-        GuiWidget::update();
-        ofColor currentColor = parameters[0]->get<ofFloatColor>();
-        elements[0]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-        elements[1]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-        elements[2]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-        elements[3]->getStyle().colorForeground = currentColor;
+        if (e->isWidget())
+        {
+            vector<GuiElement*> innerElements;
+            ((GuiWidgetBase*) e)->getAllElements(innerElements);
+            for (auto &ie : innerElements) {
+                ofAddListener(ie->elementEvent, listener, method);
+            }
+        }
+        else {
+            ofAddListener(e->elementEvent, listener, method);
+        }
     }
-};
-
-class GuiEvent : public GuiWidget
-{
-public:
-    GuiEvent(string name, Parameter<bool> *parameter);
-    
-    template <typename L, typename M>
-    GuiEvent(string name, Parameter<bool> *parameter,  L *listener, M method);
-    
-    void setupWidget();
-};
-
-
-//////////////////////////////////////////////////////
-// TEMPLATE:  CONSTRUCT / DESTRUCT
-
-template <typename L, typename M>
-GuiWidget::GuiWidget(string name, ParameterBase *parameter_, L *listener, M method) : GuiElement(name)
-{
-    parameters.push_back(parameter_);
-    setupWidget();
-    addListeners(listener, method);
-}
-
-template <typename L, typename M>
-GuiWidget::GuiWidget(string name, vector<ParameterBase*> & parameters_, L *listener, M method) : GuiElement(name)
-{
-    this->parameters = parameters_;
-    setupWidget();
-    addListeners(listener, method);
-}
-
-template <typename L, typename M>
-GuiEvent::GuiEvent(string name, Parameter<bool> *parameter,  L *listener, M method) : GuiWidget(name)
-{
-    parameters.push_back(parameter);
-    GuiElement::setAutoUpdate(true);
-    GuiElement::setAutoDraw(true);
-    setupWidget();
-    addListeners(listener, method);
-}
-
-
-//////////////////////////////////////////////////////
-// TEMPLATE : create elements from parameter
-
-template <typename T>
-inline void GuiWidget::createElements(Parameter<T> *parameter)
-{
-
-}
-template <> inline void GuiWidget::createElements(Parameter<bool> *parameter)
-{
-    GuiToggle *button = new GuiToggle(parameter->getName(), parameter);
-    elements.push_back(button);
-}
-template <> inline void GuiWidget::createElements(Parameter<int> *parameter)
-{
-    GuiSlider<int> *slider = new GuiSlider<int>(parameter->getName(), parameter);
-    elements.push_back(slider);
-}
-template <> inline void GuiWidget::createElements(Parameter<float> *parameter)
-{
-    GuiSlider<float> *slider = new GuiSlider<float>(parameter->getName(), parameter);
-    elements.push_back(slider);
-
-}
-template <> inline void GuiWidget::createElements(Parameter<double> *parameter)
-{
-    GuiSlider<double> *slider = new GuiSlider<double>(parameter->getName(), parameter);
-    elements.push_back(slider);
-}
-template <> inline void GuiWidget::createElements(Parameter<ofVec2f> *parameter)
-{
-    GuiSlider<float> *sliderX = new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x);
-    GuiSlider<float> *sliderY = new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y);
-    elements.push_back(sliderX);
-    elements.push_back(sliderY);
-}
-template <>
-inline void GuiWidget::createElements(Parameter<ofVec3f> *parameter)
-{
-    GuiSlider<float> *sliderX = new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x);
-    GuiSlider<float> *sliderY = new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y);
-    GuiSlider<float> *sliderZ = new GuiSlider<float>(parameter->getName()+".z", &parameter->getReference()->z, parameter->getMin().z, parameter->getMax().z);
-    elements.push_back(sliderX);
-    elements.push_back(sliderY);
-    elements.push_back(sliderZ);
-}
-template <>
-inline void GuiWidget::createElements(Parameter<ofVec4f> *parameter)
-{
-    GuiSlider<float> *sliderX = new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x);
-    GuiSlider<float> *sliderY = new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y);
-    GuiSlider<float> *sliderZ = new GuiSlider<float>(parameter->getName()+".z", &parameter->getReference()->z, parameter->getMin().z, parameter->getMax().z);
-    GuiSlider<float> *sliderW = new GuiSlider<float>(parameter->getName()+".w", &parameter->getReference()->w, parameter->getMin().w, parameter->getMax().w);
-    elements.push_back(sliderX);
-    elements.push_back(sliderY);
-    elements.push_back(sliderZ);
-    elements.push_back(sliderW);
-}
-template <>
-inline void GuiWidget::createElements(Parameter<ofFloatColor> *parameter)
-{
-    GuiSlider<float> *sliderR = new GuiSlider<float>(parameter->getName()+".r", &parameter->getReference()->r, parameter->getMin().r, parameter->getMax().r);
-    GuiSlider<float> *sliderG = new GuiSlider<float>(parameter->getName()+".g", &parameter->getReference()->g, parameter->getMin().g, parameter->getMax().g);
-    GuiSlider<float> *sliderB = new GuiSlider<float>(parameter->getName()+".b", &parameter->getReference()->b, parameter->getMin().b, parameter->getMax().b);
-    GuiSlider<float> *sliderA = new GuiSlider<float>(parameter->getName()+".a", &parameter->getReference()->a, parameter->getMin().a, parameter->getMax().a);
-    elements.push_back(sliderR);
-    elements.push_back(sliderG);
-    elements.push_back(sliderB);
-    elements.push_back(sliderA);
 }
 
 
 
-//////////////////////////////////////////////////////
-// TEMPLATE : add listeners for each element
+////////////////////////////////////////////////////////
+//  Creating elements
 
-template <typename L, typename M>
-void GuiWidget::addListeners(L *listener, M method)
+template<typename T>
+void GuiWidget::createRangeSliders(GuiElementGroup *elementGroup, string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh)
 {
-    for (auto e : elements)
-    {
-        ofAddListener(e->elementEvent, listener, method);
-    }
+    elementGroup->addElement(new GuiRangeSlider<T>(name, parameterLow, parameterHigh));
+}
+
+template<typename T> void GuiWidget::createSliders(GuiElementGroup *elementGroup, Parameter<T> *parameter)
+{
+    elementGroup->addElement(new GuiSlider<T>(parameter));
+}
+
+template<> inline void GuiWidget::createSliders<ofVec2f>(GuiElementGroup *elementGroup, Parameter<ofVec2f> *parameter)
+{
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y));
+}
+
+template<> inline void GuiWidget::createSliders<ofVec3f>(GuiElementGroup *elementGroup, Parameter<ofVec3f> *parameter)
+{
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".z", &parameter->getReference()->z, parameter->getMin().z, parameter->getMax().z));
+}
+
+template<> inline void GuiWidget::createSliders(GuiElementGroup *elementGroup, Parameter<ofVec4f> *parameter)
+{
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".x", &parameter->getReference()->x, parameter->getMin().x, parameter->getMax().x));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".y", &parameter->getReference()->y, parameter->getMin().y, parameter->getMax().y));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".z", &parameter->getReference()->z, parameter->getMin().z, parameter->getMax().z));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".w", &parameter->getReference()->w, parameter->getMin().w, parameter->getMax().w));
+}
+
+template<> inline void GuiWidget::createSliders(GuiElementGroup *elementGroup, Parameter<ofFloatColor> *parameter)
+{
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".r", &parameter->getReference()->r, parameter->getMin().r, parameter->getMax().r));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".g", &parameter->getReference()->g, parameter->getMin().g, parameter->getMax().g));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".b", &parameter->getReference()->b, parameter->getMin().b, parameter->getMax().b));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".a", &parameter->getReference()->a, parameter->getMin().a, parameter->getMax().a));
+}
+
+template<> inline void GuiWidget::createRangeSliders<ofVec2f>(GuiElementGroup *elementGroup, string name, Parameter<ofVec2f> *parameterLow, Parameter<ofVec2f> *parameterHigh)
+{
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".x", &parameterLow->getReference()->x, &parameterHigh->getReference()->x, min(parameterLow->getMin().x, parameterHigh->getMin().x), max(parameterLow->getMax().x, parameterHigh->getMax().x)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".y", &parameterLow->getReference()->y, &parameterHigh->getReference()->y, min(parameterLow->getMin().y, parameterHigh->getMin().y), max(parameterLow->getMax().y, parameterHigh->getMax().y)));
+}
+
+template<> inline void GuiWidget::createRangeSliders<ofVec3f>(GuiElementGroup *elementGroup, string name, Parameter<ofVec3f> *parameterLow, Parameter<ofVec3f> *parameterHigh)
+{
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".x", &parameterLow->getReference()->x, &parameterHigh->getReference()->x, min(parameterLow->getMin().x, parameterHigh->getMin().x), max(parameterLow->getMax().x, parameterHigh->getMax().x)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".y", &parameterLow->getReference()->y, &parameterHigh->getReference()->y, min(parameterLow->getMin().y, parameterHigh->getMin().y), max(parameterLow->getMax().y, parameterHigh->getMax().y)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".z", &parameterLow->getReference()->z, &parameterHigh->getReference()->z, min(parameterLow->getMin().z, parameterHigh->getMin().z), max(parameterLow->getMax().z, parameterHigh->getMax().z)));
+}
+
+template<> inline void GuiWidget::createRangeSliders<ofVec4f>(GuiElementGroup *elementGroup, string name, Parameter<ofVec4f> *parameterLow, Parameter<ofVec4f> *parameterHigh)
+{
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".x", &parameterLow->getReference()->x, &parameterHigh->getReference()->x, min(parameterLow->getMin().x, parameterHigh->getMin().x), max(parameterLow->getMax().x, parameterHigh->getMax().x)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".y", &parameterLow->getReference()->y, &parameterHigh->getReference()->y, min(parameterLow->getMin().y, parameterHigh->getMin().y), max(parameterLow->getMax().y, parameterHigh->getMax().y)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".z", &parameterLow->getReference()->z, &parameterHigh->getReference()->z, min(parameterLow->getMin().z, parameterHigh->getMin().z), max(parameterLow->getMax().z, parameterHigh->getMax().z)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".w", &parameterLow->getReference()->w, &parameterHigh->getReference()->w, min(parameterLow->getMin().w, parameterHigh->getMin().w), max(parameterLow->getMax().w, parameterHigh->getMax().w)));
+}
+
+template<> inline void GuiWidget::createRangeSliders<ofFloatColor>(GuiElementGroup *elementGroup, string name, Parameter<ofFloatColor> *parameterLow, Parameter<ofFloatColor> *parameterHigh) {
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".r", &parameterLow->getReference()->r, &parameterHigh->getReference()->r, min(parameterLow->getMin().r, parameterHigh->getMin().r), max(parameterLow->getMax().r, parameterHigh->getMax().r)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".g", &parameterLow->getReference()->g, &parameterHigh->getReference()->g, min(parameterLow->getMin().g, parameterHigh->getMin().g), max(parameterLow->getMax().g, parameterHigh->getMax().g)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".b", &parameterLow->getReference()->b, &parameterHigh->getReference()->b, min(parameterLow->getMin().b, parameterHigh->getMin().b), max(parameterLow->getMax().b, parameterHigh->getMax().b)));
+    elementGroup->addElement(new GuiRangeSlider<float>(name+".a", &parameterLow->getReference()->a, &parameterHigh->getReference()->a, min(parameterLow->getMin().a, parameterHigh->getMin().a), max(parameterLow->getMax().a, parameterHigh->getMax().a)));
 }
 

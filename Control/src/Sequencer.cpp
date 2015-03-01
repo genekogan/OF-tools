@@ -1,36 +1,14 @@
 #include "Sequencer.h"
 
 
-Sequencer::SequenceElementPair::SequenceElementPair(GuiElement *element, int numColumns)
+Sequencer::SequenceElementPair::SequenceElementPair(GuiElement *element)
 {
     this->element = element;
-    sequence = new Sequence(element->getName(), numColumns);
+    sequence = new Sequence(element->getName(), 8);
     sequence->setAutoUpdate(false);
     sequence->setAutoDraw(false);
     sequence->setDiscrete(element->isDiscrete());
-    linkedToElement = true;
-}
-
-Sequencer::SequenceElementPair::SequenceElementPair(int numColumns)
-{
-    sequence = new Sequence("", numColumns);
-    sequence->setAutoUpdate(false);
-    sequence->setAutoDraw(false);
-    linkedToElement = false;
-}
-
-void Sequencer::SequenceElementPair::updateElementFromSequencer()
-{
-    if (linkedToElement && sequence->getActive()) {
-        element->setValueFromSequence(*sequence);
-    }
-}
-
-void Sequencer::SequenceElementPair::lerpWidgetToSequencer(int lerpNumFrames)
-{
-    if (linkedToElement && sequence->getActive()) {
-        element->lerpTo(sequence->getValueAtCurrentCursor(), lerpNumFrames);
-    }
+    linked = true;
 }
 
 Sequencer::SequenceElementPair::~SequenceElementPair()
@@ -38,384 +16,281 @@ Sequencer::SequenceElementPair::~SequenceElementPair()
     delete sequence;
 }
 
-Sequencer::SequenceWidgetPair::SequenceWidgetPair(GuiWidget *widget, int numColumns)
+void Sequencer::SequenceElementPair::updateElementFromSequencer()
 {
-    this->widget = widget;
-    for (auto element : widget->getElements())
-    {
-        SequenceElementPair *elementPair = new SequenceElementPair(element, numColumns);
-        elementPairs.push_back(elementPair);
+    if (linked && sequence->getActive()) {
+        element->setValueFromSequence(*sequence);
     }
-    
-    if (widget->isMenu())
+}
+
+void Sequencer::SequenceElementPair::lerpWidgetToSequencer(int lerpNumFrames)
+{
+    if (linked && sequence->getActive()) {
+        element->lerpTo(sequence->getValueAtCurrentCursor(), lerpNumFrames);
+    }
+}
+
+Sequencer::SequenceGroupPair::SequenceGroupPair(GuiElementGroup *elementGroup, GuiWidgetBase *parent)
+{
+    this->elementGroup = elementGroup;
+    this->parent = parent;
+    for (auto &e : elementGroup->getElements())
     {
-        menu = ((GuiMenu *) widget);
-        for (auto e : elementPairs) {
-            ofAddListener(e->sequence->elementEvent, this, &SequenceWidgetPair::menuSequenceChanged);
+        SequenceElementPair *newPair = new SequenceElementPair(e);
+        elementGroup->addElement(newPair->getSequence());
+        pairs.push_back(newPair);
+        if (parent->isMenu() && !((GuiMenu *) parent)->getMultipleChoice()) {
+            ofAddListener(newPair->getSequence()->elementEvent, this, &SequenceGroupPair::menuSelected);
         }
     }
 }
 
-Sequencer::SequenceWidgetPair::SequenceWidgetPair(int numColumns)
+Sequencer::SequenceGroupPair::~SequenceGroupPair()
 {
-    SequenceElementPair *elementPair = new SequenceElementPair(numColumns);
-    elementPairs.push_back(elementPair);
+    for (auto p : pairs) {
+        delete p;
+    }
+    pairs.clear();
 }
 
-void Sequencer::SequenceWidgetPair::setNumberColumns(int numColumns)
+void Sequencer::SequenceGroupPair::menuSelected(GuiElementEventArgs &e)
 {
-    for (auto e : elementPairs) {
-        e->sequence->setSize(numColumns);
+    if (e.value == 0.0) return;
+    for (auto p : pairs) {
+        p->getSequence()->setValueAtCell(e.cell, p->getSequence()->getName() == e.name);
     }
 }
 
-void Sequencer::SequenceWidgetPair::setCursor(float cursor)
+void Sequencer::SequenceGroupPair::setNumberColumns(int numCols)
 {
-    for (auto e : elementPairs) {
-        e->sequence->setCursor(cursor);
+    this->numCols = numCols;
+    for (auto p : pairs) {
+        p->getSequence()->setSize(numCols);
     }
 }
 
-void Sequencer::SequenceWidgetPair::randomizeSequence(float density, float range)
+void Sequencer::SequenceGroupPair::setCursor(float cursor)
 {
-    for (auto e : elementPairs) {
-        e->sequence->randomize(density, range);
+    for (auto p : pairs) {
+        p->getSequence()->setCursor(cursor);
     }
 }
 
-void Sequencer::SequenceWidgetPair::updateWidgetFromSequencer()
+void Sequencer::SequenceGroupPair::randomizeSequence(float density, float range)
 {
-    if (widget->isMenu())
+    if (parent->isMenu() && !((GuiMenu *) parent)->getMultipleChoice())
     {
-        if (menu->getMultipleChoice())
+        for (int col = 0; col < numCols; col++)
         {
-            for (auto e : elementPairs)
-            {
-                if (e->sequence->getActive()) {
-                    menu->setToggle(e->sequence->getName(), e->sequence->getValueAtCurrentIndex() == 1.0);
-                }
+            int rowSelection = ofRandom(pairs.size());
+            for (int row = 0; row < pairs.size(); row++) {
+                pairs[row]->getSequence()->setValueAtCell(col, row == rowSelection);
             }
         }
-        else
+    }
+    else {
+        for (auto p : pairs) {
+            p->getSequence()->randomize(density, range);
+        }
+    }
+}
+
+void Sequencer::SequenceGroupPair::updateWidgetFromSequencer()
+{
+    if (parent->isMenu())
+    {
+        for (auto p : pairs)
         {
-            for (auto e : elementPairs)
-            {
-                if (e->sequence->getValueAtCurrentIndex() == 1.0 && e->sequence->getActive()) {
-                    menu->setToggle(e->sequence->getName(), true);
-                }
+            if (p->getSequence()->getActive()) {
+                ((GuiMenu *) parent)->setToggle(p->getSequence()->getName(), p->getSequence()->getValueAtCurrentIndex() == 1.0);
             }
         }
     }
     else
     {
-        for (auto e : elementPairs) {
-            e->updateElementFromSequencer();
+        for (auto p : pairs) {
+            p->updateElementFromSequencer();
         }
     }
 }
 
-void Sequencer::SequenceWidgetPair::lerpWidgetToSequencer(int lerpNumFrames)
+void Sequencer::SequenceGroupPair::lerpWidgetToSequencer(int lerpNumFrames)
 {
-    for (auto e : elementPairs) {
-        e->lerpWidgetToSequencer(lerpNumFrames);
+    for (auto p : pairs) {
+        p->lerpWidgetToSequencer(lerpNumFrames);
     }
 }
 
-void Sequencer::SequenceWidgetPair::update()
+Sequencer::SequencerSavedSet::SequencerSavedSet(string name, bool smooth, int bpm, int lerpNumFrames, int numCols)
 {
-    for (auto e : elementPairs) {
-        e->sequence->update();
-    }
+    this->name = name;
+    this->smooth = smooth;
+    this->bpm = bpm;
+    this->lerpNumFrames = lerpNumFrames;
+    this->numCols = numCols;
 }
 
-void Sequencer::SequenceWidgetPair::draw()
+void Sequencer::SequencerSavedSet::addSequence(string sequenceName, vector<float> sequence, bool active)
 {
-    for (auto e : elementPairs) {
-        e->sequence->draw();
-    }
+    sequences[sequenceName] = sequence;
+    sequencesActive[sequenceName] = active;
 }
 
-void Sequencer::SequenceWidgetPair::mouseMoved(int mouseX, int mouseY)
-{
-    for (auto e : elementPairs) {
-        e->sequence->mouseMoved(mouseX, mouseY);
-    }
-}
 
-void Sequencer::SequenceWidgetPair::mousePressed(int mouseX, int mouseY)
-{
-    for (auto e : elementPairs) {
-        e->sequence->mousePressed(mouseX, mouseY);
-    }
-    
-}
-void Sequencer::SequenceWidgetPair::mouseReleased(int mouseX, int mouseY)
-{
-    for (auto e : elementPairs) {
-        e->sequence->mouseReleased(mouseX, mouseY);
-    }
-    
-}
-void Sequencer::SequenceWidgetPair::mouseDragged(int mouseX, int mouseY)
-{
-    for (auto e : elementPairs) {
-        e->sequence->mouseDragged(mouseX, mouseY);
-    }
-}
 
-void Sequencer::SequenceWidgetPair::menuSequenceChanged(GuiElementEventArgs & b)
-{
-    for (auto e : elementPairs)
-    {
-        if (e->sequence->getName() != b.name &&
-            b.value == 1.0 &&
-            menu->getMultipleChoice() == false) {
-            e->sequence->setValueAtCell(b.cell, 0.0);
-        }
-    }
-}
+//////////////////////////////////////////////////
+//  Sequencer
 
-Sequencer::SequenceWidgetPair::~SequenceWidgetPair()
-{
-    for (auto e : elementPairs)
-    {
-        ofRemoveListener(e->sequence->elementEvent, this, &SequenceWidgetPair::menuSequenceChanged);
-        delete e;
-    }
-    elementPairs.clear();
-}
-
-Sequencer::Sequencer(string name, GuiPanel * panel, int numColumns) : GuiWidget(name)
+Sequencer::Sequencer(string name, GuiWidgetBase * panel, int numCols) : GuiWidgetBase(name)
 {
     this->panel = panel;
-    this->numColumns = numColumns;
-    vector<GuiWidget *> widgets = panel->getWidgets();
-    for (auto widget : widgets)
-    {
-        SequenceWidgetPair *widgetPair = new SequenceWidgetPair(widget, numColumns);
-        widgetPairs.push_back(widgetPair);
-        ofAddListener(widget->widgetChanged, this, &Sequencer::eventWidgetCollapsed);
-    }
-    linkedToPanel = true;
+    this->numCols = numCols;
+    
+    sequencerPanelMargin = GUI_DEFAULT_SEQUENCER_PANEL_MARGIN;
+    sequencerWidth = GUI_DEFAULT_SEQUENCER_WIDTH;
+    lerpNumFrames = 1;
+    
+    getElementGroupsFromWidget(panel);
     setupSequencer();
+    
+    setList(false);
+    setSmooth(false);
+    setAllSequencersActive(true);
+    setBpm(120);
+    setNumberColumns(numCols);
+    
+    GuiElement::setAutoUpdate(true);
+    GuiElement::setAutoDraw(true);
 }
 
-void Sequencer::setupGuiComponents()
+Sequencer::~Sequencer()
 {
-    if (linkedToPanel) {
-        setupGuiSequencesFromPanel();
-    }
-    else {
-        //setupGuiSequencesManually();
-    }
+    ofRemoveListener(clock.beatEvent, this, &Sequencer::eventBeat);
+    ofRemoveListener(sBeatPm->elementEvent, this, &Sequencer::eventBpm);
+    ofRemoveListener(sNumCol->elementEvent, this, &Sequencer::eventNumColumns);
     
-    setupGuiControls();
+    delete tActive;
+    delete tSmooth;
+    delete sBeatPm;
+    delete sNumCol;
+    delete sLerpNf;
+    delete bRandom;
+    delete mChoose;
+    
+    for (auto s : sequencePairs) {
+        delete s;
+    }
+    sequencePairs.clear();
+    
+    removeElementGroupsFromWidget(panel);
 }
 
-void Sequencer::setupGuiSequencesFromPanel()
+void Sequencer::getElementGroupsFromWidget(GuiWidgetBase * widget)
 {
-    vector<GuiWidget *> widgets = panel->getWidgets();
-    if (widgets.size() == 0)    return;
-    ofRectangle widgetTop = widgets[0]->getRectangle();
-    ofRectangle widgetBottom = widgets[widgets.size()-1]->getRectangle();
-    
-    sequenceRectangle.set(widgetTop.x + widgetTop.width + style.marginInner + seqPanelMarginLeft, widgetTop.y, sequencerWidth, widgetBottom.y + widgetBottom.height - widgetTop.y);
-    controlRectangle.set(widgetTop.x + widgetTop.width + style.marginInner + seqPanelMarginLeft, widgetTop.y - seqHeaderHeight, sequenceRectangle.width, seqHeaderHeight);
-    rectangle.set(controlRectangle.x, controlRectangle.y, controlRectangle.width, controlRectangle.height + sequenceRectangle.height);
-    
-    for (auto w : widgetPairs)
+    vector<GuiElementGroup*> &groups = widget->getElementGroups();
+    for (auto group : groups)
     {
-        if (w->getWidget()->getCollapsed())
+        GuiElementGroup * newGroup = new GuiElementGroup();
+        vector<GuiElement*> & elements = group->getElements();
+        for (auto &element : elements)
         {
-            for (auto e : w->elementPairs) {
-                e->sequence->setRectangle(0, 0, 0, 0);
+            if (element->isWidget()) {
+                getElementGroupsFromWidget((GuiWidgetBase*) element);
+            }
+            else {
+                newGroup->addElement(element);
             }
         }
-        else
+        if (newGroup->getElements().size() > 0) {
+            sequencePairs.push_back(new SequenceGroupPair(newGroup, widget));
+        }
+    }
+    ofAddListener(widget->widgetChanged, this, &Sequencer::eventWidgetCollapsed);
+}
+
+void Sequencer::removeElementGroupsFromWidget(GuiWidgetBase * widget)
+{
+    vector<GuiElementGroup*> &groups = widget->getElementGroups();
+    for (auto group : groups)
+    {
+        vector<GuiElement*> & elements = group->getElements();
+        for (auto &element : elements)
         {
-            for (auto e : w->elementPairs)
-            {
-                ofRectangle elementRectangle = e->element->getRectangle();
-                e->sequence->setRectangle(sequenceRectangle.x, elementRectangle.y, sequenceRectangle.width, elementRectangle.height);
+            if (element->isWidget()) {
+                removeElementGroupsFromWidget((GuiWidgetBase*) element);
             }
         }
     }
+    ofRemoveListener(widget->widgetChanged, this, &Sequencer::eventWidgetCollapsed);
 }
 
 void Sequencer::setupSequencer()
 {
-    isList = false;
-    collapsed = false;
-    smooth = false;
-    allSequencesActive = true;
-    bpm = 120;
-    lerpNumFrames = 1;
-    randomDensity = 0.5;
-    randomRange = 1.0;
+    tActive = new GuiToggle("on", &active, this, &Sequencer::eventActive);
+    tSmooth = new GuiToggle("~", &smooth);
+    bRandom = new GuiButton("?", this, &Sequencer::eventRandomizeSequencer);
+    sBeatPm = new GuiSlider<int>("bpm", &bpm, 1, 360);
+    sNumCol = new GuiSlider<int>("cols", &numCols, 1, 64);
+    sLerpNf = new GuiSlider<int>("lerp", &lerpNumFrames, 1, 120);
+    mChoose = new GuiMenu("choose", this, &Sequencer::eventSequencerMenuSelection, false, true);
+    mChoose->addToggle("save new");
+    mChoose->setCollapsed(true);
     
-    vector<string> choices;
-    choices.push_back("seq 1");
-    choices.push_back("seq 2");
-    mChooseSeq = new GuiMenu("loasadd", choices, false, true);
-    mChooseSeq->setCollapsed(true);
-    mChooseSeq->getStyle().elementWidth = 100;
-    mChooseSeq->setPosition(controlRectangle.x + 4, controlRectangle.y + style.marginInner - 2);
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    elementGroup->addElement(tActive);
+    elementGroup->addElement(tSmooth);
+    elementGroup->addElement(sBeatPm);
+    elementGroup->addElement(sNumCol);
+    elementGroup->addElement(sLerpNf);
+    elementGroup->addElement(bRandom);
+    elementGroup->addElement(mChoose);
+    setupElementGroup(elementGroup);
     
-    tActive = new GuiToggle("active", &active, this, &Sequencer::eventActive);
-    tSmooth = new GuiToggle("smooth", &smooth);
-    bRandomize = new GuiButton("?", this, &Sequencer::eventRandomizeSequencer);
-    sBpm = new GuiSlider<int>("bpm", &bpm, 1, 360);
-    sNumColumns = new GuiSlider<int>("cols", &numColumns, 1, 64);
-    sDensity = new GuiSlider<float>("density", &randomDensity, 0.0f, 1.0f);
-    sRange = new GuiSlider<float>("range", &randomRange, 0.0f, 1.0f);
-    sLerpFrames = new GuiSlider<int>("lerp", &lerpNumFrames, 1, 120);
-    
-    elements.clear();
-    elements.push_back(tActive);
-    elements.push_back(tSmooth);
-    elements.push_back(sBpm);
-    elements.push_back(sNumColumns);
-    elements.push_back(sLerpFrames);
-    elements.push_back(sDensity);
-    elements.push_back(sRange);
-    elements.push_back(bRandomize);
-    elements.push_back(mChooseSeq);
-    for (auto e : elements)
-    {
-        e->setAutoUpdate(false);
-        e->setAutoDraw(false);
-    }
-
     ofAddListener(clock.beatEvent, this, &Sequencer::eventBeat);
-    ofAddListener(sBpm->elementEvent, this, &Sequencer::eventBpm);
-    ofAddListener(sNumColumns->elementEvent, this, &Sequencer::eventNumColumns);
-    
-    setBpm(bpm);
-    GuiElement::setAutoUpdate(true);
-    GuiElement::setAutoDraw(true);
-    setupGuiComponents();
+    ofAddListener(sBeatPm->elementEvent, this, &Sequencer::eventBpm);
+    ofAddListener(sNumCol->elementEvent, this, &Sequencer::eventNumColumns);
 }
 
-void Sequencer::setupGuiControls()
+void Sequencer::setupGuiComponents()
 {
-    mChooseSeq->setPosition(controlRectangle.x + 4, controlRectangle.y + style.marginInner - 2);
-    tActive->setRectangle(controlRectangle.x + 4, controlRectangle.y + style.marginInner + 20, 56, 14);
-
-    sBpm->setRectangle(controlRectangle.x + 120, controlRectangle.y + style.marginInner, 100, 14);
-    sLerpFrames->setRectangle(controlRectangle.x + 120, controlRectangle.y + style.marginInner + 20, 100, 14);
-
-    sNumColumns->setRectangle(controlRectangle.x + 225, controlRectangle.y + style.marginInner, 80, 14);
-    tSmooth->setRectangle(controlRectangle.x + 225, controlRectangle.y + style.marginInner + 20, 80, 14);
-
-    sDensity->setRectangle(controlRectangle.x + 310, controlRectangle.y + style.marginInner, 100, 14);
-    sRange->setRectangle(controlRectangle.x + 310, controlRectangle.y + style.marginInner + 20, 82, 14);
-    bRandomize->setRectangle(controlRectangle.x + 396, controlRectangle.y + style.marginInner + 20, 14, 14);
+    setupSequencesFromPanel();
     
+    mChoose->setRectangle(rectangle.x +   2, rectangle.y + marginInner,   100, 15);
+    tActive->setRectangle(rectangle.x + 107, rectangle.y + marginInner+2,  24, 15);
+    tSmooth->setRectangle(rectangle.x + 136, rectangle.y + marginInner+2,  24, 15);
+    sBeatPm->setRectangle(rectangle.x + 165, rectangle.y + marginInner+2,  56, 15);
+    sLerpNf->setRectangle(rectangle.x + 226, rectangle.y + marginInner+2,  56, 15);
+    sNumCol->setRectangle(rectangle.x + 287, rectangle.y + marginInner+2,  56, 15);
+    bRandom->setRectangle(rectangle.x + 348, rectangle.y + marginInner+2,  14, 15);
+    
+    ofRectangle rectTopSeq = sequencePairs[0]->getElementPairs()[0]->getSequence()->getSequenceRectangle();
     rectSelectColumnMouseOver = -1;
     rectToggleAllSeqMouseOver = false;
-    rectTopSeq = widgetPairs[0]->elementPairs[0]->sequence->getSequenceRectangle();
-    rectToggleAllSeq.set(sequenceRectangle.x + 1, rectTopSeq.y - rectTopSeq.height, rectTopSeq.height * 0.7, rectTopSeq.height * 0.7);
-    rectSelectColumn.resize(numColumns);
-    for (int i = 0; i < rectSelectColumn.size(); i++)
+    bToggleAllSequencers.set(rectangle.x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.height, rectTopSeq.height);
+    bColumnSelectors.resize(numCols);
+    for (int i = 0; i < numCols; i++)
     {
-        float x = ofMap(i + 0.1, 0, numColumns, rectTopSeq.x, rectTopSeq.x + rectTopSeq.width);
-        rectSelectColumn[i].set(x, rectTopSeq.y - rectTopSeq.height, 0.7 * rectTopSeq.width / numColumns, rectTopSeq.height * 0.7);
+        float x = ofMap(i + 0.15, 0, numCols, rectTopSeq.x, rectTopSeq.x + rectTopSeq.width);
+        bColumnSelectors[i].set(x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.width * 0.7 / numCols, rectTopSeq.height * 0.7);
     }
 }
 
-void Sequencer::update()
+void Sequencer::setupSequencesFromPanel()
 {
-    GuiWidget::update();
-    if (active && smooth)
-    {
-        cursor = currentColumn + (ofGetElapsedTimeMillis() - bpmTime) / bpmInterval;
-        for (auto w : widgetPairs)
-        {
-            w->setCursor(cursor);
-            w->updateWidgetFromSequencer();
-        }
-    }
-    for (auto w : widgetPairs) {
-        w->update();
-    }
-}
-
-void Sequencer::draw()
-{
-    GuiWidget::draw();
-    for (auto w : widgetPairs) {
-        w->draw();
-    }
-    drawControls();
-}
-
-void Sequencer::drawControls()
-{
-    for (int i=0; i<rectSelectColumn.size(); i++)
-    {
-        ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE, ofClamp(ofMap(abs(cursor - i), 0, 1, 255, 0), 0, 255));
-        ofFill();
-        ofRect(rectSelectColumn[i]);
-        rectSelectColumnMouseOver == i ? ofSetColor(style.colorActive) : ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE);
-        ofNoFill();
-        ofRect(rectSelectColumn[i]);
-    }
-    rectToggleAllSeqMouseOver ? ofFill() : ofNoFill();
-    allSequencesActive ? ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE) : ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_INACTIVE);
-    ofCircle(rectToggleAllSeq.x + rectToggleAllSeq.width / 2, rectToggleAllSeq.y + rectToggleAllSeq.width / 2, rectToggleAllSeq.width / 2);
-}
-
-void Sequencer::mouseMoved(int mouseX, int mouseY)
-{
-    GuiWidget::mouseMoved(mouseX, mouseY);
-    for (auto w : widgetPairs) {
-        w->mouseMoved(mouseX, mouseY);
-    }
+    ofRectangle panelRect = panel->getRectangle();
+    rectangle.set(panelRect.x + panelRect.width + sequencerPanelMargin, panelRect.y, sequencerWidth, panelRect.height);
     
-    rectToggleAllSeqMouseOver = rectToggleAllSeq.inside(mouseX, mouseY);
-    rectSelectColumnMouseOver = -1;
-    for (int i = 0; i < rectSelectColumn.size(); i++)
+    for (auto groupPair : sequencePairs)
     {
-        if (rectSelectColumn[i].inside(mouseX, mouseY))
+        for (auto elementPair : groupPair->getElementPairs())
         {
-            rectSelectColumnMouseOver = i;
-            break;
-        }
-    }
-}
-
-void Sequencer::mousePressed(int mouseX, int mouseY)
-{
-    GuiWidget::mousePressed(mouseX, mouseY);
-    if (mouseOver)
-    {
-        for (auto w : widgetPairs) {
-            w->mousePressed(mouseX, mouseY);
-        }
-    }
-    if (rectToggleAllSeqMouseOver) {
-        toggleSequencersActive();
-    }
-    else if (rectSelectColumnMouseOver != -1) {
-        selectColumn(rectSelectColumnMouseOver);
-    }
-}
-
-void Sequencer::mouseReleased(int mouseX, int mouseY)
-{
-    GuiWidget::mouseReleased(mouseX, mouseY);
-    for (auto w : widgetPairs) {
-        w->mouseReleased(mouseX, mouseY);
-    }
-}
-
-void Sequencer::mouseDragged(int mouseX, int mouseY)
-{
-    GuiWidget::mouseDragged(mouseX, mouseY);
-    if (mouseDragging)
-    {
-        for (auto w : widgetPairs) {
-            w->mouseDragged(mouseX, mouseY);
+            if (groupPair->getParent()->getCollapsed()) {
+                elementPair->getSequence()->setRectangle(0, 0, 0, 0);
+            }
+            else {
+                ofRectangle elementRectangle = elementPair->getElement()->getRectangle();
+                elementPair->getSequence()->setRectangle(rectangle.x, elementRectangle.y, sequencerWidth, elementRectangle.height);
+            }
         }
     }
 }
@@ -439,51 +314,29 @@ void Sequencer::setBpm(int bpm)
     clock.setBeatPerBar(4);
 }
 
-void Sequencer::setNumberColumns(int numColumns)
+void Sequencer::setNumberColumns(int numCols)
 {
-    this->numColumns = numColumns;
-    for (auto w : widgetPairs) {
-        w->setNumberColumns(numColumns);
+    this->numCols = numCols;
+    for (auto p : sequencePairs) {
+        p->setNumberColumns(numCols);
     }
     setupGuiComponents();
 }
 
 void Sequencer::randomizeSequencer()
 {
-    for (auto w : widgetPairs)
-    {
-        if (w->getWidget()->isMenu()) {
-            randomizeSequencerForMenu(w);
-        }
-        else {
-            w->randomizeSequence(randomDensity, randomRange);
-        }
+    for (auto p : sequencePairs) {
+        p->randomizeSequence(0.5, 1.0);
     }
 }
 
-void Sequencer::randomizeSequencerForMenu(SequenceWidgetPair * w)
+void Sequencer::setAllSequencersActive(bool allSequencesActive)
 {
-    if (((GuiMenu *) w->getWidget())->getMultipleChoice()) {
-        w->randomizeSequence(randomDensity, randomRange);
-    }
-    else
+    this->allSequencesActive = allSequencesActive;
+    for (auto p : sequencePairs)
     {
-        for (int col = 0; col < numColumns; col++)
-        {
-            int idx = ofRandom(w->elementPairs.size());
-            for (int i = 0; i < w->elementPairs.size(); i++) {
-                w->elementPairs[i]->sequence->setValueAtCell(col, i == idx);
-            }
-        }
-    }
-}
-
-void Sequencer::toggleSequencersActive()
-{
-    allSequencesActive = !allSequencesActive;
-    for (auto w : widgetPairs) {
-        for (auto e : w->elementPairs) {
-            e->sequence->setActive(allSequencesActive);
+        for (auto &e : p->getElementPairs()) {
+            e->getSequence()->setActive(allSequencesActive);
         }
     }
 }
@@ -493,23 +346,230 @@ void Sequencer::selectColumn(int column)
     setActive(false);
     currentColumn = column;
     cursor = currentColumn;
-    for (auto w : widgetPairs)
+    
+    for (auto p : sequencePairs)
     {
-        w->setCursor(cursor);
-        w->lerpWidgetToSequencer(lerpNumFrames);
+        p->setCursor(cursor);
+        for (auto &e : p->getElementPairs()) {
+            e->lerpWidgetToSequencer(lerpNumFrames);
+        }
     }
 }
 
 void Sequencer::next()
 {
     bpmTime = ofGetElapsedTimeMillis();
-    currentColumn = fmodf(currentColumn + 1.0f, (float) numColumns);
+    currentColumn = fmodf(currentColumn + 1.0f, (float) numCols);
     cursor = currentColumn;
-    for (auto w : widgetPairs)
+    
+    for (auto p : sequencePairs)
     {
-        w->setCursor(cursor);
+        p->setCursor(cursor);
         if (!smooth) {
-            w->updateWidgetFromSequencer();
+            p->updateWidgetFromSequencer();
+        }
+    }
+}
+
+bool Sequencer::mouseMoved(int mouseX, int mouseY)
+{
+    GuiWidgetBase::mouseMoved(mouseX, mouseY);
+    for (auto s : sequencePairs)
+    {
+        for (auto e : s->getElementPairs()) {
+            if (e->getSequence()->mouseMoved(mouseX, mouseY)) return true;
+        }
+    }
+    
+    rectToggleAllSeqMouseOver = bToggleAllSequencers.inside(mouseX, mouseY);
+    rectSelectColumnMouseOver = -1;
+    for (int i = 0; i < bColumnSelectors.size(); i++)
+    {
+        if (bColumnSelectors[i].inside(mouseX, mouseY))
+        {
+            rectSelectColumnMouseOver = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Sequencer::mousePressed(int mouseX, int mouseY)
+{
+    if (GuiWidgetBase::mousePressed(mouseX, mouseY)) return true;
+    if (mouseOver)
+    {
+        for (auto s : sequencePairs)
+        {
+            for (auto e : s->getElementPairs()) {
+                if (e->getSequence()->mousePressed(mouseX, mouseY)) return true;
+            }
+        }
+    }
+    
+    if (rectToggleAllSeqMouseOver)
+    {
+        setAllSequencersActive(!allSequencesActive);
+        return true;
+    }
+    else if (rectSelectColumnMouseOver != -1)
+    {
+        selectColumn(rectSelectColumnMouseOver);
+        return true;
+    }
+    
+    return false;
+}
+
+bool Sequencer::mouseDragged(int mouseX, int mouseY)
+{
+    GuiWidgetBase::mouseDragged(mouseX, mouseY);
+    if (mouseDragging)
+    {
+        for (auto s : sequencePairs)
+        {
+            for (auto e : s->getElementPairs()) {
+                if (e->getSequence()->mouseDragged(mouseX, mouseY)) return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Sequencer::mouseReleased(int mouseX, int mouseY)
+{
+    if (GuiWidgetBase::mouseReleased(mouseX, mouseY)) return true;
+    for (auto s : sequencePairs)
+    {
+        for (auto e : s->getElementPairs()) {
+            if (e->getSequence()->mouseReleased(mouseX, mouseY)) return true;
+        }
+    }
+    return false;
+}
+
+bool Sequencer::keyPressed(int key)
+{
+    if (GuiWidgetBase::keyPressed(key)) return true;
+    if (mouseOver)
+    {
+        for (auto s : sequencePairs)
+        {
+            for (auto e : s->getElementPairs()) {
+                if (e->getSequence()->keyPressed(key)) return true;
+            }
+        }
+        
+        if (key == OF_KEY_LEFT)
+        {
+            selectColumn((currentColumn + numCols - 1) % numCols);
+            return true;
+        }
+        else if (key == OF_KEY_RIGHT)
+        {
+            selectColumn((currentColumn + 1) % numCols);
+            return true;
+        }
+        else if (key == 48)
+        {
+            selectColumn(0);
+            return true;
+        }
+        else if (key >= 49 && key <= 57)
+        {
+            selectColumn(key-49);
+            return true;
+        }
+    }
+    return false;
+}
+
+void Sequencer::update()
+{
+    GuiWidgetBase::update();
+    
+    if (active && smooth)
+    {
+        cursor = currentColumn + (ofGetElapsedTimeMillis() - bpmTime) / bpmInterval;
+        for (auto s : sequencePairs)
+        {
+            s->setCursor(cursor);
+            s->updateWidgetFromSequencer();
+        }
+    }
+}
+
+void Sequencer::draw()
+{
+    GuiWidgetBase::draw();
+    
+    for (auto s : sequencePairs)
+    {
+        for (auto e : s->getElementPairs()) {
+            e->getSequence()->draw();
+        }
+    }
+    
+    for (int i=0; i<bColumnSelectors.size(); i++)
+    {
+        ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE, ofClamp(ofMap(abs(cursor - i), 0, 1, 255, 0), 0, 255));
+        ofFill();
+        ofRect(bColumnSelectors[i]);
+        rectSelectColumnMouseOver == i ? ofSetColor(colorActive) : ofSetColor(colorOutline);
+        ofNoFill();
+        ofRect(bColumnSelectors[i]);
+    }
+    rectToggleAllSeqMouseOver ? ofFill() : ofNoFill();
+    allSequencesActive ? ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE) : ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_INACTIVE);
+    ofCircle(bToggleAllSequencers.x + bToggleAllSequencers.width / 2, bToggleAllSequencers.y + bToggleAllSequencers.width / 3, bToggleAllSequencers.width / 3);
+        
+    mChoose->draw();
+}
+
+void Sequencer::saveSequencerSet(string sequencerName)
+{
+    if (sequencerName == "")
+    {
+        sequencerName = ofSystemTextBoxDialog("New sequencer set name:");
+        if (sequencerName == "")   return;
+    }
+
+    SequencerSavedSet newSet(sequencerName, smooth, bpm, lerpNumFrames, numCols);
+    for (auto s : sequencePairs)
+    {
+        for (auto &e : s->getElementPairs())
+        {
+            string sequenceName = s->getParent()->getName() + "/" + e->getElement()->getName();
+            newSet.addSequence(sequenceName, e->getSequence()->getAllValues(), e->getSequence()->getActive());
+        }
+    }
+    sequencerSets[sequencerName] = newSet;
+    mChoose->addToggle(sequencerName);
+}
+
+void Sequencer::loadSequencerSet(string sequencerName)
+{
+    if (sequencerSets.count(sequencerName) == 0)
+    {
+        ofLog(OF_LOG_ERROR, "Error: no sequencer set found named " + sequencerName);
+        return;
+    }
+    
+    setNumberColumns(sequencerSets[sequencerName].numCols);
+    setSmooth(sequencerSets[sequencerName].smooth);
+    setBpm(sequencerSets[sequencerName].bpm);
+    lerpNumFrames = sequencerSets[sequencerName].lerpNumFrames;
+    
+    for (auto s : sequencePairs)
+    {
+        for (auto &e : s->getElementPairs())
+        {
+            string sequenceName = s->getParent()->getName() + "/" + e->getElement()->getName();
+            if (sequencerSets[sequencerName].sequences.count(sequenceName) != 0)
+            {
+                e->getSequence()->setFromValues(sequencerSets[sequencerName].sequences[sequenceName]);
+                e->getSequence()->setActive(sequencerSets[sequencerName].sequencesActive[sequenceName]);
+            }
         }
     }
 }
@@ -521,7 +581,7 @@ void Sequencer::eventBpm(GuiElementEventArgs &s)
 
 void Sequencer::eventNumColumns(GuiElementEventArgs &s)
 {
-    setNumberColumns(numColumns);
+    setNumberColumns(numCols);
 }
 
 void Sequencer::eventActive(GuiElementEventArgs &b)
@@ -536,8 +596,7 @@ void Sequencer::eventWidgetCollapsed(string &s)
 
 void Sequencer::eventRandomizeSequencer(GuiElementEventArgs &b)
 {
-    if (b.value == 1.0) // todo: shouldn't need to check
-        randomizeSequencer();
+    randomizeSequencer();
 }
 
 void Sequencer::eventSelectColumn(GuiElementEventArgs & b)
@@ -550,21 +609,12 @@ void Sequencer::eventBeat()
     next();
 }
 
-Sequencer::~Sequencer()
+void Sequencer::eventSequencerMenuSelection(GuiElementEventArgs & evt)
 {
-    for (auto w : widgetPairs)
-    {
-        ofRemoveListener(w->getWidget()->widgetChanged, this, &Sequencer::eventWidgetCollapsed);
-        delete w;
+    if (evt.name == "save new") {
+        saveSequencerSet();
     }
-    setActive(false);
-    delete tActive;
-    delete tSmooth;
-    delete sBpm;
-    delete sNumColumns;
-    delete sLerpFrames;
-    delete sDensity;
-    delete sRange;
-    delete bRandomize;
-    delete mChooseSeq;
+    else {
+        loadSequencerSet(evt.name);
+    }
 }

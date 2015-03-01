@@ -1,5 +1,6 @@
 /*
  Adapted from: [ofxKinectFeatures](https://github.com/asarasua/ofxKinectFeatures)
+ Real-time filters for MoCap by Skogstad et al ( http://www.uio.no/english/research/groups/fourms/projects/sma/subprojects/mocapfilters/ )
 */
 
 #pragma once

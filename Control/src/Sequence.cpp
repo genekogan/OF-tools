@@ -22,6 +22,8 @@ Sequence::~Sequence()
 void Sequence::setupSequence()
 {
     setActive(true);
+    colorForeground = GUI_DEFAULT_SEQUENCER_COLOR_FOREGROUND;
+    colorOutline = GUI_DEFAULT_SEQUENCER_COLOR_OUTLINE;
     mouseOverActive = false;
     mouseOverSequencer = false;
 }
@@ -65,6 +67,12 @@ void Sequence::setValueAtCell(int idx, float value)
     values[idx] = value;
 }
 
+void Sequence::setFromValues(vector<float> values)
+{
+    this->values = values;
+    numCells = values.size();
+}
+
 void Sequence::randomize(float density, float range)
 {
     for (int i = 0; i < numCells; i++) {
@@ -95,7 +103,7 @@ float Sequence::getValueAtCurrentCursor()
     return ofLerp(values[idx1], values[(1+idx1) % values.size()], cursorLerp);
 }
 
-void Sequence::mouseMoved(int mouseX, int mouseY)
+bool Sequence::mouseMoved(int mouseX, int mouseY)
 {
     GuiElement::mouseMoved(mouseX, mouseY);
     mouseOverActive = activeRectangle.inside(mouseX, mouseY);
@@ -104,9 +112,10 @@ void Sequence::mouseMoved(int mouseX, int mouseY)
     {
         activeCell = floor((float) (ofGetMouseX() - sequenceRectangle.x) / cellWidth);
     }
+    return mouseOver || mouseOverActive || mouseOverSequencer;
 }
 
-void Sequence::mousePressed(int mouseX, int mouseY)
+bool Sequence::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
@@ -122,20 +131,24 @@ void Sequence::mousePressed(int mouseX, int mouseY)
             else {
                 mousePos.set(mouseX, mouseY);
             }
+            return true;
         }
         else if (mouseOverActive)
         {
             setActive(!active);
+            return true;
         }
     }
+    return false;
 }
 
-void Sequence::mouseReleased(int mouseX, int mouseY)
+bool Sequence::mouseReleased(int mouseX, int mouseY)
 {
     GuiElement::mouseReleased(mouseX, mouseY);
+    return mouseOver || mouseOverActive || mouseOverSequencer;
 }
 
-void Sequence::mouseDragged(int mouseX, int mouseY)
+bool Sequence::mouseDragged(int mouseX, int mouseY)
 {
     GuiElement::mouseDragged(mouseX, mouseY);
     if (mouseDragging && !discrete)
@@ -143,6 +156,12 @@ void Sequence::mouseDragged(int mouseX, int mouseY)
         values[activeCell] = ofClamp(values[activeCell] - 0.005 * (mouseY - mousePos.y), 0, 1);
         mousePos.set(mouseX, mouseY);
     }
+    return mouseOver || mouseOverActive || mouseOverSequencer;
+}
+
+bool Sequence::keyPressed(int key)
+{
+    return mouseOver;
 }
 
 void Sequence::update()
@@ -154,55 +173,48 @@ void Sequence::draw()
 {
     ofPushStyle();
     
-    active ? ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE) : ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE);
+    active ? ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_ACTIVE) : ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_INACTIVE);
     ofFill();
     ofCircle(activeRectangle.x + activeRectangle.width / 2 + 1, activeRectangle.y + activeRectangle.height / 2, activeRectangle.width / 2);
     
     if (mouseOverActive)
     {
-        ofSetColor(style.colorActive);
+        ofSetColor(colorActive);
         ofNoFill();
-        ofSetLineWidth(1);
+        ofSetLineWidth(2);
         ofCircle(activeRectangle.x + activeRectangle.width / 2, activeRectangle.y + activeRectangle.height / 2, activeRectangle.width / 2);
+        ofSetLineWidth(1);
     }
 
     if (active)
     {
-        ofFill();
-        ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-        ofSetColor(style.colorBackground);
-        //ofRect(sequenceRectangle);
-            
-        ofNoFill();
-        ofSetColor(style.colorForeground);
-        ofRect(sequenceRectangle);
-        
         for (int i = 0; i < numCells; i++)
         {
             ofFill();
-            ofSetColor(style.colorBackground);
-            /*
+            ofSetColor(colorBackground);
             ofRect(sequenceRectangle.x + i * cellWidth,
                    sequenceRectangle.y,
                    cellWidth,
                    sequenceRectangle.height);
-            */
-            ofSetColor(GUI_DEFAULT_SEQUENCER_COLOR_FORE);
+            
+            ofSetColor(colorForeground);
             ofRect(sequenceRectangle.x + cellWidth * (i + 0.5 * (1.0 - values[i])),
                    sequenceRectangle.y + sequenceRectangle.height * (0.5 * (1.0 - values[i])),
                    cellWidth * values[i],
                    sequenceRectangle.height * values[i]);
             
             ofNoFill();
-            ofSetColor(style.colorForeground);
+            ofSetColor(colorOutline);
             ofRect(sequenceRectangle.x + i * cellWidth, sequenceRectangle.y, cellWidth, sequenceRectangle.height);
         }
         
         if (mouseOverSequencer)
         {
-            ofSetColor(style.colorActive);
+            ofSetColor(colorActive);
             ofNoFill();
+            ofSetLineWidth(2);
             ofRect(sequenceRectangle.x + activeCell * cellWidth, sequenceRectangle.y, cellWidth, sequenceRectangle.height);
+            ofSetLineWidth(1);
         }
     }
     

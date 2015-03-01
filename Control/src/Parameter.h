@@ -11,7 +11,7 @@
  
  */
 
-
+#include "ofMain.h"
 
 
 class ParameterBase
@@ -48,14 +48,9 @@ public:
     template<class T> void setMax(T max);
     template<class T> T getMax();
     
-    // warp
-    float getWarp() {return warp;}
-    void setWarp(float warp) {this->warp = warp;}
-    
     // data
     string name;
     string oscAddress;
-    float warp;
 };
 
 
@@ -68,17 +63,21 @@ public:
         this->name = name;
         setOscAddress("/"+name);
         value = val;
-        warp = 1.0;
     }
     
-    Parameter(string name, T *val, T min, T max, float warp_=1.0) : minValue(min), maxValue(max)
+    Parameter(string name, T *val, T min, T max) : minValue(min), maxValue(max)
     {
         this->name = name;
         setOscAddress("/"+name);
         value = val;
-        warp = warp_;
     }
-    
+
+    Parameter(string name, T min, T max) : value(new T()), minValue(min), maxValue(max)
+    {
+        this->name = name;
+        setOscAddress("/"+name);
+    }
+
     //value
     T get() {return *value;}
     void set(const T& val) {*value=val;}

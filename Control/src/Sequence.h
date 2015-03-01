@@ -23,6 +23,7 @@ public:
     float getCursor() {return cursor;}
     
     void setValueAtCell(int idx, float value);
+    void setFromValues(vector<float> values);
     void randomize(float density, float range);
     
     float getValueAtIndex(int idx);
@@ -30,13 +31,17 @@ public:
     float getValueAtCursor(float cursor_);
     float getValueAtCurrentCursor();
     
+    vector<float> getAllValues() {return values;}
+    
     ofRectangle getActiveRectangle() {return activeRectangle;}
     ofRectangle getSequenceRectangle() {return sequenceRectangle;}
     
-    void mouseMoved(int mouseX, int mouseY);
-    void mousePressed(int mouseX, int mouseY);
-    void mouseReleased(int mouseX, int mouseY);
-    void mouseDragged(int mouseX, int mouseY);
+    bool mouseMoved(int mouseX, int mouseY);
+    bool mousePressed(int mouseX, int mouseY);
+    bool mouseReleased(int mouseX, int mouseY);
+    bool mouseDragged(int mouseX, int mouseY);
+    
+    bool keyPressed(int key);
     
     void update();
     void draw();

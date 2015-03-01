@@ -1,29 +1,37 @@
 #include "GuiMenu.h"
 
 
-GuiMenu::GuiMenu(string name, vector<string> choices, bool multipleChoice, bool autoClose) : GuiWidget(name)
+
+GuiMenu::GuiMenu(string name, vector<string> choices, bool multipleChoice, bool autoClose) : GuiWidgetBase(name)
+{
+    setupMenu(multipleChoice, autoClose);
+    initializeToggles(choices);
+}
+
+GuiMenu::GuiMenu(string name, bool multipleChoice, bool autoClose) : GuiWidgetBase(name)
+{
+    setupMenu(multipleChoice, autoClose);
+}
+
+GuiMenu::~GuiMenu()
+{
+    toggles.clear();
+}
+
+void GuiMenu::setupMenu(bool multipleChoice, bool autoClose)
 {
     this->multipleChoice = multipleChoice;
     this->autoClose = autoClose;
-    setupMenu(choices);
+    menuGroup = new GuiElementGroup();
+    setupElementGroup(menuGroup);
 }
 
-void GuiMenu::setupMenu(vector<string> & choices)
+void GuiMenu::initializeToggles(vector<string> & choices)
 {
     for (auto choice : choices)
     {
-        GuiToggle *toggle = new GuiToggle(choice, new bool());
-        toggle->setAutoUpdate(false);
-        toggle->setAutoDraw(false);
-        toggles[choice] = toggle;
-        elements.push_back(toggle);
-        ofAddListener(toggle->elementEvent, this, &GuiMenu::updateParameter);
+        addToggle(choice);
     }
-    isList = true;
-    collapsed = false;
-    setupGuiComponents();
-    GuiElement::setAutoUpdate(true);
-    GuiElement::setAutoDraw(true);
 }
 
 void GuiMenu::setToggle(string toggleName, bool value)
@@ -42,6 +50,23 @@ void GuiMenu::setToggle(string toggleName, bool value)
     }
 }
 
+void GuiMenu::addToggle(string choice, bool *value)
+{
+    GuiToggle *toggle = new GuiToggle(choice, value);
+    toggle->setParent(this);
+    toggle->setAutoUpdate(false);
+    toggle->setAutoDraw(false);
+    toggles[choice] = toggle;
+    menuGroup->addElement(toggle);
+    ofAddListener(toggle->elementEvent, this, &GuiMenu::updateParameter);
+    setList(true);
+}
+
+void GuiMenu::addToggle(string choice)
+{
+    addToggle(choice, new bool());
+}
+
 bool GuiMenu::getToggle(string toggleName)
 {
     if (toggles.count(toggleName) > 0) {
@@ -55,7 +80,7 @@ bool GuiMenu::getToggle(string toggleName)
 
 void GuiMenu::updateParameter(GuiElementEventArgs & button)
 {
-    for (auto e : elements)
+    for (auto e : elementGroups[0]->getElements())
     {
         if (!multipleChoice) {
             ((GuiToggle *) e)->setValue(e->getName() == button.name, false);
@@ -65,14 +90,7 @@ void GuiMenu::updateParameter(GuiElementEventArgs & button)
     ofNotifyEvent(elementEvent, args, this);
     if (autoClose)
     {
-        collapsed = !collapsed;
         header = button.name;
-        setupGuiComponents();
-        ofNotifyEvent(widgetChanged, name, this);
+        setCollapsed(!collapsed);
     }
-}
-
-GuiMenu::~GuiMenu()
-{
-    toggles.clear();
 }

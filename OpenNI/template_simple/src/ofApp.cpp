@@ -20,8 +20,6 @@ void ofApp::exit() {
 void ofApp::update(){
     kinect.update();
     
-    
-    
     map<int, OpenNIUser*>::iterator it = kinect.getUsers().begin();
     while (it != kinect.getUsers().end()) {
         head = it->second->getPosition(JOINT_HEAD);
@@ -29,27 +27,16 @@ void ofApp::update(){
         ++it;
     }
     
-    
     ctr.x = ofMap(ctr.x, -500, 500, 0, 1);
     ctr.y = ofMap(ctr.y, 0, 1000, 0, 1);
     ctr.z = ofMap(ctr.z, 0, 2300, 0, 1);
-//    cout << "HEAD IS " << ofToString(head) << endl;
-    cout << "CTR IS " << ofToString(ctr) << endl;
-    
-  
-    
-    
-    
-    
-    
-    
 
+    cout << "CTR IS " << ofToString(ctr) << endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     kinect.draw();
-
 }
 
 //--------------------------------------------------------------

@@ -1,19 +1,22 @@
 #pragma once
 
-//#include "ofMain.h"
-//#include "ofBitmapFont.h"
-//#include "Parameter.h"
-#include "GuiWidget.h"
+#include "ofMain.h"
+#include "GuiSlider.h"
+#include "GuiWidgetBase.h"
 
 
-/*
+
 class GuiColor : public GuiWidgetBase
 {
 public:
-    GuiColor(string name, Parameter<ofFloatColor> *parameter);
+    GuiColor(Parameter<ofFloatColor> *parameter);
     GuiColor(string name, ofFloatColor *value);
     
-    Parameter<ofFloatColor> * getParameter() {return parameter;}
+    template <typename L, typename M>
+    GuiColor(Parameter<ofFloatColor> *parameter, L *listener, M method);
+    
+    template <typename L, typename M>
+    GuiColor(string name, ofFloatColor *value, L *listener, M method);
     
 private:
     
@@ -23,4 +26,20 @@ private:
     Parameter<ofFloatColor> *parameter;
 };
 
-*/
+template <typename L, typename M>
+GuiColor::GuiColor(Parameter<ofFloatColor> *parameter, L *listener, M method) : GuiWidgetBase(parameter->getName())
+{
+    this->parameter = parameter;
+    setupColor();
+    ofAddListener(elementEvent, listener, method);
+}
+
+template <typename L, typename M>
+GuiColor::GuiColor(string name, ofFloatColor *value, L *listener, M method) : GuiWidgetBase(name)
+{
+    parameter = new Parameter<ofFloatColor>(name, value, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1));
+    setupColor();
+    ofAddListener(elementEvent, listener, method);
+}
+
+

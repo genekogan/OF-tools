@@ -4,12 +4,38 @@
 GuiElement::GuiElement(string name)
 {
     this->name = name;
+    initialize();
+}
+
+GuiElement::GuiElement()
+{
+    initialize();
+}
+
+void GuiElement::initialize()
+{
+    hasParent = false;
+    
+    elementWidth = GUI_DEFAULT_ELEMENT_WIDTH;
+    elementHeight = GUI_DEFAULT_ELEMENT_HEIGHT;
+    
+    colorBackground = GUI_DEFAULT_COLOR_BACKGROUND;
+    colorForeground = GUI_DEFAULT_COLOR_FOREGROUND;
+    colorOutline = GUI_DEFAULT_COLOR_OUTLINE;
+    colorText = GUI_DEFAULT_COLOR_TEXT;
+    colorActive = GUI_DEFAULT_COLOR_ACTIVE;
+    
     mouseDragging = false;
     mouseOver = false;
-    extraMargin = false;
     setAutoUpdate(true);
     setAutoDraw(true);
-    setRectangle(0, 0, style.elementWidth, style.elementHeight);
+    setRectangle(0, 0, elementWidth, elementHeight);
+}
+
+void GuiElement::setParent(GuiElement *parent)
+{
+    this->parent = parent;
+    hasParent = true;
 }
 
 GuiElement::~GuiElement()
@@ -29,6 +55,7 @@ void GuiElement::setAutoUpdate(bool autoUpdate)
         ofAddListener(ofEvents().mousePressed, this, &GuiElement::mousePressed);
         ofAddListener(ofEvents().mouseDragged, this, &GuiElement::mouseDragged);
         ofAddListener(ofEvents().mouseReleased, this, &GuiElement::mouseReleased);
+        ofAddListener(ofEvents().keyPressed, this, &GuiElement::keyPressed);
         ofAddListener(ofEvents().update, this, &GuiElement::update);
     }
     else
@@ -37,6 +64,7 @@ void GuiElement::setAutoUpdate(bool autoUpdate)
         ofRemoveListener(ofEvents().mousePressed, this, &GuiElement::mousePressed);
         ofRemoveListener(ofEvents().mouseDragged, this, &GuiElement::mouseDragged);
         ofRemoveListener(ofEvents().mouseReleased, this, &GuiElement::mouseReleased);
+        ofRemoveListener(ofEvents().keyPressed, this, &GuiElement::keyPressed);
         ofRemoveListener(ofEvents().update, this, &GuiElement::update);
     }
 }
@@ -52,16 +80,6 @@ void GuiElement::setAutoDraw(bool autoDraw)
     }
 }
 
-void GuiElement::setName(string name)
-{
-    this->name = name;
-}
-
-string GuiElement::getName()
-{
-    return name;
-}
-
 void GuiElement::setRectangle(ofRectangle rectangle)
 {
     this->rectangle = rectangle;
@@ -73,42 +91,63 @@ void GuiElement::setRectangle(int x, int y, int width, int height)
     setRectangle(ofRectangle(x, y, width, height));
 }
 
-void GuiElement::setPosition(int x, int y)
-{
-    setRectangle(x, y, rectangle.width, rectangle.height);
-}
-
 void GuiElement::setPosition(ofPoint p)
 {
     setPosition(p.x, p.y);
 }
 
-ofRectangle GuiElement::getRectangle()
+void GuiElement::setPosition(int x, int y)
 {
-    return rectangle;
+    setRectangle(x, y, rectangle.width, rectangle.height);
 }
 
-void GuiElement::mouseMoved(int mouseX, int mouseY)
+void GuiElement::setSize(ofPoint s)
+{
+    setSize(s.x, s.y);
+}
+
+void GuiElement::setSize(int width, int height)
+{
+    setRectangle(rectangle.x, rectangle.y, width, height);
+}
+
+void GuiElement::setMouseOver(bool mouseOver)
+{
+    this->mouseOver = mouseOver;
+    if (mouseOver && hasParent) {
+        parent->setMouseOver(mouseOver);
+    }
+}
+
+bool GuiElement::mouseMoved(int mouseX, int mouseY)
 {
     mouseOver = rectangle.inside(mouseX, mouseY);
+    return mouseOver;
 }
 
-void GuiElement::mousePressed(int mouseX, int mouseY)
+bool GuiElement::mousePressed(int mouseX, int mouseY)
 {
     if (mouseOver)
     {
         mouseDragging = true;
     }
+    return false;
 }
 
-void GuiElement::mouseDragged(int mouseX, int mouseY)
+bool GuiElement::mouseDragged(int mouseX, int mouseY)
 {
-    
+    return mouseOver;
 }
 
-void GuiElement::mouseReleased(int mouseX, int mouseY)
+bool GuiElement::mouseReleased(int mouseX, int mouseY)
 {
     mouseDragging = false;
+    return false;
+}
+
+bool GuiElement::keyPressed(int key)
+{
+    return false;
 }
 
 void GuiElement::mouseMoved(ofMouseEventArgs &evt)
@@ -131,6 +170,11 @@ void GuiElement::mouseReleased(ofMouseEventArgs &evt)
     mouseReleased(evt.x, evt.y);
 }
 
+void GuiElement::keyPressed(ofKeyEventArgs &evt)
+{
+    keyPressed(evt.key);
+}
+
 void GuiElement::update(ofEventArgs &data)
 {
     update();
@@ -139,19 +183,4 @@ void GuiElement::update(ofEventArgs &data)
 void GuiElement::draw(ofEventArgs &data)
 {
     draw();
-}
-
-GuiStyle & GuiElement::getStyle()
-{
-    return style;
-}
-
-void GuiElement::setExtraMargin(bool extraMargin)
-{
-    this->extraMargin = extraMargin;
-}
-
-bool GuiElement::getExtraMargin()
-{
-    return extraMargin;
 }

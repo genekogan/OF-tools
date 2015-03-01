@@ -1,40 +1,40 @@
 #include "GuiColor.h"
 
-/*
-GuiColor::GuiColor(string name, Parameter<ofFloatColor> *parameter) : GuiWidgetBase(name)
+
+GuiColor::GuiColor(Parameter<ofFloatColor> *parameter) : GuiWidgetBase(parameter->getName())
 {
     this->parameter = parameter;
     setupColor();
 }
 
-GuiColor::GuiColor(string name, ofFloatColor *color) : GuiWidgetBase(name)
+GuiColor::GuiColor(string name, ofFloatColor *value) : GuiWidgetBase(name)
 {
-    parameter = new Parameter<ofFloatColor>(name, color, ofFloatColor(0, 0, 0, 0), ofFloatColor(1, 1, 1, 1));
+    parameter = new Parameter<ofFloatColor>(name, value, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1));
     setupColor();
 }
 
 void GuiColor::setupColor()
 {
-    elements.push_back(new GuiSlider<float>(name+".r", &parameter->getReference()->r, parameter->getMin().r, parameter->getMax().r));
-    elements.push_back(new GuiSlider<float>(name+".g", &parameter->getReference()->g, parameter->getMin().g, parameter->getMax().g));
-    elements.push_back(new GuiSlider<float>(name+".b", &parameter->getReference()->b, parameter->getMin().b, parameter->getMax().b));
-    elements.push_back(new GuiSlider<float>(name+".a", &parameter->getReference()->a, parameter->getMin().a, parameter->getMax().a));
-
-    isList = true;
-    collapsed = false;
-    setupGuiComponents();
-    GuiElementBase::setAutoUpdate(true);
-    GuiElementBase::setAutoDraw(true);
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".r", &parameter->getReference()->r, 0.0f, 1.0f));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".g", &parameter->getReference()->g, 0.0f, 1.0f));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".b", &parameter->getReference()->b, 0.0f, 1.0f));
+    elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".b", &parameter->getReference()->a, 0.0f, 1.0f));
+    setupElementGroup(elementGroup);
+    setList(true);
 }
 
 void GuiColor::update()
 {
     GuiWidgetBase::update();
-    
     ofColor currentColor = parameter->get();
-    elements[0]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-    elements[1]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-    elements[2]->getStyle().colorForeground = ofColor(currentColor.r, currentColor.g, currentColor.b);
-    elements[3]->getStyle().colorForeground = currentColor;
+    ofColor textColor = currentColor.r + currentColor.g + currentColor.b > 385 ? GUI_DEFAULT_COLOR_TEXT_DARK : GUI_DEFAULT_COLOR_TEXT_LIGHT;
+    elementGroups[0]->getElements()[0]->setColorForeground(ofColor(currentColor, 255));
+    elementGroups[0]->getElements()[1]->setColorForeground(ofColor(currentColor, 255));
+    elementGroups[0]->getElements()[2]->setColorForeground(ofColor(currentColor, 255));
+    elementGroups[0]->getElements()[3]->setColorForeground(currentColor);
+    elementGroups[0]->getElements()[0]->setColorText(textColor);
+    elementGroups[0]->getElements()[1]->setColorText(textColor);
+    elementGroups[0]->getElements()[2]->setColorText(textColor);
+    elementGroups[0]->getElements()[3]->setColorText(textColor);
 }
-*/

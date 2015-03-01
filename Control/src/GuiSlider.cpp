@@ -9,10 +9,6 @@ GuiSliderBase::GuiSliderBase(string name) : GuiElement(name)
 
 GuiSliderBase::~GuiSliderBase()
 {
-//    sliderEvent.clear();
-//    sliderEvent.disable();
-
-    
     //
     //
     // who should delete parameter?
@@ -25,12 +21,6 @@ GuiSliderBase::~GuiSliderBase()
 void GuiSliderBase::setValue(float sliderValue)
 {
     this->sliderValue = sliderValue;
-}
-
-void GuiSliderBase::setValueString(string _valueString)
-{
-    this->valueStringNext = _valueString;
-    toUpdateValueString = true;
 }
 
 void GuiSliderBase::lerpTo(float nextValue, int numFrames)
@@ -50,6 +40,20 @@ void GuiSliderBase::lerpTo(float nextValue, int numFrames)
 void GuiSliderBase::setValueFromSequence(Sequence &sequence)
 {
     setValue(sequence.getValueAtCurrentCursor());
+}
+
+void GuiSliderBase::setEditing(bool editing)
+{
+    this->editing = editing;
+    if (editing) {
+        colorActive = GUI_DEFAULT_COLOR_ACTIVE_EDIT;
+    }
+    else
+    {
+        editingString = "";
+        colorActive = GUI_DEFAULT_COLOR_ACTIVE;
+        updateValueString();
+    }
 }
 
 void GuiSliderBase::update()
@@ -74,30 +78,30 @@ void GuiSliderBase::draw()
     ofPushStyle();
     
     ofFill();
-    ofSetColor(style.colorBackground);
-    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
+    ofSetColor(colorBackground);
+    ofSetLineWidth(1);
     ofRect(rectangle);
 
-    ofSetColor(style.colorForeground);
+    ofSetColor(colorForeground);
     ofRect(rectangle.x,
            rectangle.y,
            rectangle.width * sliderValue,
            rectangle.height);
 
     ofNoFill();
-    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-    ofSetColor(style.colorText, 150);
+    ofSetColor(colorOutline);
     ofRect(rectangle);
 
     if (mouseOver)
     {
         ofNoFill();
-        ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-        ofSetColor(style.colorActive);
+        ofSetLineWidth(2);
+        ofSetColor(colorActive);
         ofRect(rectangle);
+        ofSetLineWidth(1);
     }
     
-    ofSetColor(style.colorText);
+    ofSetColor(colorText);
     ofDrawBitmapString(name,
                        rectangle.x + 1,
                        rectangle.y + 1 + 0.5 * (rectangle.height + 0.5 * stringHeight));
@@ -108,3 +112,94 @@ void GuiSliderBase::draw()
     ofPopStyle();
 }
 
+void GuiSliderBase::keyboardEdit(int key)
+{
+    if (key==OF_KEY_RETURN)
+    {
+        if (editing)
+        {
+            setParameterValueFromString(editingString);
+            setEditing(false);
+        }
+        else
+        {
+            setEditing(true);
+            editingString = getParameterValueString();
+        }
+    }
+    else if (key==OF_KEY_BACKSPACE)
+    {
+        if (!editing)
+        {
+            setEditing(true);
+            editingString = getParameterValueString();
+        }
+        if (editingString.length() > 1)
+        {
+            editingString = editingString.substr(0, editingString.length()-1);
+            valueStringNext = editingString;
+            toUpdateValueString = true;
+        }
+    }
+    else if (key == OF_KEY_LEFT)
+    {
+        decrement();
+    }
+    else if (key == OF_KEY_RIGHT)
+    {
+        increment();
+    }
+    else if ((key >= 48 && key <= 57) || key == 46)
+    {
+        if (!editing) {
+            setEditing(true);
+        }
+        editingString += key;
+        valueStringNext = editingString;
+        toUpdateValueString = true;
+    }
+}
+
+bool GuiSliderBase::mouseMoved(int mouseX, int mouseY)
+{
+    GuiElement::mouseMoved(mouseX, mouseY);
+    if (editing && !mouseOver) {
+        setEditing(false);
+    }
+    return mouseOver;
+}
+
+bool GuiSliderBase::mousePressed(int mouseX, int mouseY)
+{
+    GuiElement::mousePressed(mouseX, mouseY);
+    if (mouseOver)
+    {
+        setValue(ofClamp((float)(mouseX - rectangle.x) / rectangle.width, 0, 1));
+    }
+    return mouseOver;
+}
+
+bool GuiSliderBase::mouseReleased(int mouseX, int mouseY)
+{
+    return GuiElement::mouseReleased(mouseX, mouseY);
+}
+
+bool GuiSliderBase::mouseDragged(int mouseX, int mouseY)
+{
+    GuiElement::mouseDragged(mouseX, mouseY);
+    if (mouseDragging)
+    {
+        setValue(ofClamp((float)(mouseX - rectangle.x) / rectangle.width, 0, 1));
+    }
+    return mouseOver;
+}
+
+bool GuiSliderBase::keyPressed(int key)
+{
+    GuiElement::keyPressed(key);
+    if (mouseOver)
+    {
+        keyboardEdit(key);
+    }
+    return mouseOver;
+}

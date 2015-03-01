@@ -4,7 +4,6 @@
 #include "Control.h"
 
 
-
 class ofApp : public ofBaseApp
 {
     
@@ -13,18 +12,27 @@ public:
     void update();
     void draw();
     
-    void menuSelect(GuiElementEventArgs & sel) {
-        cout << "menu selection: " << sel.name<< " :: " << sel.value << endl;
-    }
     
+    void buttonEvent(GuiElementEventArgs & e);
+    void menuSelect(GuiElementEventArgs & e);
+    void sliderEvent(GuiElementEventArgs & e);
+    void colorEvent(GuiElementEventArgs & e);
+    void panelToggleEvent(GuiElementEventArgs & e);
+    void multiChoiceMenuSelect(GuiElementEventArgs & e);
+    
+
     GuiPanel panel;
+    GuiWidget widget;
     
-    vector<float> floatValues, floatMins, floatMaxs;
-    vector<ofVec3f> vec3Values, vec3Mins, vec3Maxs;
-    bool boolValue;
-    float floatValue;
-    ofVec2f vec2;
-    ofVec3f vec3;
-    ofFloatColor color;
+    bool button, toggle;
+    float floatSlider;
+    int intSlider;
+    double doubleSlider;
+    ofVec4f vec4slider;
+    float rangeLow, rangeHigh;
+    ofVec2f vec2RangeLow, vec2RangeHigh;
+    ofPoint padValue;
+    ofFloatColor color, color2;
+    ofVec2f vec2slider;
     
 };

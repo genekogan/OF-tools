@@ -56,6 +56,8 @@ public:
     
 private:
     
+    void initialize();
+    
     int historyDepth_;
     float historyWeight_;
     int elementId_;

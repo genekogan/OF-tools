@@ -1,302 +1,182 @@
 #include "GuiPanel.h"
 
 
-GuiPanel::GuiPanel()
+GuiPanel::GuiPanel() : GuiWidget()
 {
-    setAutoUpdate(true);
-    setAutoDraw(true);
+    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
+    controllerHeight = GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT;
+    
+    tOsc = new GuiToggle("osc", &bOsc);
+    tSeq = new GuiToggle("seq", &bSeq, this, &GuiPanel::eventToggleSequencer);
+    tXml = new GuiToggle("xml", &bXml);
+    tOsc->setParent(this);
+    tSeq->setParent(this);
+    tXml->setParent(this);
+    tOsc->setAutoUpdate(false);
+    tSeq->setAutoUpdate(false);
+    tXml->setAutoUpdate(false);
+    tOsc->setAutoDraw(false);
+    tSeq->setAutoDraw(false);
+    tXml->setAutoDraw(false);
 }
 
 GuiPanel::~GuiPanel()
 {
-    clearWidgets();
-    setAutoUpdate(false);
-    setAutoDraw(false);
-}
-
-void GuiPanel::setAutoUpdate(bool autoUpdate)
-{
-    this->autoUpdate = autoUpdate;
-    if (autoUpdate)
-    {
-        ofAddListener(ofEvents().mouseMoved, this, &GuiPanel::mouseMoved);
-        ofAddListener(ofEvents().mousePressed, this, &GuiPanel::mousePressed);
-        ofAddListener(ofEvents().mouseDragged, this, &GuiPanel::mouseDragged);
-        ofAddListener(ofEvents().mouseReleased, this, &GuiPanel::mouseReleased);
-        ofAddListener(ofEvents().update, this, &GuiPanel::update);
+    if (bSeq) {
+        delete sequencer;
     }
-    else
-    {
-        ofRemoveListener(ofEvents().update, this, &GuiPanel::update);
-        ofRemoveListener(ofEvents().mouseMoved, this, &GuiPanel::mouseMoved);
-        ofRemoveListener(ofEvents().mousePressed, this, &GuiPanel::mousePressed);
-        ofRemoveListener(ofEvents().mouseDragged, this, &GuiPanel::mouseDragged);
-        ofRemoveListener(ofEvents().mouseReleased, this, &GuiPanel::mouseReleased);    
-    }
+    delete tOsc;
+    delete tSeq;
+    delete tXml;
 }
 
-void GuiPanel::setAutoDraw(bool autoDraw)
+GuiWidget * GuiPanel::addWidget(string name)
 {
-    this->autoDraw = autoDraw;
-    if (autoDraw) {
-        ofAddListener(ofEvents().draw, this, &GuiPanel::draw);
-    }
-    else {
-        ofRemoveListener(ofEvents().draw, this, &GuiPanel::draw);
-    }
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiWidget * widget = new GuiWidget(name);
+    widget->setParent(this);
+    elementGroup->addElement(widget);
+    setupElementGroup(elementGroup);
+    ofAddListener(widget->widgetChanged, this, &GuiPanel::eventWidgetChanged);
+    return widget;
 }
 
-void GuiPanel::setName(string name)
+void GuiPanel::addWidget(GuiWidget *widget)
 {
-    this->name = name;
+    GuiElementGroup *elementGroup = new GuiElementGroup();
+    widget->setParent(this);
+    elementGroup->addElement(widget);
+    setupElementGroup(elementGroup);
+    ofAddListener(widget->widgetChanged, this, &GuiPanel::eventWidgetChanged);
 }
 
-void GuiPanel::setPosition(int x, int y)
+void GuiPanel::enableSequencer()
 {
-    rectangle.setPosition(x, y);
-    resetElementPositions();
+    bSeq = true;
+    sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
+    sequencer->setParent(this);
+    sequencer->setAutoUpdate(false);
+    sequencer->setAutoDraw(false);
 }
 
-void GuiPanel::setWidth(int width)
+void GuiPanel::disableSequencer()
 {
-    rectangle.setWidth(width);
-    resetElementPositions();
+    bSeq = false;
+    delete sequencer;
 }
 
-void GuiPanel::receiveWidgetChangedEvent(string &s)
+void GuiPanel::setupGuiComponents()
 {
-    resetElementPositions();
-}
-
-void GuiPanel::resetElementPositions()
-{
-    int idx = 0;
-    float maxElementWidth = 0;
-    for (auto w : widgets)
-    {
-        maxElementWidth = max(maxElementWidth, w->getRectangle().width);
-        ofPoint position = getGuiPosition(idx++, false);
-        w->setPosition(position);
-    }
-    rectangle.set(rectangle.x, rectangle.y, maxElementWidth + 2 * style.marginInner, getGuiPosition().y - rectangle.y + style.marginInner);
-}
-
-void GuiPanel::addParameter(string name, ParameterBase *parameter)
-{
-    GuiWidget *widget = new GuiWidget(name, parameter);
-    parameters[name] = parameter;
-    setupNewWidget(name, widget);
-}
-
-void GuiPanel::addParameter(string name, vector<ParameterBase*> parameterGroup)
-{
-    GuiWidget *entry = new GuiWidget(name, parameterGroup);
-    for (int i=0; i<parameterGroup.size(); i++) {
-        parameters[parameterGroup[i]->getName()] = parameterGroup[i];
-    }
-    setupNewWidget(name, entry);
-}
-
-void GuiPanel::addColor(string name, Parameter<ofFloatColor> *parameter)
-{
-    GuiWidget *widget = new GuiColor(name, parameter);
-    parameters[name] = parameter;
-    setupNewWidget(name, widget);
-}
-
-void GuiPanel::addColor(string name, ofFloatColor *color)
-{
-    addColor(name, new Parameter<ofFloatColor>(name, color, ofFloatColor(0, 0, 0, 0), ofFloatColor(1, 1, 1, 1)));
-}
-
-void GuiPanel::setupNewWidget(string widgetName, GuiWidget *widget)
-{
-    widgetMap[widgetName] = widget;
-    widget->setPosition(getGuiPosition());
-    widget->setAutoUpdate(false);
-    widget->setAutoDraw(false);
-    widgets.push_back(widget);
-    resetElementPositions();
-    ofAddListener(widget->widgetChanged, this, &GuiPanel::receiveWidgetChangedEvent);
+    GuiWidget::setupGuiComponents();
+    tOsc->setRectangle(rectangle.x + 8, rectangle.y + headerHeight + 5, 50, 15);
+    tSeq->setRectangle(rectangle.x + 64, rectangle.y + headerHeight + 5, 50, 15);
+    tXml->setRectangle(rectangle.x + 120, rectangle.y + headerHeight + 5, 50, 15);
 }
 
 void GuiPanel::update()
 {
-    updateWidgets();
-}
-
-void GuiPanel::updateWidgets()
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->update();
+    GuiWidget::update();
+    tOsc->update();
+    tSeq->update();
+    tXml->update();
+    if (bSeq) {
+        sequencer->update();
     }
 }
 
 void GuiPanel::draw()
 {
-    drawPanel();
-    drawWidgets();
-}
+    ofPushStyle();
+    ofSetLineWidth(1);
+    ofSetCircleResolution(16);
 
-void GuiPanel::drawPanel()
-{
-    ofSetColor(style.colorBackground, 150);
-    ofFill();
-    ofRect(rectangle);
-    ofSetColor(style.colorBackground, 220);
-    ofNoFill();
-    ofRect(rectangle);
-    ofSetColor(style.colorText);
-    ofDrawBitmapString(name, rectangle.x + 6, rectangle.y + 16);
-}
-
-void GuiPanel::drawWidgets()
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->draw();
-    }
-}
-
-void GuiPanel::mouseMoved(int mouseX, int mouseY)
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->mouseMoved(mouseX, mouseY);
-    }
-}
-
-void GuiPanel::mousePressed(int mouseX, int mouseY)
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->mousePressed(mouseX, mouseY);
-    }
-}
-
-void GuiPanel::mouseReleased(int mouseX, int mouseY)
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->mouseReleased(mouseX, mouseY);
-    }
-}
-
-void GuiPanel::mouseDragged(int mouseX, int mouseY)
-{
-    map<string, GuiWidget *>::iterator it = widgetMap.begin();
-    for (; it != widgetMap.end(); ++it) {
-        it->second->mouseDragged(mouseX, mouseY);
-    }
-}
-
-ofPoint GuiPanel::getGuiPosition(int idxPosition, bool bottom)
-{
-    ofPoint position(rectangle.x, rectangle.y);
-    position.y += GUI_DEFAULT_HEADER_HEIGHT;
-    position.y += style.marginInner;
-    position.x += style.marginInner;
-    int idx = 0;
-    for (auto w : widgets)
+    GuiWidget::draw();
+    
+    if (!getCollapsed())
     {
-        if (bottom)     position.y += w->getRectangle().height;
-        if (idx == idxPosition)  return position;
-        if (!bottom)    position.y += w->getRectangle().height;
-        ++idx;
-    }
-}
+        ofPushStyle();
+        ofSetColor(255, 50);
+        ofRect(rectangle.x, rectangle.y + headerHeight, rectangle.width, controllerHeight);
+        ofPopStyle();
 
-ofPoint GuiPanel::getGuiPosition()
-{
-    return getGuiPosition(widgetMap.size());
-}
+        tOsc->draw();
+        tSeq->draw();
+        tXml->draw();
 
-void GuiPanel::clearWidgets()
-{
-    map<string, ParameterBase *>::iterator itp = parameters.begin();
-    map<string, GuiWidget *>::iterator ite = widgetMap.begin();
-    for (; itp != parameters.end(); ++itp)  delete itp->second;
-    for (; ite != widgetMap.end(); ++ite)     delete ite->second;
-    widgetMap.erase(widgetMap.begin(), widgetMap.end());
-    parameters.erase(parameters.begin(), parameters.end());
-    widgets.clear();
-}
-
-void GuiPanel::setMarginInner(float marginInner)
-{
-    style.marginInner = marginInner;
-    resetStyle();
-    resetElementPositions();
-}
-
-void GuiPanel::setMarginBetween(float marginBetween)
-{
-    style.marginBetween = marginBetween;
-    resetStyle();
-    resetElementPositions();
-}
-
-void GuiPanel::setElementWidth(float elementWidth)
-{
-    style.elementWidth = elementWidth;
-    resetStyle();
-    resetElementPositions();
-}
-
-void GuiPanel::setElementHeight(float elementHeight)
-{
-    style.elementHeight = elementHeight;
-    resetStyle();
-    resetElementPositions();
-}
-
-void GuiPanel::setColorBackground(ofColor colorBackground)
-{
-    style.colorBackground = colorBackground;
-    resetStyle();
-}
-
-void GuiPanel::setColorForeground(ofColor colorForeground)
-{
-    style.colorForeground = colorForeground;
-    resetStyle();
-}
-
-void GuiPanel::setColorActive(ofColor colorActive)
-{
-    style.colorActive = colorActive;
-    resetStyle();
-}
-
-void GuiPanel::setColorText(ofColor colorText)
-{
-    style.colorText = colorText;
-    resetStyle();
-}
-
-void GuiPanel::resetStyle()
-{
-    for (auto w : widgets)
-    {
-        for (auto e : w->getElements())
-        {
-            e->getStyle().elementWidth = style.elementWidth;
-            e->getStyle().elementHeight = style.elementHeight;
-            e->getStyle().marginInner = style.marginInner;
-            e->getStyle().marginBetween = style.marginBetween;
-            e->getStyle().colorBackground = style.colorBackground;
-            e->getStyle().colorForeground = style.colorForeground;
-            e->getStyle().colorActive = style.colorActive;
-            e->getStyle().colorText = style.colorText;
+        if (bSeq) {
+            sequencer->draw();
         }
-        w->getStyle().elementWidth = style.elementWidth;
-        w->getStyle().elementHeight = style.elementHeight;
-        w->getStyle().marginInner = style.marginInner;
-        w->getStyle().marginBetween = style.marginBetween;
-        w->getStyle().colorBackground = style.colorBackground;
-        w->getStyle().colorForeground = style.colorForeground;
-        w->getStyle().colorActive = style.colorActive;
-        w->getStyle().colorText = style.colorText;
+    }
+    
+    ofPopStyle();
+}
+
+bool GuiPanel::mouseMoved(int mouseX, int mouseY)
+{
+    if (tOsc->mouseMoved(mouseX, mouseY)) return true;
+    if (tSeq->mouseMoved(mouseX, mouseY)) return true;
+    if (tXml->mouseMoved(mouseX, mouseY)) return true;
+    if (bSeq) {
+        if (sequencer->mouseMoved(mouseX, mouseY)) return true;
+    }
+    return GuiWidget::mouseMoved(mouseX, mouseY);
+}
+
+bool GuiPanel::mousePressed(int mouseX, int mouseY)
+{
+    if (tOsc->mousePressed(mouseX, mouseY)) return true;
+    if (tSeq->mousePressed(mouseX, mouseY)) return true;
+    if (tXml->mousePressed(mouseX, mouseY)) return true;
+    if (bSeq) {
+        if (sequencer->mousePressed(mouseX, mouseY)) return true;
+    }
+    return GuiWidget::mousePressed(mouseX, mouseY);
+}
+
+bool GuiPanel::mouseDragged(int mouseX, int mouseY)
+{
+    if (tOsc->mouseDragged(mouseX, mouseY)) return true;
+    if (tSeq->mouseDragged(mouseX, mouseY)) return true;
+    if (tXml->mouseDragged(mouseX, mouseY)) return true;
+    if (bSeq) {
+        if (sequencer->mouseDragged(mouseX, mouseY)) return true;
+    }
+    return GuiWidget::mouseDragged(mouseX, mouseY);
+}
+
+bool GuiPanel::mouseReleased(int mouseX, int mouseY)
+{
+    if (tOsc->mouseReleased(mouseX, mouseY)) return true;
+    if (tSeq->mouseReleased(mouseX, mouseY)) return true;
+    if (tXml->mouseReleased(mouseX, mouseY)) return true;
+    if (bSeq) {
+        if (sequencer->mouseReleased(mouseX, mouseY)) return true;
+    }
+    return GuiWidget::mouseReleased(mouseX, mouseY);
+}
+
+bool GuiPanel::keyPressed(int key)
+{
+    if (tOsc->keyPressed(key)) return true;
+    if (tSeq->keyPressed(key)) return true;
+    if (tXml->keyPressed(key)) return true;
+    if (bSeq) {
+        if (sequencer->keyPressed(key)) return true;
+    }
+    return GuiWidget::keyPressed(key);
+}
+
+void GuiPanel::eventWidgetChanged(string & s)
+{
+    setupGuiComponents();
+}
+
+void GuiPanel::eventToggleSequencer(GuiElementEventArgs &e)
+{
+    if (bSeq) {
+        enableSequencer();
+    }
+    else {
+        disableSequencer();
     }
 }

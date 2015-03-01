@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofBitmapFont.h"
+#include "Parameter.h"
+#include "GuiElement.h"
 #include "Sequence.h"
 
 
@@ -8,7 +10,7 @@ class GuiButtonBase : public GuiElement
 {
 public:
     template <typename L, typename M>
-    GuiButtonBase(string name, Parameter<bool> *parameter, L *listener, M method);
+    GuiButtonBase(Parameter<bool> *parameter, L *listener, M method);
     
     template <typename L, typename M>
     GuiButtonBase(string name, bool *value, L *listener, M method);
@@ -16,17 +18,12 @@ public:
     template <typename L, typename M>
     GuiButtonBase(string name, L *listener, M method);
     
-    GuiButtonBase(string name, Parameter<bool> *parameter);
+    GuiButtonBase(Parameter<bool> *parameter);
     GuiButtonBase(string name, bool *value);
     GuiButtonBase(string name);
     
-    ~GuiButtonBase();
-    
-    virtual void mouseMoved(int mouseX, int mouseY);
-    virtual void mousePressed(int mouseX, int mouseY);
-    virtual void mouseReleased(int mouseX, int mouseY);
-    virtual void mouseDragged(int mouseX, int mouseY);
-    
+    virtual ~GuiButtonBase();
+        
     bool isDiscrete() {return true;}
 
     bool getValue();
@@ -42,7 +39,6 @@ protected:
     void setupButton();
     
     Parameter<bool> *parameter;
-    bool previous;
     float stringWidth, stringHeight;
     
     float lerpNextValue;;
@@ -51,7 +47,7 @@ protected:
 
 
 template <typename L, typename M>
-GuiButtonBase::GuiButtonBase(string name, Parameter<bool> *parameter, L *listener, M method) : GuiElement(name)
+GuiButtonBase::GuiButtonBase(Parameter<bool> *parameter, L *listener, M method) : GuiElement(name)
 {
     this->parameter = parameter;
     setupButton();
@@ -79,21 +75,21 @@ GuiButtonBase::GuiButtonBase(string name, L *listener, M method) : GuiElement(na
 class GuiButton : public GuiButtonBase
 {
 public:
+    GuiButton(Parameter<bool> *parameter) : GuiButtonBase(parameter) { }
+    GuiButton(string name, bool *value) : GuiButtonBase(name, value) { }
+    GuiButton(string name) : GuiButtonBase(name) { }
+
     template <typename L, typename M>
-    GuiButton(string name, Parameter<bool> *parameter, L *listener, M method) : GuiButtonBase(name, parameter, listener, method) { }
+    GuiButton(Parameter<bool> *parameter, L *listener, M method) : GuiButtonBase(parameter, listener, method) { }
     
     template <typename L, typename M>
     GuiButton(string name, bool *value, L *listener, M method) : GuiButtonBase(name, value, listener, method) { }
     
     template <typename L, typename M>
-    GuiButton(string name, L *listener, M method) : GuiButtonBase(name, new bool(), listener, method) { }
+    GuiButton(string name, L *listener, M method) : GuiButtonBase(name, listener, method) { }
     
-    GuiButton(string name, Parameter<bool> *parameter) : GuiButtonBase(name, parameter) { }
-    GuiButton(string name, bool *value) : GuiButtonBase(name, value) { }
-    GuiButton(string name) : GuiButtonBase(name, new bool()) { }
-    
-    void mousePressed(int mouseX, int mouseY);
-    void mouseReleased(int mouseX, int mouseY);
+    bool mousePressed(int mouseX, int mouseY);
+    bool mouseReleased(int mouseX, int mouseY);
 };
 
 
@@ -101,18 +97,19 @@ public:
 class GuiToggle : public GuiButtonBase
 {
 public:
+    GuiToggle(Parameter<bool> *parameter) : GuiButtonBase(parameter) { }
+    GuiToggle(string name, bool *value) : GuiButtonBase(name, value) { }
+    GuiToggle(string name) : GuiButtonBase(name) { }
+
     template <typename L, typename M>
-    GuiToggle(string name, Parameter<bool> *parameter, L *listener, M method) : GuiButtonBase(name, parameter, listener, method) { }
+    GuiToggle(Parameter<bool> *parameter, L *listener, M method) : GuiButtonBase(parameter, listener, method) { }
     
     template <typename L, typename M>
     GuiToggle(string name, bool *value, L *listener, M method) : GuiButtonBase(name, value, listener, method) { }
     
     template <typename L, typename M>
-    GuiToggle(string name, L *listener, M method) : GuiButtonBase(name, new bool(), listener, method) { }
+    GuiToggle(string name, L *listener, M method) : GuiButtonBase(name, listener, method) { }
     
-    GuiToggle(string name, Parameter<bool> *parameter) : GuiButtonBase(name, parameter) { }
-    GuiToggle(string name, bool *value) : GuiButtonBase(name, value) { }
-    GuiToggle(string name) : GuiButtonBase(name, new bool()) { }
-    
-    void mousePressed(int mouseX, int mouseY);
+    bool mousePressed(int mouseX, int mouseY);
+    bool keyPressed(int key);
 };

@@ -15,22 +15,20 @@ public:
     void update();
     void draw();
     
-    void menuSelect(GuiElementEventArgs & sel) {
-        cout << "menu mc selection: " << sel.name<< " :: " << sel.value << endl;
-    }
-    void menuSelect2(GuiElementEventArgs & sel) {
-        cout << "menu selection: " << sel.name<< " :: " << sel.value << endl;
-    }
-    
+    void menuSelect(GuiElementEventArgs & e);
+    void multiChoiceMenuSelect(GuiElementEventArgs & e);
+
     GuiPanel panel;
     
-    vector<float> floatValues, floatMins, floatMaxs;
-    vector<ofVec3f> vec3Values, vec3Mins, vec3Maxs;
-    bool boolValue;
-    float floatValue;
-    ofVec2f vec2;
-    ofVec3f vec3;
-    ofFloatColor color;
-        
-    Sequencer *seq;
+    bool filled;
+    float radius;
+    float lineWidth;
+    int resolution;
+    ofVec2f position;
+    ofFloatColor myColor;
+    bool b1, b2, b3;
+    
+    string greeting;
+    string city;
+    
 };

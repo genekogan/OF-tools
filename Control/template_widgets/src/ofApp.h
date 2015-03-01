@@ -4,33 +4,24 @@
 #include "Control.h"
 
 
-
-
 class ofApp : public ofBaseApp
 {
 public:
     ~ofApp();
+    
     void setup();
     void update();
     void draw();
     
-    void toggleNotifier(GuiElementEventArgs & s) {
-        cout << "toggle notifier ! " << s.name << " : " << s.value << endl;
-    }
+    void toggleNotifier(GuiElementEventArgs & s);
+    void buttonNotifier(GuiElementEventArgs & s);
+    void sliderNotifier(GuiElementEventArgs & s);
+    void menuNotifier(GuiElementEventArgs & s);
+    void menuNotifierMultiChoice(GuiElementEventArgs & s);
     
-    void buttonNotifier(GuiElementEventArgs & s) {
-        cout << "button notifier ! " << s.name << " : " << s.value << endl;
-    }
-    
-    void menuNotifier(GuiElementEventArgs & s) {
-        cout << "menu select:: "<<s.name<< " : " << s.value << endl;
-    }
-
-    void menuNotifierMultiChoice(GuiElementEventArgs & s) {
-        cout << "menu (multiple choice) select:: "<< s.name << " : " << s.value << endl;
-    }
     
     GuiButton *button;
+    
     GuiToggle *toggle;
     GuiToggle *toggleNotify;
     
@@ -38,12 +29,22 @@ public:
     GuiSlider<int> *intSlider;
     GuiSlider<double> *doubleSlider;
     
-    GuiMenu *menu, *menuMultiChoice;
+    GuiRangeSlider<float> *rangeFloatSlider;
+    GuiRangeSlider<int> *rangeIntSlider;
+    
+    Gui2dPad *pad;
+    
     GuiColor *colorPicker;
+    
+    GuiMenu *menu, *menuMultiChoice;
+
+    
     
     bool myToggle;
     float floatValue;
     int intValue;
     double doubleValue;
+    float rangeLow, rangeHigh;
+    ofPoint padValue;
     ofFloatColor bgColor;
 };

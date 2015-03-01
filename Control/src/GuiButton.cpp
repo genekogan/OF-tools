@@ -1,6 +1,6 @@
 #include "GuiButton.h"
 
-GuiButtonBase::GuiButtonBase(string name, Parameter<bool> *parameter) : GuiElement(name)
+GuiButtonBase::GuiButtonBase(Parameter<bool> *parameter) : GuiElement(parameter->getName())
 {
     this->parameter = parameter;
     setupButton();
@@ -20,10 +20,6 @@ GuiButtonBase::GuiButtonBase(string name) : GuiElement(name)
 
 GuiButtonBase::~GuiButtonBase()
 {
-//    buttonEvent.clear();
-//    buttonEvent.disable();
-    
-    
     //
     //
     // who should delete parameter?
@@ -42,9 +38,9 @@ void GuiButtonBase::setupButton()
 
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
-    bool valueChanged = (value != parameter->get());
+    bool previous = parameter->get();
     parameter->set(value);
-    if (sendChangeNotification && valueChanged)
+    if (sendChangeNotification && (value != previous))
     {
         GuiElementEventArgs args(name, 0, value ? 1.0 : 0.0);
         ofNotifyEvent(elementEvent, args, this);
@@ -63,26 +59,6 @@ void GuiButtonBase::setValueFromSequence(Sequence &sequence)
     setValue(sequence.getValueAtCurrentIndex() > 0.5, true);
 }
 
-void GuiButtonBase::mouseMoved(int mouseX, int mouseY)
-{
-    GuiElement::mouseMoved(mouseX, mouseY);
-}
-
-void GuiButtonBase::mousePressed(int mouseX, int mouseY)
-{
-    GuiElement::mousePressed(mouseX, mouseY);
-}
-
-void GuiButtonBase::mouseDragged(int mouseX, int mouseY)
-{
-    GuiElement::mouseDragged(mouseX, mouseY);
-}
-
-void GuiButtonBase::mouseReleased(int mouseX, int mouseY)
-{
-    GuiElement::mouseReleased(mouseX, mouseY);
-}
-
 bool GuiButtonBase::getValue()
 {
     return parameter->get();
@@ -93,16 +69,9 @@ void GuiButtonBase::update()
     if (lerpFrame < lerpNumFrames)
     {
         lerpFrame++;
-        if (lerpFrame == lerpNumFrames)
-        {
+        if (lerpFrame == lerpNumFrames) {
             setValue(lerpNextValue > 0.5, true);
-            previous = parameter->get();
         }
-    }
-    if (previous != parameter->get())
-    {
-        setValue(parameter->get(), false);
-        previous = parameter->get();
     }
 }
 
@@ -111,27 +80,26 @@ void GuiButtonBase::draw()
 	ofPushStyle();
     
     ofFill();
-    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-    parameter->get() ? ofSetColor(style.colorForeground) : ofSetColor(style.colorBackground);
+    ofSetLineWidth(1);
+    parameter->get() ? ofSetColor(colorForeground) : ofSetColor(colorBackground);
     ofRect(rectangle);
     
     ofNoFill();
-    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-    ofSetColor(style.colorText, 150);
+    ofSetColor(colorOutline);
     ofRect(rectangle);
-
     
 	if (mouseOver)
 	{
 	    ofNoFill();
-	    ofSetLineWidth(GUI_DEFAULT_LINE_WIDTH_ACTIVE);
-	    ofSetColor(style.colorActive);
+	    ofSetLineWidth(2);
+	    ofSetColor(colorActive);
 	    ofRect(rectangle);
+        ofSetLineWidth(1);
 	}
     
     if (stringWidth < rectangle.width)
     {
-        ofSetColor(style.colorText);
+        ofSetColor(colorText);
         ofDrawBitmapString(name,
                            rectangle.x + 0.5 * (rectangle.width - stringWidth),
                            rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
@@ -140,31 +108,49 @@ void GuiButtonBase::draw()
 	ofPopStyle();
 }
 
-void GuiButton::mousePressed(int mouseX, int mouseY)
+bool GuiButton::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         setValue(true, true);
+        return true;
     }
+    return false;
 }
 
-void GuiButton::mouseReleased(int mouseX, int mouseY)
+bool GuiButton::mouseReleased(int mouseX, int mouseY)
 {
+    GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         GuiElement::mouseReleased(mouseX, mouseY);
-        setValue(false, true);
+        setValue(false, false);
+        return true;
     }
+    return false;
 }
 
-void GuiToggle::mousePressed(int mouseX, int mouseY)
+bool GuiToggle::mousePressed(int mouseX, int mouseY)
 {
     GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         bool value = !parameter->get();
-        previous = value;
         setValue(value, true);
+        return true;
     }
+    return false;
+}
+
+bool GuiToggle::keyPressed(int key)
+{
+    GuiElement::keyPressed(key);
+    if (mouseOver && key==' ')
+    {
+        bool value = !parameter->get();
+        setValue(value, true);
+        return true;
+    }
+    return false;
 }

@@ -7,16 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B02904AC1A984BB5003C0512 /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904691A984B71003C0512 /* Bpm.cpp */; };
-		B02904AD1A984BB5003C0512 /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B029046C1A984B71003C0512 /* GuiButton.cpp */; };
-		B02904AE1A984BB5003C0512 /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B029046E1A984B71003C0512 /* GuiColor.cpp */; };
-		B02904AF1A984BB5003C0512 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904711A984B71003C0512 /* GuiElement.cpp */; };
-		B02904B01A984BB5003C0512 /* GuiMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904731A984B71003C0512 /* GuiMenu.cpp */; };
-		B02904B11A984BB5003C0512 /* GuiPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904751A984B71003C0512 /* GuiPanel.cpp */; };
-		B02904B21A984BB5003C0512 /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904771A984B71003C0512 /* GuiSlider.cpp */; };
-		B02904B31A984BB5003C0512 /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02904791A984B71003C0512 /* GuiWidget.cpp */; };
-		B02904B41A984BB5003C0512 /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B029047C1A984B71003C0512 /* Sequence.cpp */; };
-		B02904B51A984BB5003C0512 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B029047E1A984B71003C0512 /* Sequencer.cpp */; };
+		B0ABFFE51AA2270D00383E0C /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFC81AA226F800383E0C /* Bpm.cpp */; };
+		B0ABFFE61AA2270D00383E0C /* Gui2dPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFCB1AA226F800383E0C /* Gui2dPad.cpp */; };
+		B0ABFFE71AA2270D00383E0C /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFCD1AA226F800383E0C /* GuiButton.cpp */; };
+		B0ABFFE81AA2270D00383E0C /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFCF1AA226F800383E0C /* GuiColor.cpp */; };
+		B0ABFFE91AA2270D00383E0C /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFD21AA226F800383E0C /* GuiElement.cpp */; };
+		B0ABFFEA1AA2270D00383E0C /* GuiMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFD41AA226F800383E0C /* GuiMenu.cpp */; };
+		B0ABFFEB1AA2270D00383E0C /* GuiPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFD61AA226F800383E0C /* GuiPanel.cpp */; };
+		B0ABFFEC1AA2270D00383E0C /* GuiRangeSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFD81AA226F800383E0C /* GuiRangeSlider.cpp */; };
+		B0ABFFED1AA2270D00383E0C /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFDA1AA226F800383E0C /* GuiSlider.cpp */; };
+		B0ABFFEE1AA2270D00383E0C /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFDC1AA226F800383E0C /* GuiWidget.cpp */; };
+		B0ABFFEF1AA2270D00383E0C /* GuiWidgetBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFDE1AA226F800383E0C /* GuiWidgetBase.cpp */; };
+		B0ABFFF01AA2270D00383E0C /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFE11AA226F800383E0C /* Sequence.cpp */; };
+		B0ABFFF11AA2270D00383E0C /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0ABFFE31AA226F800383E0C /* Sequencer.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -69,29 +72,35 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B02904691A984B71003C0512 /* Bpm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
-		B029046A1A984B71003C0512 /* Bpm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
-		B029046B1A984B71003C0512 /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
-		B029046C1A984B71003C0512 /* GuiButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiButton.cpp; sourceTree = "<group>"; };
-		B029046D1A984B71003C0512 /* GuiButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiButton.h; sourceTree = "<group>"; };
-		B029046E1A984B71003C0512 /* GuiColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiColor.cpp; sourceTree = "<group>"; };
-		B029046F1A984B71003C0512 /* GuiColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
-		B02904701A984B71003C0512 /* GuiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiConstants.h; sourceTree = "<group>"; };
-		B02904711A984B71003C0512 /* GuiElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiElement.cpp; sourceTree = "<group>"; };
-		B02904721A984B71003C0512 /* GuiElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiElement.h; sourceTree = "<group>"; };
-		B02904731A984B71003C0512 /* GuiMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiMenu.cpp; sourceTree = "<group>"; };
-		B02904741A984B71003C0512 /* GuiMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiMenu.h; sourceTree = "<group>"; };
-		B02904751A984B71003C0512 /* GuiPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiPanel.cpp; sourceTree = "<group>"; };
-		B02904761A984B71003C0512 /* GuiPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiPanel.h; sourceTree = "<group>"; };
-		B02904771A984B71003C0512 /* GuiSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiSlider.cpp; sourceTree = "<group>"; };
-		B02904781A984B71003C0512 /* GuiSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiSlider.h; sourceTree = "<group>"; };
-		B02904791A984B71003C0512 /* GuiWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
-		B029047A1A984B71003C0512 /* GuiWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
-		B029047B1A984B71003C0512 /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
-		B029047C1A984B71003C0512 /* Sequence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
-		B029047D1A984B71003C0512 /* Sequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
-		B029047E1A984B71003C0512 /* Sequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
-		B029047F1A984B71003C0512 /* Sequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
+		B0ABFFC81AA226F800383E0C /* Bpm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
+		B0ABFFC91AA226F800383E0C /* Bpm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
+		B0ABFFCA1AA226F800383E0C /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
+		B0ABFFCB1AA226F800383E0C /* Gui2dPad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gui2dPad.cpp; sourceTree = "<group>"; };
+		B0ABFFCC1AA226F800383E0C /* Gui2dPad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gui2dPad.h; sourceTree = "<group>"; };
+		B0ABFFCD1AA226F800383E0C /* GuiButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiButton.cpp; sourceTree = "<group>"; };
+		B0ABFFCE1AA226F800383E0C /* GuiButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiButton.h; sourceTree = "<group>"; };
+		B0ABFFCF1AA226F800383E0C /* GuiColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiColor.cpp; sourceTree = "<group>"; };
+		B0ABFFD01AA226F800383E0C /* GuiColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
+		B0ABFFD11AA226F800383E0C /* GuiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiConstants.h; sourceTree = "<group>"; };
+		B0ABFFD21AA226F800383E0C /* GuiElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiElement.cpp; sourceTree = "<group>"; };
+		B0ABFFD31AA226F800383E0C /* GuiElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiElement.h; sourceTree = "<group>"; };
+		B0ABFFD41AA226F800383E0C /* GuiMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiMenu.cpp; sourceTree = "<group>"; };
+		B0ABFFD51AA226F800383E0C /* GuiMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiMenu.h; sourceTree = "<group>"; };
+		B0ABFFD61AA226F800383E0C /* GuiPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiPanel.cpp; sourceTree = "<group>"; };
+		B0ABFFD71AA226F800383E0C /* GuiPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiPanel.h; sourceTree = "<group>"; };
+		B0ABFFD81AA226F800383E0C /* GuiRangeSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiRangeSlider.cpp; sourceTree = "<group>"; };
+		B0ABFFD91AA226F800383E0C /* GuiRangeSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiRangeSlider.h; sourceTree = "<group>"; };
+		B0ABFFDA1AA226F800383E0C /* GuiSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiSlider.cpp; sourceTree = "<group>"; };
+		B0ABFFDB1AA226F800383E0C /* GuiSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiSlider.h; sourceTree = "<group>"; };
+		B0ABFFDC1AA226F800383E0C /* GuiWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
+		B0ABFFDD1AA226F800383E0C /* GuiWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
+		B0ABFFDE1AA226F800383E0C /* GuiWidgetBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidgetBase.cpp; sourceTree = "<group>"; };
+		B0ABFFDF1AA226F800383E0C /* GuiWidgetBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidgetBase.h; sourceTree = "<group>"; };
+		B0ABFFE01AA226F800383E0C /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
+		B0ABFFE11AA226F800383E0C /* Sequence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
+		B0ABFFE21AA226F800383E0C /* Sequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
+		B0ABFFE31AA226F800383E0C /* Sequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
+		B0ABFFE41AA226F800383E0C /* Sequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -147,37 +156,43 @@
 		B029044D1A984B4B003C0512 /* Control */ = {
 			isa = PBXGroup;
 			children = (
-				B02904681A984B71003C0512 /* src */,
+				B0ABFFC71AA226F800383E0C /* src */,
 			);
 			name = Control;
 			sourceTree = "<group>";
 		};
-		B02904681A984B71003C0512 /* src */ = {
+		B0ABFFC71AA226F800383E0C /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B02904691A984B71003C0512 /* Bpm.cpp */,
-				B029046A1A984B71003C0512 /* Bpm.h */,
-				B029046B1A984B71003C0512 /* Control.h */,
-				B029046C1A984B71003C0512 /* GuiButton.cpp */,
-				B029046D1A984B71003C0512 /* GuiButton.h */,
-				B029046E1A984B71003C0512 /* GuiColor.cpp */,
-				B029046F1A984B71003C0512 /* GuiColor.h */,
-				B02904701A984B71003C0512 /* GuiConstants.h */,
-				B02904711A984B71003C0512 /* GuiElement.cpp */,
-				B02904721A984B71003C0512 /* GuiElement.h */,
-				B02904731A984B71003C0512 /* GuiMenu.cpp */,
-				B02904741A984B71003C0512 /* GuiMenu.h */,
-				B02904751A984B71003C0512 /* GuiPanel.cpp */,
-				B02904761A984B71003C0512 /* GuiPanel.h */,
-				B02904771A984B71003C0512 /* GuiSlider.cpp */,
-				B02904781A984B71003C0512 /* GuiSlider.h */,
-				B02904791A984B71003C0512 /* GuiWidget.cpp */,
-				B029047A1A984B71003C0512 /* GuiWidget.h */,
-				B029047B1A984B71003C0512 /* Parameter.h */,
-				B029047C1A984B71003C0512 /* Sequence.cpp */,
-				B029047D1A984B71003C0512 /* Sequence.h */,
-				B029047E1A984B71003C0512 /* Sequencer.cpp */,
-				B029047F1A984B71003C0512 /* Sequencer.h */,
+				B0ABFFC81AA226F800383E0C /* Bpm.cpp */,
+				B0ABFFC91AA226F800383E0C /* Bpm.h */,
+				B0ABFFCA1AA226F800383E0C /* Control.h */,
+				B0ABFFCB1AA226F800383E0C /* Gui2dPad.cpp */,
+				B0ABFFCC1AA226F800383E0C /* Gui2dPad.h */,
+				B0ABFFCD1AA226F800383E0C /* GuiButton.cpp */,
+				B0ABFFCE1AA226F800383E0C /* GuiButton.h */,
+				B0ABFFCF1AA226F800383E0C /* GuiColor.cpp */,
+				B0ABFFD01AA226F800383E0C /* GuiColor.h */,
+				B0ABFFD11AA226F800383E0C /* GuiConstants.h */,
+				B0ABFFD21AA226F800383E0C /* GuiElement.cpp */,
+				B0ABFFD31AA226F800383E0C /* GuiElement.h */,
+				B0ABFFD41AA226F800383E0C /* GuiMenu.cpp */,
+				B0ABFFD51AA226F800383E0C /* GuiMenu.h */,
+				B0ABFFD61AA226F800383E0C /* GuiPanel.cpp */,
+				B0ABFFD71AA226F800383E0C /* GuiPanel.h */,
+				B0ABFFD81AA226F800383E0C /* GuiRangeSlider.cpp */,
+				B0ABFFD91AA226F800383E0C /* GuiRangeSlider.h */,
+				B0ABFFDA1AA226F800383E0C /* GuiSlider.cpp */,
+				B0ABFFDB1AA226F800383E0C /* GuiSlider.h */,
+				B0ABFFDC1AA226F800383E0C /* GuiWidget.cpp */,
+				B0ABFFDD1AA226F800383E0C /* GuiWidget.h */,
+				B0ABFFDE1AA226F800383E0C /* GuiWidgetBase.cpp */,
+				B0ABFFDF1AA226F800383E0C /* GuiWidgetBase.h */,
+				B0ABFFE01AA226F800383E0C /* Parameter.h */,
+				B0ABFFE11AA226F800383E0C /* Sequence.cpp */,
+				B0ABFFE21AA226F800383E0C /* Sequence.h */,
+				B0ABFFE31AA226F800383E0C /* Sequencer.cpp */,
+				B0ABFFE41AA226F800383E0C /* Sequencer.h */,
 			);
 			name = src;
 			path = ../src;
@@ -356,16 +371,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B02904AC1A984BB5003C0512 /* Bpm.cpp in Sources */,
-				B02904AD1A984BB5003C0512 /* GuiButton.cpp in Sources */,
-				B02904AE1A984BB5003C0512 /* GuiColor.cpp in Sources */,
-				B02904AF1A984BB5003C0512 /* GuiElement.cpp in Sources */,
-				B02904B01A984BB5003C0512 /* GuiMenu.cpp in Sources */,
-				B02904B11A984BB5003C0512 /* GuiPanel.cpp in Sources */,
-				B02904B21A984BB5003C0512 /* GuiSlider.cpp in Sources */,
-				B02904B31A984BB5003C0512 /* GuiWidget.cpp in Sources */,
-				B02904B41A984BB5003C0512 /* Sequence.cpp in Sources */,
-				B02904B51A984BB5003C0512 /* Sequencer.cpp in Sources */,
+				B0ABFFE51AA2270D00383E0C /* Bpm.cpp in Sources */,
+				B0ABFFE61AA2270D00383E0C /* Gui2dPad.cpp in Sources */,
+				B0ABFFE71AA2270D00383E0C /* GuiButton.cpp in Sources */,
+				B0ABFFE81AA2270D00383E0C /* GuiColor.cpp in Sources */,
+				B0ABFFE91AA2270D00383E0C /* GuiElement.cpp in Sources */,
+				B0ABFFEA1AA2270D00383E0C /* GuiMenu.cpp in Sources */,
+				B0ABFFEB1AA2270D00383E0C /* GuiPanel.cpp in Sources */,
+				B0ABFFEC1AA2270D00383E0C /* GuiRangeSlider.cpp in Sources */,
+				B0ABFFED1AA2270D00383E0C /* GuiSlider.cpp in Sources */,
+				B0ABFFEE1AA2270D00383E0C /* GuiWidget.cpp in Sources */,
+				B0ABFFEF1AA2270D00383E0C /* GuiWidgetBase.cpp in Sources */,
+				B0ABFFF01AA2270D00383E0C /* Sequence.cpp in Sources */,
+				B0ABFFF11AA2270D00383E0C /* Sequencer.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 			);
