@@ -19,7 +19,7 @@ class OpenNI
 {
 public:
     OpenNI();
-    ~OpenNI() { }  /// cleanup?
+    ~OpenNI();
     
     void setup(string oni="");
     void stop();
@@ -28,20 +28,20 @@ public:
     void setTrackingUserFeatures(bool trackingUserFeatures);
     void setTrackingContours(bool trackingContours);
     
-    ofVec3f getWorldCoordinateAt(int x, int y);
-    ofVec2f getProjectedPointAt(int x, int y);
-    
-    ContourFinder & getContourFinder() {return contourFinder;}
-    vector<cv::Point> & getContour(int idx) {return contourFinder.getContour(idx);}
-    void getCalibratedContour(int idx, vector<ofVec2f> & calibratedPoints, int width, int height, float smoothness=1.0);
-    int getNumContours() {return numContours;}
-    
-    map<int, OpenNIUser*> & getUsers() {return users;}
-    int getNumTrackedUsers() {return numTrackedUsers;}
-    
     ofxOpenNI & getKinect() {return kinect;}
     ofxKinectProjectorToolkit & getKinectProjectorToolkit() {return kpt;}
     vector<double> getCalibration() {return kpt.getCalibration();}
+
+    ofVec3f getWorldCoordinateAt(int x, int y);
+    ofVec2f getProjectedPointAt(int x, int y);
+    
+    int getNumContours() {return numContours;}
+    vector<cv::Point> & getContour(int idx) {return contourFinder.getContour(idx);}
+    void getCalibratedContour(int idx, vector<ofVec2f> & calibratedPoints, int width, int height, float smoothness=1.0);
+    ContourFinder & getContourFinder() {return contourFinder;}
+    
+    map<int, OpenNIUser*> & getUsers() {return users;}
+    int getNumTrackedUsers() {return numTrackedUsers;}
     
     bool update();
     void draw();
@@ -50,7 +50,6 @@ public:
     void enableCalibration(ofxSecondWindow & window);
     void startCalibrationModule();
     void stopCaibrationModule();
-    
     void saveCalibration(string filename);
     void loadCalibration(string filename);
     
@@ -59,16 +58,18 @@ private:
     void updateUsers();
     void updateSkeletonFeatures();
     void updateContours();
+    void clearUsers();
     void resetUserGenerator();
-    
-    void drawFeatureExtractor();
+
+    void drawDebug();
     
     inline bool isNewSkeletonDataAvailable(ofxOpenNIUser & user);
     
-    void eventSetTrackingUsers(GuiElementEventArgs & b);
-    void eventSetTrackingContours(GuiElementEventArgs & b);
-    void eventSetTrackingUserFeatures(GuiElementEventArgs & b);
-    void eventToggleCalibrationModule(GuiElementEventArgs & b);
+    void eventSetTrackingUsers(GuiElementEventArgs & e);
+    void eventSetTrackingContours(GuiElementEventArgs & e);
+    void eventSetTrackingUserFeatures(GuiElementEventArgs & e);
+    void eventSetMaxUsers(GuiElementEventArgs & e);
+    void eventToggleCalibrationModule(GuiElementEventArgs & e);
     void eventUser(ofxOpenNIUserEvent & event);
 
     // calibration
@@ -110,18 +111,16 @@ private:
     int maxDistance;
     int smoothingRate;
     bool simplified;
-    
     int delay;
     
+    // user tracking
     vector<ofShortPixels> depthHistory;
     int numFrames;
     int idxHistory;
-    
+    int maxUsers;
     
     // gui
     GuiPanel panel;
-    vector<ParameterBase*> contourTrackingParameters;
-    vector<ParameterBase*> userTrackingParameters;
     
     // calibration module
     CalibrationModule calibration;

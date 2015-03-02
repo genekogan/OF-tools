@@ -4,6 +4,26 @@
 GuiPanel::GuiPanel() : GuiWidget()
 {
     marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
+    
+    enableControlRow();
+}
+
+GuiPanel::~GuiPanel()
+{
+    if (controlRow) {
+        disableControlRow();
+    }
+    
+    if (bSeq) {
+        delete sequencer;
+    }
+
+}
+
+void GuiPanel::enableControlRow()
+{
+    controlRow = true;
+    
     controllerHeight = GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT;
     
     tOsc = new GuiToggle("osc", &bOsc);
@@ -20,15 +40,16 @@ GuiPanel::GuiPanel() : GuiWidget()
     tXml->setAutoDraw(false);
 }
 
-GuiPanel::~GuiPanel()
+void GuiPanel::disableControlRow()
 {
-    if (bSeq) {
-        delete sequencer;
-    }
+    controlRow = false;
+    controllerHeight = 0;
     delete tOsc;
     delete tSeq;
     delete tXml;
+
 }
+
 
 GuiWidget * GuiPanel::addWidget(string name)
 {
@@ -68,17 +89,22 @@ void GuiPanel::disableSequencer()
 void GuiPanel::setupGuiComponents()
 {
     GuiWidget::setupGuiComponents();
-    tOsc->setRectangle(rectangle.x + 8, rectangle.y + headerHeight + 5, 50, 15);
-    tSeq->setRectangle(rectangle.x + 64, rectangle.y + headerHeight + 5, 50, 15);
-    tXml->setRectangle(rectangle.x + 120, rectangle.y + headerHeight + 5, 50, 15);
+    if (controlRow) {
+        int width = rectangle.width / 3.0;
+        tOsc->setRectangle(rectangle.x + 4, rectangle.y + headerHeight + 5, width - 8, 15);
+        tSeq->setRectangle(rectangle.x + 4 + width, rectangle.y + headerHeight + 5, width - 8, 15);
+        tXml->setRectangle(rectangle.x + 4 + 2 * width, rectangle.y + headerHeight + 5, width - 8, 15);
+    }
 }
 
 void GuiPanel::update()
 {
     GuiWidget::update();
-    tOsc->update();
-    tSeq->update();
-    tXml->update();
+    if (controlRow) {
+        tOsc->update();
+        tSeq->update();
+        tXml->update();
+    }
     if (bSeq) {
         sequencer->update();
     }
@@ -99,9 +125,11 @@ void GuiPanel::draw()
         ofRect(rectangle.x, rectangle.y + headerHeight, rectangle.width, controllerHeight);
         ofPopStyle();
 
-        tOsc->draw();
-        tSeq->draw();
-        tXml->draw();
+        if (controlRow) {
+            tOsc->draw();
+            tSeq->draw();
+            tXml->draw();
+        }
 
         if (bSeq) {
             sequencer->draw();
@@ -113,9 +141,11 @@ void GuiPanel::draw()
 
 bool GuiPanel::mouseMoved(int mouseX, int mouseY)
 {
-    if (tOsc->mouseMoved(mouseX, mouseY)) return true;
-    if (tSeq->mouseMoved(mouseX, mouseY)) return true;
-    if (tXml->mouseMoved(mouseX, mouseY)) return true;
+    if (controlRow) {
+        if (tOsc->mouseMoved(mouseX, mouseY)) return true;
+        if (tSeq->mouseMoved(mouseX, mouseY)) return true;
+        if (tXml->mouseMoved(mouseX, mouseY)) return true;
+    }
     if (bSeq) {
         if (sequencer->mouseMoved(mouseX, mouseY)) return true;
     }
@@ -124,9 +154,11 @@ bool GuiPanel::mouseMoved(int mouseX, int mouseY)
 
 bool GuiPanel::mousePressed(int mouseX, int mouseY)
 {
-    if (tOsc->mousePressed(mouseX, mouseY)) return true;
-    if (tSeq->mousePressed(mouseX, mouseY)) return true;
-    if (tXml->mousePressed(mouseX, mouseY)) return true;
+    if (controlRow) {
+        if (tOsc->mousePressed(mouseX, mouseY)) return true;
+        if (tSeq->mousePressed(mouseX, mouseY)) return true;
+        if (tXml->mousePressed(mouseX, mouseY)) return true;
+    }
     if (bSeq) {
         if (sequencer->mousePressed(mouseX, mouseY)) return true;
     }
@@ -135,9 +167,11 @@ bool GuiPanel::mousePressed(int mouseX, int mouseY)
 
 bool GuiPanel::mouseDragged(int mouseX, int mouseY)
 {
-    if (tOsc->mouseDragged(mouseX, mouseY)) return true;
-    if (tSeq->mouseDragged(mouseX, mouseY)) return true;
-    if (tXml->mouseDragged(mouseX, mouseY)) return true;
+    if (controlRow) {
+        if (tOsc->mouseDragged(mouseX, mouseY)) return true;
+        if (tSeq->mouseDragged(mouseX, mouseY)) return true;
+        if (tXml->mouseDragged(mouseX, mouseY)) return true;
+    }
     if (bSeq) {
         if (sequencer->mouseDragged(mouseX, mouseY)) return true;
     }
@@ -146,9 +180,11 @@ bool GuiPanel::mouseDragged(int mouseX, int mouseY)
 
 bool GuiPanel::mouseReleased(int mouseX, int mouseY)
 {
-    if (tOsc->mouseReleased(mouseX, mouseY)) return true;
-    if (tSeq->mouseReleased(mouseX, mouseY)) return true;
-    if (tXml->mouseReleased(mouseX, mouseY)) return true;
+    if (controlRow) {
+        if (tOsc->mouseReleased(mouseX, mouseY)) return true;
+        if (tSeq->mouseReleased(mouseX, mouseY)) return true;
+        if (tXml->mouseReleased(mouseX, mouseY)) return true;
+    }
     if (bSeq) {
         if (sequencer->mouseReleased(mouseX, mouseY)) return true;
     }
@@ -157,9 +193,11 @@ bool GuiPanel::mouseReleased(int mouseX, int mouseY)
 
 bool GuiPanel::keyPressed(int key)
 {
-    if (tOsc->keyPressed(key)) return true;
-    if (tSeq->keyPressed(key)) return true;
-    if (tXml->keyPressed(key)) return true;
+    if (controlRow) {
+        if (tOsc->keyPressed(key)) return true;
+        if (tSeq->keyPressed(key)) return true;
+        if (tXml->keyPressed(key)) return true;
+    }
     if (bSeq) {
         if (sequencer->keyPressed(key)) return true;
     }

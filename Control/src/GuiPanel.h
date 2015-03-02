@@ -25,6 +25,11 @@ public:
     void update();
     void draw();
     
+    void enableControlRow();
+    void disableControlRow();
+    
+    Sequencer * getSequencer() {return sequencer;}
+    
 private:
     
     void setupGuiComponents();
@@ -33,6 +38,7 @@ private:
     
     GuiToggle *tOsc, *tSeq, *tXml;
     bool bOsc, bSeq, bXml;
+    bool controlRow;
     
     Sequencer *sequencer;
 };

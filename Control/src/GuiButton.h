@@ -26,6 +26,8 @@ public:
         
     bool isDiscrete() {return true;}
 
+    void setTriggerAll(bool triggerAll);
+    
     bool getValue();
     void setValue(bool value, bool sendChangeNotification=false);
     void setValueFromSequence(Sequence &sequence);
@@ -43,6 +45,8 @@ protected:
     
     float lerpNextValue;;
     int lerpFrame, lerpNumFrames;
+    
+    bool triggerAll;
 };
 
 

@@ -5,11 +5,10 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     
     projector.setup("projector", ofGetScreenWidth()-100, 0, 1280, 800, false);
-    kinect.setup("/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
+    kinect.setup();//"/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
     kinect.enableCalibration(projector);
-    kinect.loadCalibration("/Users/Gene/Desktop/calibration.xml");
-    
-    
+    //kinect.loadCalibration("/Users/Gene/Desktop/calibration.xml");
+    kinect.loadCalibration("/Users/Gene/Code/openFrameworks/tools/Visuals/template_simple/bin/data/calibration.xml");
     
     //player.loadMovie("/Users/Gene/Media/german_train_grid.mov");
     player.loadMovie("/Users/Gene/Desktop/feel-white_building_high.mp4");
@@ -55,11 +54,11 @@ void ofApp::setup(){
     
     panel.setName("OpenNI");
     panel.setPosition(10, 500);
-    panel.addParameter("volume", &volume, 0.0f, 1.0f, this, &ofApp::setVolume);
-    panel.addParameter("position", &position, 0.0f, 1.0f, this, &ofApp::setPosition);
-    panel.addParameter("bg volume", &volume2, 0.0f, 1.0f, this, &ofApp::setVolumeBg);
-    panel.addParameter("bg position", &position2, 0.0f, 1.0f, this, &ofApp::setPositionBg);
-    panel.addParameter("smoothness", &smoothness, 0.1f, 20.0f);
+    panel.addSlider("volume", &volume, 0.0f, 1.0f, this, &ofApp::setVolume);
+    panel.addSlider("position", &position, 0.0f, 1.0f, this, &ofApp::setPosition);
+    panel.addSlider("bg volume", &volume2, 0.0f, 1.0f, this, &ofApp::setVolumeBg);
+    panel.addSlider("bg position", &position2, 0.0f, 1.0f, this, &ofApp::setPositionBg);
+    panel.addSlider("smoothness", &smoothness, 0.1f, 20.0f);
 
 }
 

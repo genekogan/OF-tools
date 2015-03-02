@@ -101,6 +101,44 @@ void GuiWidgetBase::getAllElements(vector<GuiElement*> & allElements)
     }
 }
 
+GuiElement * GuiWidgetBase::getElement(string name)
+{
+    for (auto group : elementGroups)
+    {
+        for (auto &e : group->getElements())
+        {
+            if (e->getName() == name) {
+                return e;
+            }
+        }
+    }
+    ofLog(OF_LOG_ERROR, "No element found in "+getName()+" called "+name);
+}
+
+void GuiWidgetBase::removeElement(string name)
+{
+    vector<GuiElementGroup*>::iterator it = elementGroups.begin();
+    while (it != elementGroups.end())
+    {
+        vector<GuiElement*>::iterator ite = (*it)->getElements().begin();
+        while (ite != (*it)->getElements().end())
+        {
+            if ((*ite)->getName() == name)
+            {
+                ofNotifyEvent(elementDeletedEvent, (*ite), this);
+                delete *ite;
+                (*it)->getElements().erase(ite);
+            }
+            else {
+                ++ite;
+            }
+        }
+        ++it;
+    }
+    setupGuiComponents();
+    ofNotifyEvent(widgetChanged, name, this);
+}
+
 void GuiWidgetBase::setList(bool list)
 {
     this->list = list;

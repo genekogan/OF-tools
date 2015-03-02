@@ -34,13 +34,19 @@ void GuiButtonBase::setupButton()
     setValue(parameter->get());
     stringWidth = ofBitmapStringGetBoundingBox(name, 0, 0).width;
     stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
+    setTriggerAll(false);
+}
+
+void GuiButtonBase::setTriggerAll(bool triggerAll)
+{
+    this->triggerAll = triggerAll;
 }
 
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
     bool previous = parameter->get();
     parameter->set(value);
-    if (sendChangeNotification && (value != previous))
+    if (sendChangeNotification && ((value != previous) || triggerAll))
     {
         GuiElementEventArgs args(name, 0, value ? 1.0 : 0.0);
         ofNotifyEvent(elementEvent, args, this);

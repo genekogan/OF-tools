@@ -102,41 +102,47 @@ void CalibrationModule::searchForCorners(ofxCvColorImage & rgbImage)
     }
 }
 
-void CalibrationModule::draw(ofxSecondWindow * secondWindow)
+void CalibrationModule::draw(ofxSecondWindow *projector)
 {
-    //rgbImage.draw(0, 0);
-    //kinect.drawDepth(10, 490, 320, 240);
-    
     ofPushStyle();
     ofSetColor(0);
     if (testing)
     {
-        ofDrawBitmapString("Click on the image to test a point in the RGB image.", 340, 510);
-        ofDrawBitmapString("The projector should place a green dot on the corresponding point.", 340, 530);
-        ofDrawBitmapString("Press the 's' key to save the calibration.", 340, 550);
         if (saved) {
-            ofDrawBitmapString("Calibration saved.", 340, 590);
+            ofDrawBitmapString("Calibration saved.", 10, 500);
         }
+        ofSetLineWidth(3);
         ofSetColor(255, 0, 0);
-        float ptSize = ofMap(cos(ofGetFrameNum()*0.1), -1, 1, 3, 40);
-        ofCircle(testPoint.x, testPoint.y, ptSize);
+        ofCircle(testPoint.x, testPoint.y, ofMap(cos(ofGetFrameNum() * 0.1), -1, 1, 3, 40));
     }
     else
     {
-        ofDrawBitmapString("Position the chessboard using the mouse.", 340, 510);
-        ofDrawBitmapString("Adjust the size of the chessboard using the 'q' and 'w' keys.", 340, 530);
-        ofDrawBitmapString("Adjust kinect's tilt angle using up/down keys.", 340, 550);
-        ofDrawBitmapString("Press the spacebar to save a set of point pairs.", 340, 570);
-        ofDrawBitmapString("Press the 'c' key to calibrate.", 340, 590);
         ofSetColor(resultMessageColor);
-        ofDrawBitmapString(resultMessage, 340, 630);
+        ofDrawBitmapString(resultMessage, 10, 500);
         ofSetColor(0);
-        ofDrawBitmapString(ofToString(pairsKinect.size())+" point pairs collected.", 340, 650);
+        ofDrawBitmapString(ofToString(pairsKinect.size())+" point pairs collected.", 10, 520);
     }
     ofPopStyle();
     
-    secondWindow->begin();
+    projector->begin();
     ofBackground(255);
     fboChessboard.draw(0, 0);
-    secondWindow->end();
+    projector->end();
+}
+
+void CalibrationModule::calibrate(ofxKinectProjectorToolkit & kpt)
+{
+    kpt.calibrate(pairsKinect, pairsProjector);
+}
+
+void CalibrationModule::loadCalibration(ofxKinectProjectorToolkit & kpt)
+{
+    string filename = "/Users/Gene/Desktop/calibration.xml";
+    kpt.loadCalibration(filename);
+}
+
+void CalibrationModule::saveCalibration(ofxKinectProjectorToolkit & kpt)
+{
+    string filename = "/Users/Gene/Desktop/calibration.xml";
+    kpt.saveCalibration(filename);
 }

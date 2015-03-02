@@ -117,6 +117,7 @@ private:
     void eventRandomizeSequencer(GuiElementEventArgs &b);
     void eventSelectColumn(GuiElementEventArgs &b);
     void eventBeat();
+    void eventElementDeleted(GuiElement * &elementToDelete);
     
     Bpm clock;
     int numCols;

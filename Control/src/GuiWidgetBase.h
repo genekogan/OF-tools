@@ -37,7 +37,9 @@ public:
     vector<GuiElementGroup*> & getElementGroups();
     void getAllElementGroups(vector<GuiElementGroup*> & allGroups);
     void getAllElements(vector<GuiElement*> & allElements);
-    
+    GuiElement * getElement(string name);
+    void removeElement(string name);
+
     void setList(bool list);
     void setCollapsed(bool collapsed);
     
@@ -72,6 +74,8 @@ public:
     virtual bool isMenu() {return false;}
     
     ofEvent<string> widgetChanged;
+    ofEvent<GuiElement*> elementDeletedEvent;
+
     
 protected:
     

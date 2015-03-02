@@ -16,7 +16,6 @@ using namespace cv;
 class CalibrationModule
 {
 public:
-
     struct Chessboard {
         int x, y;
         int cols, rows;
@@ -28,33 +27,20 @@ public:
     void setup(int width, int height);
     void stop();
     
-    vector<double> getCalibration();
-    
     Chessboard & getChessboard() {return chessboard;}
-    
     vector<cv::Point2f> & getChessboardCorners() {return cvPoints;}
-    
     
     void addPointPairs(vector<ofVec3f> & worldPoints);
     void testWorldPoint(ofVec3f & worldPoint);
     void searchForCorners(ofxCvColorImage & rgbImage);
     void drawTestingPoint(ofVec2f projectedPoint);
     
-    void draw(ofxSecondWindow * secondWindow);
-    
-    
-    void calibrate(ofxKinectProjectorToolkit & kpt) {
-        kpt.calibrate(pairsKinect, pairsProjector);
-    }
-    void loadCalibration(ofxKinectProjectorToolkit & kpt) {
-        string filename = "/Users/Gene/Desktop/calibration.xml";
-        kpt.loadCalibration(filename);
-    }
-    void saveCalibration(ofxKinectProjectorToolkit & kpt) {
-        //kpt.calibrate(pairsKinect, pairsProjector);
-        string filename = "/Users/Gene/Desktop/calibration.xml";
-        kpt.saveCalibration(filename);
-    }
+    vector<double> getCalibration();
+    void calibrate(ofxKinectProjectorToolkit &kpt);
+    void loadCalibration(ofxKinectProjectorToolkit &kpt);
+    void saveCalibration(ofxKinectProjectorToolkit &kpt);
+
+    void draw(ofxSecondWindow *projector);
     
 private:
     

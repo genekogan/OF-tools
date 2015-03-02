@@ -94,28 +94,28 @@ template<typename T>
 GuiSlider<T>::GuiSlider(Parameter<T> *parameter) : GuiSliderBase(parameter->getName())
 {
     this->parameter = parameter;
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
 }
 
 template<typename T>
 GuiSlider<T>::GuiSlider(string name, T *value, T min, T max) : GuiSliderBase(name)
 {
     parameter = new Parameter<T>(name, value, min, max);
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
 }
 
 template<typename T>
 GuiSlider<T>::GuiSlider(string name, T min, T max) : GuiSliderBase(name)
 {
     parameter = new Parameter<T>(name, new T(), min, max);
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
 }
 
 template<typename T> template<typename L, typename M>
 GuiSlider<T>::GuiSlider(Parameter<T> *parameter, L *listener, M method) : GuiSliderBase(parameter->getName())
 {
     this->parameter = parameter;
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
     ofAddListener(elementEvent, listener, method);
 }
 
@@ -123,7 +123,7 @@ template<typename T> template<typename L, typename M>
 GuiSlider<T>::GuiSlider(string name, T *value, T min, T max, L *listener, M method) : GuiSliderBase(name)
 {
     parameter = new Parameter<T>(name, value, min, max);
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
     ofAddListener(elementEvent, listener, method);
 }
 
@@ -131,7 +131,7 @@ template<typename T> template<typename L, typename M>
 GuiSlider<T>::GuiSlider(string name, T min, T max, L *listener, M method) : GuiSliderBase(name)
 {
     parameter = new Parameter<T>(name, new T(), min, max);
-    setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
+    setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
     ofAddListener(elementEvent, listener, method);
 }
 

@@ -149,7 +149,8 @@ Sequencer::Sequencer(string name, GuiWidgetBase * panel, int numCols) : GuiWidge
     sequencerPanelMargin = GUI_DEFAULT_SEQUENCER_PANEL_MARGIN;
     sequencerWidth = GUI_DEFAULT_SEQUENCER_WIDTH;
     lerpNumFrames = 1;
-    
+
+    ofAddListener(panel->elementDeletedEvent, this, &Sequencer::eventElementDeleted);
     getElementGroupsFromWidget(panel);
     setupSequencer();
     
@@ -617,4 +618,26 @@ void Sequencer::eventSequencerMenuSelection(GuiElementEventArgs & evt)
     else {
         loadSequencerSet(evt.name);
     }
+}
+
+void Sequencer::eventElementDeleted(GuiElement * &elementToDelete)
+{
+    vector<SequenceGroupPair*>::iterator itg = sequencePairs.begin();
+    while (itg != sequencePairs.end())
+    {
+        vector<SequenceElementPair*>::iterator ite = (*itg)->getElementPairs().begin();
+        while (ite != (*itg)->getElementPairs().end())
+        {
+            if ((*ite)->getElement() == elementToDelete)
+            {
+                delete *ite;
+                (*itg)->getElementPairs().erase(ite);
+            }
+            else {
+                ++ite;
+            }
+        }
+        ++itg;
+    }
+    setupGuiComponents();
 }

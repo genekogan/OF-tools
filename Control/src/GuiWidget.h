@@ -77,7 +77,6 @@ public:
     template<typename L, typename M>
     GuiMenu * addMenu(string name, L *listener, M method, bool multipleChoice=false, bool autoClose=false);
 
-    
 private:
     
     template<typename T>
