@@ -47,6 +47,7 @@ public:
     void draw();
     
     // calibration
+    bool isCalibrating() {return calibrating;}
     void enableCalibration(ofxSecondWindow & window);
     void startCalibrationModule();
     void stopCaibrationModule();

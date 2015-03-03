@@ -123,6 +123,13 @@ void GuiWidgetBase::removeElement(string name)
         vector<GuiElement*>::iterator ite = (*it)->getElements().begin();
         while (ite != (*it)->getElements().end())
         {
+            
+            
+            //////////////
+            ///////
+            // TODO: messy and doesn't work right for widgets inside widgets
+            
+            
             if ((*ite)->getName() == name)
             {
                 ofNotifyEvent(elementDeletedEvent, (*ite), this);

@@ -3,31 +3,28 @@
 #include "ofMain.h"
 
 #include "ofxSecondWindow.h"
-
 #include "OpenNI.h"
-#include "ProjectorCalibration.h"
+
 #include "ContourRibbons.h"
+#include "ContourFluids.h"
+#include "ContourStars.h"
+#include "ContourBodyMap.h"
 
 
-class ofApp : public ofBaseApp{
-    
+class ofApp : public ofBaseApp
+{    
 public:
     void setup();
     void update();
     void draw();
-    
     void exit();
-    
     void keyPressed(int key);
 	
+    ofxSecondWindow projector;
     OpenNI kinect;
     
-    ProjectorCalibration calibration;
-    ofxSecondWindow secondWindow;
-    
     ContourRibbons ribbons;
-    
-    bool done = true;
-    bool curved = false;
-   
+    //ContourFluids ribbons;
+    //ContourStars ribbons;
+    //ContourBodyMap ribbons;
 };

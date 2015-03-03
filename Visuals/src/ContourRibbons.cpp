@@ -1,7 +1,6 @@
 #include "ContourRibbons.h"
 
 
-
 Contour::Contour(vector<ofVec2f> & points, ofPoint center, int label)
 {
     this->points = points;
@@ -11,14 +10,14 @@ Contour::Contour(vector<ofVec2f> & points, ofPoint center, int label)
     color = ofColor(ofRandom(60,255), ofRandom(60,255), ofRandom(60,255));
 }
 
-//-------
-void Contour::setPoints(vector<ofVec2f> & points, ofPoint center) {
+void Contour::setPoints(vector<ofVec2f> & points, ofPoint center)
+{
     this->points = points;
     this->center = center;
 }
 
-//-------
-void Contour::draw() {
+void Contour::draw()
+{
     ofPushStyle();
     ofNoFill();
     ofSetLineWidth(2);
@@ -31,12 +30,12 @@ void Contour::draw() {
     ofPopStyle();
 }
 
-//-------
 Ribbon::Ribbon(Contour *contour,
                int maxAge, int speed, int length, int skip,
                int margin, float noiseFactor, float ageFactor,
                float lineWidth, int maxAlpha, int updateRate,
-               float lerpRate, float dilate, bool curved, bool match){
+               float lerpRate, float dilate, bool curved, bool match)
+{
     this->contour = contour;
     this->maxAge = maxAge;
     this->speed = speed;
@@ -56,16 +55,18 @@ Ribbon::Ribbon(Contour *contour,
     age = 0;
     active = true;
     
-    for (int i=0; i<length; i++) {
+    for (int i=0; i<length; i++)
+    {
         int j = (idx + i*skip) % contour->points.size();
         addPoint(j);
     }
     idx = (idx + length * skip) % contour->points.size();
 }
 
-//-------
-void Ribbon::update() {
-    if (ofGetFrameNum() % updateRate == 0) {
+void Ribbon::update()
+{
+    if (ofGetFrameNum() % max(1, updateRate) == 0)
+    {
         idx = (idx + speed) % contour->points.size();
         addPoint(idx);
         points.erase(points.begin());
@@ -78,8 +79,8 @@ void Ribbon::update() {
     }
 }
 
-//-------
-void Ribbon::addPoint(int p) {
+void Ribbon::addPoint(int p)
+{
     if (dilate != 1.0) {
         points.push_back(ofVec2f(contour->center.x + dilate * (contour->points[p].x - contour->center.x) + margin * ofSignedNoise(p * noiseFactor + 25, ageFactor * age - 9, -22),
                                  contour->center.y + dilate * (contour->points[p].y - contour->center.y) + margin * ofSignedNoise(p * noiseFactor + 17, ageFactor * age + 6, -50)));
@@ -92,22 +93,25 @@ void Ribbon::addPoint(int p) {
     lookupMatched.push_back((float) p / contour->points.size());
 }
 
-//-------
-void Ribbon::draw() {
+void Ribbon::draw()
+{
     ofPushStyle();
     ofNoFill();
     ofSetLineWidth(lineWidth);
     ofSetColor(contour->color, ofMap(abs(age - maxAge*0.5), 0, maxAge*0.5, 255, 0));
     ofBeginShape();
-    for (int i=0; i<points.size(); i++) {
-        if (match) {
+    for (int i=0; i<points.size(); i++)
+    {
+        if (match)
+        {
             idxMatched = floor(contour->points.size() * lookupMatched[i]);
             points[i].x = ofLerp(points[i].x, contour->points[idxMatched].x +
                                  margin * ofSignedNoise(i * noiseFactor, ageFactor * age, 5), lerpRate);
             points[i].y = ofLerp(points[i].y, contour->points[idxMatched].y +
                                  margin * ofSignedNoise(i * noiseFactor, ageFactor * age, 10), lerpRate);
         }
-        else {
+        else
+        {
             points[i].x = ofLerp(points[i].x, contour->points[lookup[i]].x +
                                  margin * ofSignedNoise(i * noiseFactor, ageFactor * age, 5), lerpRate);
             points[i].y = ofLerp(points[i].y, contour->points[lookup[i]].y +
@@ -119,76 +123,50 @@ void Ribbon::draw() {
     ofPopStyle();
 }
 
-
-void ContourRibbons::setup()
+void ContourRibbons::setup(int width, int height)
 {
-    threshold = 240;
+    this->width = width;
+    this->height = height;
+    
     frameSkip = 3;
     numNew = 1;
-    
-    
-    maxAgeMin = 50;         maxAgeMax = 100;
-    speedMin = 1;           speedMax = 4;
-    lengthMin = 30;         lengthMax = 120;
-    skipMin = 5;            skipMax = 10;
-    marginMin = 8;          marginMax = 24;
-    noiseFactorMin = 0.01;  noiseFactorMax = 0.03;
-    ageFactorMin = 0.01;    ageFactorMax = 0.03;
-    lineWidthMin = 3;       lineWidthMax = 5;
-    maxAlphaMin = 200;      maxAlphaMax = 255;
-    lerpRateMin = 0.4;      lerpRateMax = 0.6;
-    updateRateMin = 1;      updateRateMax = 1;
     dilate = 1.0;
     curved = true;
     match = true;
     
+    maxAgeMin = 50;         maxAgeMax = 100;
+    speedMin = 1;           speedMax = 4;
+    lengthMin = 30;         lengthMax = 75;
+    skipMin = 5;            skipMax = 10;
+    marginMin = 8;          marginMax = 24;
+    noiseFactorMin = 0.01;  noiseFactorMax = 0.03;
+    ageFactorMin = 0.01;    ageFactorMax = 0.03;
+    lineWidthMin = 0.5;     lineWidthMax = 2.5;
+    maxAlphaMin = 200;      maxAlphaMax = 255;
+    lerpRateMin = 0.4;      lerpRateMax = 0.6;
+    updateRateMin = 1;      updateRateMax = 1;
+    
     panel.setName("ribbons");
-    panel.setPosition(700, 5);
-    panel.addSlider("threshold", &threshold, 100, 255);
+    panel.setPosition(0, 360);
     panel.addSlider("numNew", &numNew, 1, 10);
     panel.addSlider("frameSkip", &frameSkip, 1, 10);
-    
-    panel.addSlider("maxAgeMin", &maxAgeMin, 5, 50);
-    panel.addSlider("maxAgeMax", &maxAgeMax, 20, 100);
-    
-    //panel.addSlider("maxAge", &maxAgeMin, &maxAgeMax, 2, 150);
-    
-    panel.addSlider("speedMin", &speedMin, 1, 5);
-    panel.addSlider("speedMax", &speedMax, 3, 20);
-    
-    panel.addSlider("lengthMin", &lengthMin, 5, 30);
-    panel.addSlider("lengthMax", &lengthMax, 20, 120);
-    
-    panel.addSlider("skipMin", &skipMin, 1, 10);
-    panel.addSlider("skipMax", &skipMax, 5, 30);
-    
-    panel.addSlider("marginMin", &marginMin, 0, 40);
-    panel.addSlider("marginMax", &marginMax, 0, 100);
-    
-    panel.addSlider("noiseFactorMin", &noiseFactorMin, 0.001f, 0.02f);
-    panel.addSlider("noiseFactorMax", &noiseFactorMax, 0.02f, 0.1f);
-    
-    panel.addSlider("ageFactorMin", &ageFactorMin, 0.0f, 0.01f);
-    panel.addSlider("ageFactorMax", &ageFactorMax, 0.0f, 0.02f);
-    
-    panel.addSlider("lineWidthMin", &lineWidthMin, 0.0f, 3.0f);
-    panel.addSlider("lineWidthMax", &lineWidthMax, 1.0f, 8.0f);
-    
-    panel.addSlider("maxAlphaMin", &maxAlphaMin, 0, 200);
-    panel.addSlider("maxAlphaMax", &maxAlphaMax, 100, 255);
-    
-    panel.addSlider("updateRateMin", &updateRateMin, 1, 5);
-    panel.addSlider("updateRateMax", &updateRateMax, 2, 10);
-    
-    panel.addSlider("lerpRateMin", &lerpRateMin, 0.0f, 1.0f);
-    panel.addSlider("lerpRateMax", &lerpRateMax, 0.0f, 1.0f);
-    
+    panel.addRangeSlider("maxAge", &maxAgeMin, &maxAgeMax, 5, 100);
+    panel.addRangeSlider("speed", &speedMin, &speedMax, 1, 20);
+    panel.addRangeSlider("length", &lengthMin, &lengthMax, 5, 120);
+    panel.addRangeSlider("skip", &skipMin, &skipMax, 1, 30);
+    panel.addRangeSlider("margin", &marginMin, &marginMax, 0, 100);
+    panel.addRangeSlider("noiseFactor", &noiseFactorMin, &noiseFactorMax, 0.001f, 0.1f);
+    panel.addRangeSlider("ageFactor", &ageFactorMin, &ageFactorMax, 0.0f, 0.02f);
+    panel.addRangeSlider("lineWidth", &lineWidthMin, &lineWidthMax, 0.0f, 8.0f);
+    panel.addRangeSlider("maxAlpha", &maxAlphaMin, &maxAlphaMax, 0, 255);
+    panel.addRangeSlider("updateRate", &updateRateMin, &updateRateMax, 1, 10);
+    panel.addRangeSlider("lerpRate", &lerpRateMin, &lerpRateMax, 0.0f, 1.0f);
     panel.addSlider("dilate", &dilate, 0.0f, 2.0f);
-    
     panel.addToggle("curved", &curved);
     panel.addToggle("match", &match);
+    
+    calibrated = false;
 }
-
 
 void ContourRibbons::update()
 {
@@ -196,11 +174,8 @@ void ContourRibbons::update()
     manageRibbons();
 }
 
-
-//-------
 void ContourRibbons::manageContours()
 {
-    
     if (ofGetFrameNum() % frameSkip != 0)   return;
     
     // add new contours
@@ -250,10 +225,11 @@ void ContourRibbons::manageContours()
     }
 }
 
-//-------
-void ContourRibbons::manageRibbons() {
+void ContourRibbons::manageRibbons()
+{
     vector<Ribbon *>::iterator it = ribbons.begin();
-    while (it != ribbons.end()) {
+    while (it != ribbons.end())
+    {
         if ((*it)->getActive()) {
             ++it;
         }
@@ -263,23 +239,18 @@ void ContourRibbons::manageRibbons() {
     }
 }
 
-//-------
 void ContourRibbons::recordContours(OpenNI & openNi)
 {
     ContourFinder & contourFinder = openNi.getContourFinder();
     RectTracker & tracker = contourFinder.getTracker();
     
-    
     currentContours.clear();
     labels.clear();
-    
-    width = 1280;height=800;
     
     calibrated = true;
     
     for(int i = 0; i < openNi.getNumContours(); i++)
     {
-    
         vector<cv::Point> points = contourFinder.getContour(i);
         int label = contourFinder.getLabel(i);
         ofPoint center = toOf(contourFinder.getCenter(i));
@@ -288,9 +259,12 @@ void ContourRibbons::recordContours(OpenNI & openNi)
         cv::RotatedRect fitQuad = contourFinder.getFitEllipse(i);
         
         bool contourExists = false;
-        for (int c=0; c<contours.size(); c++) {
-            if (label == contours[c]->label) {
-                if (calibrated) {
+        for (int c=0; c<contours.size(); c++)
+        {
+            if (label == contours[c]->label)
+            {
+                if (calibrated)
+                {
                     vector<ofVec2f> calibratedContour;
                     openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
                     currentContours.push_back(calibratedContour);
@@ -303,8 +277,10 @@ void ContourRibbons::recordContours(OpenNI & openNi)
                 break;
             }
         }
-        if (!contourExists) {
-            if (calibrated) {
+        if (!contourExists)
+        {
+            if (calibrated)
+            {
                 vector<ofVec2f> calibratedContour;
                 openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
                 contours.push_back(new Contour(calibratedContour, center, label));
@@ -317,14 +293,15 @@ void ContourRibbons::recordContours(OpenNI & openNi)
     }
 }
 
-//-------
-void ContourRibbons::draw() {
+void ContourRibbons::draw()
+{
     renderRibbons();
 }
 
-//-------
-void ContourRibbons::renderRibbons() {
-    for (int i=0; i<ribbons.size(); i++) {
+void ContourRibbons::renderRibbons()
+{
+    for (int i=0; i<ribbons.size(); i++)
+    {
         ribbons[i]->update();
         ribbons[i]->draw();
     }

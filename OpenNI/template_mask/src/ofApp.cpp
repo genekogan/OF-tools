@@ -4,11 +4,11 @@
 void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    projector.setup("projector", ofGetScreenWidth()-100, 0, 1280, 800, false);
+    projector.setup("projector", ofGetScreenWidth(), 0, 1280, 800, true);
     kinect.setup();//"/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
     kinect.enableCalibration(projector);
-    //kinect.loadCalibration("/Users/Gene/Desktop/calibration.xml");
-    kinect.loadCalibration("/Users/Gene/Code/openFrameworks/tools/Visuals/template_simple/bin/data/calibration.xml");
+    kinect.loadCalibration("/Users/Gene/Desktop/calibration.xml");
+    //kinect.loadCalibration("/Users/Gene/Code/openFrameworks/tools/Visuals/template_simple/bin/data/calibration.xml");
     
     //player.loadMovie("/Users/Gene/Media/german_train_grid.mov");
     player.loadMovie("/Users/Gene/Desktop/feel-white_building_high.mp4");

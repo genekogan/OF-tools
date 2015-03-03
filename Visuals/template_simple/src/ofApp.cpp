@@ -1,103 +1,59 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
-void ofApp::setup(){
-    ofSetLogLevel(OF_LOG_VERBOSE);
-    
-    secondWindow.setup("projection", ofGetScreenWidth()-500, 0, 1280, 800, false);
+void ofApp::setup()
+{
+    projector.setup("projection", ofGetScreenWidth(), 0, 1280, 800, true);
 
-    kinect.setup("/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
+    kinect.setup();//"/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
+    kinect.enableCalibration(projector);
+    kinect.loadCalibration("/Users/Gene/Desktop/calibration.xml");
     kinect.setTrackingContours(true);
-    kinect.loadCalibration("calibration.xml");
     
-    calibration.setup(kinect, secondWindow);
-    calibration.loadCalibration("calibration.xml");
-    
-    ribbons.setup();
+    ribbons.setup(projector.getWidth(), projector.getHeight());
+    //fluids.setup(projector.getWidth(), projector.getHeight());
+    //stars.setup(projector.getWidth(), projector.getHeight());
+    //map.setup(projector.getWidth(), projector.getHeight());
 }
 
-//--------------------------------------------------------------
-void ofApp::exit() {
+void ofApp::exit()
+{
     kinect.stop();
 }
 
-//--------------------------------------------------------------
 void ofApp::update()
 {
-    bool newFrame = kinect.update();
-    if (newFrame) {
-        //calibration.update();
-    }
-    
+    kinect.update();
     
     ribbons.recordContours(kinect);
-    ribbons.update();
-
+ribbons.update();
+    //fluids.recordContours(kinect);
+    //fluids.update();
+    //stars.recordContours(kinect);
+    //stars.update();
+//    map.recordContours(kinect);
+//    map.update();
+    
 }
 
-//--------------------------------------------------------------
-void ofApp::draw(){
-    //kinect.draw();
-    
-    if (!done) {
-//        calibration.draw();
-    }
-    else {
-        kinect.draw();
-    }
-    
-    if (done) {
-       // secondWindow.begin();
-//        ofClear(0, 0);
-//        ofBackground(255);
-        
-        
-        ofPushStyle();
-        ofFill();
-        ofSetColor(255, 255, 100, 255);
-        
-        
-        for(int i = 0; i < kinect.getNumContours(); i++)
-        {
-            vector<cv::Point> points = kinect.getContour(i);
-            vector<ofVec2f> calibratedPoints;
-            kinect.getCalibratedContour(i, calibratedPoints, secondWindow.getWidth(), secondWindow.getHeight(), 2.0f);
-            
-            ofBeginShape();
-            if (curved) {
-                for (int j=0; j<calibratedPoints.size(); j++) {
-                    ofCurveVertex(calibratedPoints[j].x, calibratedPoints[j].y);
-                }
-            }
-            else {
-                for (int j=0; j<calibratedPoints.size(); j++) {
-                    ofVertex(calibratedPoints[j].x, calibratedPoints[j].y);
-                }
-            }
-            ofEndShape();
-            
-            
-
-        }
-        
-        
-        
-        ofPopStyle();
-        
-        
-        
-        secondWindow.begin();
+void ofApp::draw()
+{
+    kinect.draw();
+    if (!kinect.isCalibrating())
+    {
+        projector.begin();
         ofClear(0, 0);
         ofBackground(0);
-        ribbons.draw();
-        secondWindow.end();
         
-       // secondWindow.end();
+        ribbons.draw();
+        //fluids.draw();
+        //stars.draw();
+        //map.draw();
+        
+        projector.end();
     }
-    
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+void ofApp::keyPressed(int key)
+{
 
 }

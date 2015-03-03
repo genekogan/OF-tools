@@ -24,7 +24,8 @@ void GuiRangeSliderBase::selectSlider(float sliderValue)
     float dHigh = abs(sliderValue - sliderHigh);
     float dMiddle = abs(sliderValue - (0.5 * (sliderLow + sliderHigh)));
 
-    if (dMiddle < dLow && dMiddle < dHigh) {
+    if (dMiddle < dLow && dMiddle < dHigh)
+    {
         selection = MIDDLE;
         sliderValuePrev = sliderValue;
     }
@@ -47,7 +48,7 @@ void GuiRangeSliderBase::setValue(float sliderValue)
         if (sliderLow > sliderHigh)
         {
             swap(sliderLow, sliderHigh);
-            selection = (selection == LOW) ? HIGH : LOW;
+            selection = selection == LOW ? HIGH : LOW;
         }
         selection == LOW ? setValueLow(sliderValue) : setValueHigh(sliderValue);
     }
@@ -84,8 +85,8 @@ void GuiRangeSliderBase::lerpTo(float nextLow, float nextHigh, int numFrames)
 void GuiRangeSliderBase::setValueFromSequence(Sequence &sequence)
 {
     float diff = sequence.getValueAtCurrentCursor() - sliderValuePrev;
-    setValueLow(sliderLow + diff);
-    setValueHigh(sliderHigh + diff);
+    setValueLow(max(0.0f, sliderLow + diff));
+    setValueHigh(min(1.0f, sliderHigh + diff));
     sliderValuePrev = sequence.getValueAtCurrentCursor();
 }
 

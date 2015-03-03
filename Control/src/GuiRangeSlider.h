@@ -91,8 +91,8 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, Parameter<T> *pLow, Parameter<T> 
 {
     this->pLow = pLow;
     this->pHigh = pHigh;
-    setValueLow(ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
-    setValueHigh(ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
+    setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
+    setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
 }
 
 template<typename T>
@@ -100,8 +100,8 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, T *low, T *high, T min, T max) : 
 {
     pLow = new Parameter<T>(name, low, min, max);
     pHigh = new Parameter<T>(name, high, min, max);
-    setValueLow(ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
-    setValueHigh(ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
+    setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
+    setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
 }
 
 template<typename T>
@@ -109,8 +109,8 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, T min, T max) : GuiRangeSliderBas
 {
     pLow = new Parameter<T>(name, new T(), min, max);
     pHigh = new Parameter<T>(name, new T(), min, max);
-    setValueLow(ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
-    setValueHigh(ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
+    setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
+    setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
 }
 
 template<typename T>
@@ -139,7 +139,7 @@ template<typename T>
 void GuiRangeSlider<T>::setParameterLowValue(T low)
 {
     pLow->set(low);
-    sliderLow = ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0);
+    sliderLow = (float) ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0);
     updateValueString();
     adjustSliderValueLow();
     GuiElementEventArgs args(name, 0, (float) pLow->get());
@@ -150,7 +150,7 @@ template<typename T>
 void GuiRangeSlider<T>::setParameterHighValue(T high)
 {
     pHigh->set(high);
-    sliderHigh = ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
+    sliderHigh = (float) ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
     updateValueString();
     adjustSliderValueHigh();
     GuiElementEventArgs args(name, 1, (float) pHigh->get());
@@ -170,14 +170,14 @@ void GuiRangeSlider<T>::update()
     GuiRangeSliderBase::update();
     if (previousLow != pLow->get())
     {
-        this->sliderLow = ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0);
+        this->sliderLow = (float) ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0);
         updateValueString();
         adjustSliderValueLow();
         previousLow = pLow->get();
     }
     if (previousHigh != pHigh->get())
     {
-        this->sliderHigh = ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
+        this->sliderHigh = (float) ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
         updateValueString();
         adjustSliderValueHigh();
         previousHigh = pHigh->get();
@@ -187,15 +187,15 @@ void GuiRangeSlider<T>::update()
 template<> inline void GuiRangeSlider<int>::decrement()
 {
     if (selection == LOW) {
-        setParameterLowValue(ofClamp(getParameterLowValue() - 1, pLow->getMin(), pLow->getMax()));
+        setParameterLowValue((float) ofClamp(getParameterLowValue() - 1, pLow->getMin(), pLow->getMax()));
     }
     else if (selection == HIGH) {
-        setParameterHighValue(ofClamp(getParameterHighValue() - 1, pHigh->getMin(), pHigh->getMax()));
+        setParameterHighValue((float) ofClamp(getParameterHighValue() - 1, pHigh->getMin(), pHigh->getMax()));
     }
     else if (selection == MIDDLE)
     {
-        setParameterLowValue(ofClamp(getParameterLowValue() - 1, pLow->getMin(), pLow->getMax()));
-        setParameterHighValue(ofClamp(getParameterHighValue() - 1, pHigh->getMin(), pHigh->getMax()));
+        setParameterLowValue((float) ofClamp(getParameterLowValue() - 1, pLow->getMin(), pLow->getMax()));
+        setParameterHighValue((float) ofClamp(getParameterHighValue() - 1, pHigh->getMin(), pHigh->getMax()));
     }
 }
 
@@ -218,15 +218,15 @@ void GuiRangeSlider<T>::decrement()
 template<> inline void GuiRangeSlider<int>::increment()
 {
     if (selection == LOW) {
-        setParameterLowValue(ofClamp(getParameterLowValue() + 1, pLow->getMin(), pLow->getMax()));
+        setParameterLowValue((float) ofClamp(getParameterLowValue() + 1, pLow->getMin(), pLow->getMax()));
     }
     else if (selection == HIGH) {
-        setParameterHighValue(ofClamp(getParameterHighValue() + 1, pHigh->getMin(), pHigh->getMax()));
+        setParameterHighValue((float) ofClamp(getParameterHighValue() + 1, pHigh->getMin(), pHigh->getMax()));
     }
     else if (selection == MIDDLE)
     {
-        setParameterLowValue(ofClamp(getParameterLowValue() + 1, pLow->getMin(), pLow->getMax()));
-        setParameterHighValue(ofClamp(getParameterHighValue() + 1, pHigh->getMin(), pHigh->getMax()));
+        setParameterLowValue((float) ofClamp(getParameterLowValue() + 1, pLow->getMin(), pLow->getMax()));
+        setParameterHighValue((float) ofClamp(getParameterHighValue() + 1, pHigh->getMin(), pHigh->getMax()));
     }
 }
 template<typename T>

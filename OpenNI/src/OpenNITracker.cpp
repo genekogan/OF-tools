@@ -72,7 +72,7 @@ void OpenNI::setTrackingUsers(bool trackingUsers)
     else
     {
         setTrackingUserFeatures(false);
-        panel.removeWidget("user tracking");
+        panel.removeElement("user tracking");
         kinect.removeUserGenerator();
     }
 }
@@ -112,7 +112,7 @@ void OpenNI::setTrackingContours(bool trackingContours)
     }
     else
     {
-        panel.removeWidget("contour tracking");
+        panel.removeElement("contour tracking");
     }
 }
 
@@ -357,7 +357,7 @@ void OpenNI::eventUser(ofxOpenNIUserEvent & event)
 void OpenNI::enableCalibration(ofxSecondWindow & window)
 {
     this->window = &window;
-    panel.addToggle("calibration", &calibrating, this, &OpenNI::eventToggleCalibrationModule);
+    panel.addToggle("calibrate", &calibrating, this, &OpenNI::eventToggleCalibrationModule);
 }
 
 void OpenNI::eventAddPointPairs(GuiElementEventArgs & e)
@@ -425,7 +425,7 @@ void OpenNI::stopCaibrationModule()
     calibration.stop();
     
     kinect.removeImageGenerator();
-    panel.removeWidget("calibration");
+    panel.removeElement("calibration");
 }
 
 void OpenNI::updateCalibration()

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "OpenNI.h"
 
 
@@ -20,8 +19,8 @@ public:
 };
 
 
-
-class Ribbon {
+class Ribbon
+{
 public:
     Ribbon(Contour *contour,
            int maxAge, int speed, int length, int skip,
@@ -61,40 +60,32 @@ private:
 
 
 
-
 class ContourRibbons
 {
 public:
-    void setup();
+    void setup(int width, int height);
     void update();
-    
-    
     void draw();
-
+    
     void recordContours(OpenNI & openNi);
-
+    
+private:
+    
     void manageContours();
     void manageRibbons();
-
     void renderRibbons();
-    
-    
-    //OpenNi *openNi;
-    //ofxKinectProjectorToolkit *kpt;
-    
-    
+
+    GuiPanel panel;
+
     // tracking
     vector<Contour *> contours;
     vector<vector<ofVec2f> > currentContours;
-
-    bool calibrated = false;
+    bool calibrated;
     int width, height;
     
     // ribbons
     vector<Ribbon *> ribbons;
     vector<int> labels;
-    
-    GuiPanel panel;
     
     // ribbons
     int maxAgeMin, maxAgeMax;
@@ -111,8 +102,6 @@ public:
     float dilate;
     bool curved, match;
     int numNew;
-    int threshold;
     int frameSkip;
-    
     
 };

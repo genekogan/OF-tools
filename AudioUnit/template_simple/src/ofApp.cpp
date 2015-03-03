@@ -15,6 +15,14 @@ void ofApp::setup(){
 
     player.loadClip("wave", "/Users/Gene/Desktop/WhiteBuilding/Wave.wav");
     player.loadClip("particle", "/Users/Gene/Desktop/WhiteBuilding/02 Particle.mp3");
+    player.loadClip("track", "/Users/Gene/Desktop/WhiteBuilding/02 Track 2.wma");
+    //player.loadSynth("synth", 'aufx', 'sing', 'SNSH');
+    
+    //player.loadSynth("synth", 'aufx', 'sing', 'SNSH');
+    player.loadSynth("aalto", 'aumu', 'Aalt', 'MLbs');
+    
+    
+    //player.blah();
 
     /*
     player.loadClip("1", "/Users/Gene/audio/Sounds/15__tictacshutup__household-percussion/406__tictacshutup__click-1-d.wav");
@@ -43,5 +51,5 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    if (ofGetFrameNum()  > 200) player.blah();
+    //if (ofGetFrameNum()  > 200) player.blah();
 }
