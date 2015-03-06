@@ -33,8 +33,9 @@ void ofApp::setup(){
     menu->addToggle("chicago");
     
     // 2d pad
-    widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
-
+    Gui2dPad *pad = widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
+    pad->setDrawConnectedPoints(true);
+    
     
     
     // a panel is a super-widget with some extra functionality, including
@@ -72,6 +73,7 @@ void ofApp::setup(){
     // initialize variables.
     // gui is linked to actual values and is auto-updating
     color2.set(0.5, 0.2, 0.9);
+    padValue.set(5, 8);
     intSlider = 8;
     floatSlider = 8.5;
     rangeLow = 2.0;
@@ -100,7 +102,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
+    ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 100);
 }
 
 //--------------------------------------------------------------

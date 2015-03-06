@@ -45,6 +45,6 @@ public:
     int intValue;
     double doubleValue;
     float rangeLow, rangeHigh;
-    ofPoint padValue;
+    ofPoint padValue, padValue2;
     ofFloatColor bgColor;
 };

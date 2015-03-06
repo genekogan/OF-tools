@@ -17,23 +17,23 @@ public:
     GuiWidget(string name);
     virtual ~GuiWidget();
     
-    void addButton(Parameter<bool> *parameter);
-    void addButton(string name, bool *value);
+    GuiButton * addButton(Parameter<bool> *parameter);
+    GuiButton * addButton(string name, bool *value);
     template<typename L, typename M>
-    void addButton(Parameter<bool> *parameter, L *listener, M method);
+    GuiButton * addButton(Parameter<bool> *parameter, L *listener, M method);
     template<typename L, typename M>
-    void addButton(string name, bool *value, L *listener, M method);
+    GuiButton * addButton(string name, bool *value, L *listener, M method);
     template<typename L, typename M>
-    void addButton(string name, L *listener, M method);
+    GuiButton * addButton(string name, L *listener, M method);
     
-    void addToggle(Parameter<bool> *parameter);
-    void addToggle(string name, bool *value);
+    GuiToggle * addToggle(Parameter<bool> *parameter);
+    GuiToggle * addToggle(string name, bool *value);
     template<typename L, typename M>
-    void addToggle(Parameter<bool> *parameter, L *listener, M method);
+    GuiToggle * addToggle(Parameter<bool> *parameter, L *listener, M method);
     template<typename L, typename M>
-    void addToggle(string name, bool *value, L *listener, M method);
+    GuiToggle * addToggle(string name, bool *value, L *listener, M method);
     template<typename L, typename M>
-    void addToggle(string name, L *listener, M method);
+    GuiToggle * addToggle(string name, L *listener, M method);
     
     template<typename T>
     void addSlider(Parameter<T> *parameter);
@@ -53,22 +53,22 @@ public:
     template<typename T, typename L, typename M>
     void addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T max, L *listener, M method);
     
-    void add2dPad(Parameter<ofPoint> *parameter);
-    void add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max);
+    Gui2dPad * add2dPad(Parameter<ofPoint> *parameter);
+    Gui2dPad * add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max);
     template<typename L, typename M>
-    void add2dPad(Parameter<ofPoint> *parameter, L *listener, M method);
+    Gui2dPad * add2dPad(Parameter<ofPoint> *parameter, L *listener, M method);
     template<typename L, typename M>
-    void add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method);
+    Gui2dPad * add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method);
     
-    void addColor(Parameter<ofFloatColor> *parameter);
-    void addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max);
-    void addColor(string name, ofFloatColor * parameter);
+    GuiColor * addColor(Parameter<ofFloatColor> *parameter);
+    GuiColor * addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max);
+    GuiColor * addColor(string name, ofFloatColor * parameter);
     template<typename L, typename M>
-    void addColor(Parameter<ofFloatColor> *parameter, L *listener, M method);
+    GuiColor * addColor(Parameter<ofFloatColor> *parameter, L *listener, M method);
     template<typename L, typename M>
-    void addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method);
+    GuiColor * addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method);
     template<typename L, typename M>
-    void addColor(string name, ofFloatColor * parameter, L *listener, M method);
+    GuiColor * addColor(string name, ofFloatColor * parameter, L *listener, M method);
     
     GuiMenu * addMenu(string name, vector<string> choices, bool multipleChoice=false, bool autoClose=false);
     GuiMenu * addMenu(string name, bool multipleChoice=false, bool autoClose=false);
@@ -94,42 +94,42 @@ private:
 
 
 template<typename L, typename M>
-void GuiWidget::addButton(Parameter<bool> *parameter, L *listener, M method)
+GuiButton * GuiWidget::addButton(Parameter<bool> *parameter, L *listener, M method)
 {
     addButton(parameter);
     addListenersFromLastElementGroup(listener, method);
 }
 
 template<typename L, typename M>
-void GuiWidget::addButton(string name, bool *value, L *listener, M method)
+GuiButton * GuiWidget::addButton(string name, bool *value, L *listener, M method)
 {
     addButton(new Parameter<bool>(name, value));
     addListenersFromLastElementGroup(listener, method);
 }
 
 template<typename L, typename M>
-void GuiWidget::addButton(string name, L *listener, M method)
+GuiButton * GuiWidget::addButton(string name, L *listener, M method)
 {
     addButton(new Parameter<bool>(name, new bool()));
     addListenersFromLastElementGroup(listener, method);
 }
 
 template<typename L, typename M>
-void GuiWidget::addToggle(Parameter<bool> *parameter, L *listener, M method)
+GuiToggle * GuiWidget::addToggle(Parameter<bool> *parameter, L *listener, M method)
 {
     addToggle(parameter);
     addListenersFromLastElementGroup(listener, method);
 }
 
 template<typename L, typename M>
-void GuiWidget::addToggle(string name, bool *value, L *listener, M method)
+GuiToggle * GuiWidget::addToggle(string name, bool *value, L *listener, M method)
 {
     addToggle(new Parameter<bool>(name, value));
     addListenersFromLastElementGroup(listener, method);
 }
 
 template<typename L, typename M>
-void GuiWidget::addToggle(string name, L *listener, M method)
+GuiToggle * GuiWidget::addToggle(string name, L *listener, M method)
 {
     addToggle(new Parameter<bool>(name, new bool()));
     addListenersFromLastElementGroup(listener, method);
@@ -192,38 +192,43 @@ void GuiWidget::addRangeSlider(string name, T *valueLow, T *valueHigh, T min, T 
 }
 
 template<typename L, typename M>
-void GuiWidget::add2dPad(Parameter<ofPoint> *parameter, L *listener, M method)
+Gui2dPad * GuiWidget::add2dPad(Parameter<ofPoint> *parameter, L *listener, M method)
 {
-    add2dPad(parameter);
+    Gui2dPad *newPad = add2dPad(parameter);
     addListenersFromLastElementGroup(listener, method);
+    return newPad;
 }
 
 template<typename L, typename M>
-void GuiWidget::add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method)
+Gui2dPad * GuiWidget::add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method)
 {
-    add2dPad(new Parameter<ofPoint>(name, value, min, max));
+    Gui2dPad *newPad = add2dPad(new Parameter<ofPoint>(name, value, min, max));
     addListenersFromLastElementGroup(listener, method);
+    return newPad;
 }
 
 template<typename L, typename M>
-void GuiWidget::addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method)
+GuiColor * GuiWidget::addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max, L *listener, M method)
 {
-    addColor(new Parameter<ofFloatColor>(name, parameter, min, max));
+    GuiColor *newColor = addColor(new Parameter<ofFloatColor>(name, parameter, min, max));
     addListenersFromLastElementGroup(listener, method);
+    return newColor;
 }
 
 template<typename L, typename M>
-void GuiWidget::addColor(string name, ofFloatColor * parameter, L *listener, M method)
+GuiColor * GuiWidget::addColor(string name, ofFloatColor * parameter, L *listener, M method)
 {
-    addColor(new Parameter<ofFloatColor>(name, parameter, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1)));
+    GuiColor *newColor = addColor(new Parameter<ofFloatColor>(name, parameter, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1)));
     addListenersFromLastElementGroup(listener, method);
+    return newColor;
 }
 
 template<typename L, typename M>
-void GuiWidget::addColor(Parameter<ofFloatColor> *parameter, L *listener, M method)
+GuiColor * GuiWidget::addColor(Parameter<ofFloatColor> *parameter, L *listener, M method)
 {
-    addColor(parameter);
+    GuiColor *newColor = addColor(parameter);
     addListenersFromLastElementGroup(listener, method);
+    return newColor;
 }
 
 template<typename L, typename M>

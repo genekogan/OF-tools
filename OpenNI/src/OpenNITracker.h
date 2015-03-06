@@ -54,11 +54,15 @@ public:
     void saveCalibration(string filename);
     void loadCalibration(string filename);
     
+    GuiPanel & getPanel() {return panel;}
+
+    
 private:
     
     void updateUsers();
     void updateSkeletonFeatures();
     void updateContours();
+    void applyDepthMask();
     void clearUsers();
     void resetUserGenerator();
 
@@ -71,6 +75,8 @@ private:
     void eventSetTrackingUserFeatures(GuiElementEventArgs & e);
     void eventSetMaxUsers(GuiElementEventArgs & e);
     void eventToggleCalibrationModule(GuiElementEventArgs & e);
+    void eventDepthMaskEdited(GuiElementEventArgs &e);
+    void eventSetupMask(GuiElementEventArgs & e);
     void eventUser(ofxOpenNIUserEvent & event);
 
     // calibration
@@ -84,6 +90,7 @@ private:
     void eventLoadCalibration(GuiElementEventArgs & b);
 
     // kinect
+    int kinectWidth, kinectHeight;
     ofxOpenNI kinect;
     map<int, OpenNIUser*> users;
     ContourFinder contourFinder;
@@ -113,6 +120,15 @@ private:
     int smoothingRate;
     bool simplified;
     int delay;
+    
+    // depth mask
+    ofxCvColorImage cvMask;
+    ofxCvGrayscaleImage cvGrayMask;
+    ofFbo maskFBO;
+    ofImage maskImage;
+    ofPixels maskPixels;
+    Gui2dPad *maskPad;
+    bool depthMaskEnabled;
     
     // user tracking
     vector<ofShortPixels> depthHistory;

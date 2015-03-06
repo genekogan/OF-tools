@@ -29,6 +29,7 @@ public:
     
     Chessboard & getChessboard() {return chessboard;}
     vector<cv::Point2f> & getChessboardCorners() {return cvPoints;}
+    bool & getTesting() {return testing;}
     
     void addPointPairs(vector<ofVec3f> & worldPoints);
     void testWorldPoint(ofVec3f & worldPoint);
@@ -42,6 +43,8 @@ public:
 
     void draw(ofxSecondWindow *projector);
     
+    
+    
 private:
     
     void drawChessboard();
@@ -49,6 +52,7 @@ private:
     ofFbo fboChessboard;
     cv::Mat cvRgbImage;
     Chessboard chessboard;
+    bool foundChessboard;
     
     vector<cv::Point2f> cvPoints;
     vector<ofVec2f> currentProjectorPoints;

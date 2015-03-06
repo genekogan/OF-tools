@@ -4,7 +4,7 @@
 GuiElementGroup::~GuiElementGroup()
 {
     for (auto e : elements) {
-        //delete e;
+        //delete e;  //?
     }
     elements.clear();
 }

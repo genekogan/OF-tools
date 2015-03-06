@@ -91,7 +91,26 @@ void CalibrationModule::searchForCorners(ofxCvColorImage & rgbImage)
     cvRgbImage = ofxCv::toCv(rgbImage.getPixelsRef());
     cv::Size patternSize = cv::Size(chessboard.cols-1, chessboard.rows-1);
     int chessFlags = cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_FAST_CHECK;
-    bool foundChessboard = findChessboardCorners(cvRgbImage, patternSize, cvPoints, chessFlags);
+    foundChessboard = findChessboardCorners(cvRgbImage, patternSize, cvPoints, chessFlags);
+
+    /*
+    if (foundChessboard)
+    {
+        cv::Mat gray;
+        cvtColor(cvRgbImage, gray, CV_RGB2GRAY);
+        cornerSubPix(gray, cvPoints, cv::Size(11, 11), cv::Size(-1, -1),
+                     cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+        drawChessboardCorners(cvRgbImage, patternSize, cv::Mat(cvPoints), foundChessboard);
+    }*/
+}
+
+void CalibrationModule::draw(ofxSecondWindow *projector)
+{
+    ofPushStyle();
+    
+    
+    
+    cv::Size patternSize = cv::Size(chessboard.cols-1, chessboard.rows-1);
     if (foundChessboard)
     {
         cv::Mat gray;
@@ -100,11 +119,10 @@ void CalibrationModule::searchForCorners(ofxCvColorImage & rgbImage)
                      cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
         drawChessboardCorners(cvRgbImage, patternSize, cv::Mat(cvPoints), foundChessboard);
     }
-}
 
-void CalibrationModule::draw(ofxSecondWindow *projector)
-{
-    ofPushStyle();
+    
+    
+    
     ofSetColor(0);
     if (testing)
     {

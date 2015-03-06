@@ -35,7 +35,9 @@ void ofApp::setup()
     // 2d pad
     
     pad = new Gui2dPad("2d pad", &padValue, ofPoint(0, 0), ofPoint(10, 20));
-    pad->setRectangle(620, 420, 180, 180);
+    pad->addPoint(&padValue2);
+    pad->addPoint();
+    pad->setRectangle(620, 420, 320, 320);
 
     // Color picker
     

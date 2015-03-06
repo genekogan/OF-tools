@@ -16,43 +16,49 @@ GuiWidget::~GuiWidget()
     
 }
 
-void GuiWidget::addToggle(Parameter<bool> *parameter)
+GuiToggle * GuiWidget::addToggle(Parameter<bool> *parameter)
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
-    elementGroup->addElement(new GuiToggle(parameter));
+    GuiToggle *newToggle = new GuiToggle(parameter);
+    elementGroup->addElement(newToggle);
     setupElementGroup(elementGroup);
+    return newToggle;
 }
 
-void GuiWidget::addToggle(string name, bool *value)
+GuiToggle * GuiWidget::addToggle(string name, bool *value)
 {
-    addToggle(new Parameter<bool>(name, value));
+    return addToggle(new Parameter<bool>(name, value));
 }
 
-void GuiWidget::addButton(Parameter<bool> *parameter)
+GuiButton * GuiWidget::addButton(Parameter<bool> *parameter)
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
-    elementGroup->addElement(new GuiButton(parameter));
+    GuiButton *newButton = new GuiButton(parameter);
+    elementGroup->addElement(newButton);
     setupElementGroup(elementGroup);
+    return newButton;
 }
 
-void GuiWidget::addButton(string name, bool *value)
+GuiButton * GuiWidget::addButton(string name, bool *value)
 {
-    addButton(new Parameter<bool>(name, value));
+    return addButton(new Parameter<bool>(name, value));
 }
 
-void GuiWidget::add2dPad(Parameter<ofPoint> *parameter)
+Gui2dPad * GuiWidget::add2dPad(Parameter<ofPoint> *parameter)
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
-    elementGroup->addElement(new Gui2dPad(parameter));
+    Gui2dPad *new2dPad = new Gui2dPad(parameter);
+    elementGroup->addElement(new2dPad);
     setupElementGroup(elementGroup);
+    return new2dPad;
 }
 
-void GuiWidget::add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max)
+Gui2dPad * GuiWidget::add2dPad(string name, ofPoint *value, ofPoint min, ofPoint max)
 {
-    add2dPad(new Parameter<ofPoint>(name, value, min, max));
+    return add2dPad(new Parameter<ofPoint>(name, value, min, max));
 }
 
-void GuiWidget::addColor(Parameter<ofFloatColor> *parameter)
+GuiColor * GuiWidget::addColor(Parameter<ofFloatColor> *parameter)
 {
     GuiColor *color = new GuiColor(parameter);
     color->setParent(this);
@@ -60,16 +66,17 @@ void GuiWidget::addColor(Parameter<ofFloatColor> *parameter)
     elementGroup->addElement(color);
     setupElementGroup(elementGroup);
     ofAddListener(color->widgetChanged, this, &GuiWidget::eventWidgetChanged);
+    return color;
 }
 
-void GuiWidget::addColor(string name, ofFloatColor * parameter)
+GuiColor * GuiWidget::addColor(string name, ofFloatColor * parameter)
 {
-    addColor(new Parameter<ofFloatColor>(name, parameter, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1)));
+    return addColor(new Parameter<ofFloatColor>(name, parameter, ofFloatColor(0,0,0,0), ofFloatColor(1,1,1,1)));
 }
 
-void GuiWidget::addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max)
+GuiColor * GuiWidget::addColor(string name, ofFloatColor * parameter, ofFloatColor min, ofFloatColor max)
 {
-    addColor(new Parameter<ofFloatColor>(name, parameter, min, max));
+    return addColor(new Parameter<ofFloatColor>(name, parameter, min, max));
 }
 
 GuiMenu * GuiWidget::addMenu(string name, vector<string> choices, bool multipleChoice, bool autoClose)
