@@ -65,6 +65,11 @@ void GuiButtonBase::setValueFromSequence(Sequence &sequence)
     setValue(sequence.getValueAtCurrentIndex() > 0.5, true);
 }
 
+void GuiButtonBase::setSequenceFromValue(Sequence &sequence, int column)
+{
+    sequence.setValueAtCell(column, getValue() > 0.5);
+}
+
 bool GuiButtonBase::getValue()
 {
     return parameter->get();

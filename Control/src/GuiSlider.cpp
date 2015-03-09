@@ -42,6 +42,11 @@ void GuiSliderBase::setValueFromSequence(Sequence &sequence)
     setValue(sequence.getValueAtCurrentCursor());
 }
 
+void GuiSliderBase::setSequenceFromValue(Sequence &sequence, int column)
+{
+    sequence.setValueAtCell(column, getValue());
+}
+
 void GuiSliderBase::setEditing(bool editing)
 {
     this->editing = editing;

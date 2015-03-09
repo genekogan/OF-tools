@@ -44,6 +44,9 @@ void GuiWidgetBase::initialize()
     
     GuiElement::setAutoUpdate(true);
     GuiElement::setAutoDraw(true);
+    
+    elementGroups.clear();
+    hasParent = false;
 }
 
 void GuiWidgetBase::setParent(GuiWidgetBase *parent)

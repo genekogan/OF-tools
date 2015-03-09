@@ -7,6 +7,7 @@
 class GuiPanel : public GuiWidget
 {
 public:
+    GuiPanel(string name);
     GuiPanel();
     ~GuiPanel();
     
@@ -31,6 +32,8 @@ public:
     Sequencer * getSequencer() {return sequencer;}
     
 private:
+    
+    void initialize();
     
     void setupGuiComponents();
     void eventToggleSequencer(GuiElementEventArgs &e);

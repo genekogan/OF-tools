@@ -1,11 +1,14 @@
 #include "GuiPanel.h"
 
 
+GuiPanel::GuiPanel(string name) : GuiWidget(name)
+{
+    initialize();
+}
+
 GuiPanel::GuiPanel() : GuiWidget()
 {
-    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
-    
-    enableControlRow();
+    initialize();
 }
 
 GuiPanel::~GuiPanel()
@@ -17,7 +20,15 @@ GuiPanel::~GuiPanel()
     if (bSeq) {
         delete sequencer;
     }
+}
 
+void GuiPanel::initialize()
+{
+    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
+    bOsc = false;
+    bSeq = false;
+    bXml = false;
+    enableControlRow();
 }
 
 void GuiPanel::enableControlRow()
@@ -47,7 +58,6 @@ void GuiPanel::disableControlRow()
     delete tOsc;
     delete tSeq;
     delete tXml;
-
 }
 
 

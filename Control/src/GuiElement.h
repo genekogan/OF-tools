@@ -58,6 +58,7 @@ public:
     
     virtual void lerpTo(float nextSliderValue, int lerpNumFrames) { }
     virtual void setValueFromSequence(Sequence &sequence) { }
+    virtual void setSequenceFromValue(Sequence &sequence, int column) { }
     
     virtual void setRectangle(ofRectangle rectangle);
     virtual void setRectangle(int x, int y, int width, int height);

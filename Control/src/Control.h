@@ -21,6 +21,7 @@
 #include "Bpm.h"
 #include "Sequence.h"
 #include "Sequencer.h"
+#include "MidiSequencer.h"
 
 #include "GuiWidget.h"
 #include "GuiPanel.h"

@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "Control.h"
-#include "AudioUnitPlayer.h"
+#include "AudioUnits.h"
 
 
 class ofApp : public ofBaseApp
@@ -12,6 +12,13 @@ public:
     void setup();
     void update();
     void draw();
+    
+    void mousePressed(int mouseX, int mouseY, int button) {
+        //cout << "pressed mouse at t " << ofGetElapsedTimef() << endl;
+    }
 
-    AudioUnitPlayer player;
+    AudioUnitController au;
+    
+    
+    MidiSequencer *midi;
 };

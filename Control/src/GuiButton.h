@@ -31,6 +31,7 @@ public:
     bool getValue();
     void setValue(bool value, bool sendChangeNotification=false);
     void setValueFromSequence(Sequence &sequence);
+    void setSequenceFromValue(Sequence &sequence, int column);
     void lerpTo(float nextValue, int numFrames);
     
     virtual void update();

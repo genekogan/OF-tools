@@ -24,7 +24,8 @@ public:
     
     void lerpTo(float nextValue, int numFrames);
     void setValueFromSequence(Sequence &sequence);
-
+    void setSequenceFromValue(Sequence &sequence, int column);
+    
     virtual void update();
     virtual void draw();
     

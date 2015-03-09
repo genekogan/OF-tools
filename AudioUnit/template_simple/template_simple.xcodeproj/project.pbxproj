@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B040FEF91AADD0D800DD432F /* MidiSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */; };
 		B0892E181AA479CE0006AE08 /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892DFB1AA479BF0006AE08 /* Bpm.cpp */; };
 		B0892E191AA479CE0006AE08 /* Gui2dPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892DFE1AA479BF0006AE08 /* Gui2dPad.cpp */; };
 		B0892E1A1AA479CE0006AE08 /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E001AA479BF0006AE08 /* GuiButton.cpp */; };
@@ -44,7 +45,10 @@
 		B0892E6D1AA479D70006AE08 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0892E551AA479D70006AE08 /* CoreMIDI.framework */; };
 		B0892E6E1AA479D70006AE08 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0892E561AA479D70006AE08 /* CoreAudioKit.framework */; };
 		B0892E6F1AA479D70006AE08 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0892E571AA479D70006AE08 /* AudioUnit.framework */; };
-		B0892E7B1AA47ACC0006AE08 /* AudioUnitPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E791AA47ACC0006AE08 /* AudioUnitPlayer.cpp */; };
+		B0892E7B1AA47ACC0006AE08 /* AudioUnitController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E791AA47ACC0006AE08 /* AudioUnitController.cpp */; };
+		B09A59631AAADD1100CAE080 /* AudioUnitFilePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A59611AAADD1100CAE080 /* AudioUnitFilePlayer.cpp */; };
+		B09A59661AAADD4C00CAE080 /* AudioUnitInstrument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A59641AAADD4C00CAE080 /* AudioUnitInstrument.cpp */; };
+		B09A596F1AAC545000CAE080 /* AudioUnitBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A596D1AAC545000CAE080 /* AudioUnitBase.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -97,6 +101,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiSequencer.cpp; sourceTree = "<group>"; };
+		B040FEF81AADD0D800DD432F /* MidiSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiSequencer.h; sourceTree = "<group>"; };
 		B0892DFB1AA479BF0006AE08 /* Bpm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
 		B0892DFC1AA479BF0006AE08 /* Bpm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
 		B0892DFD1AA479BF0006AE08 /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
@@ -173,8 +179,15 @@
 		B0892E551AA479D70006AE08 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = ../../../../../../../System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<group>"; };
 		B0892E561AA479D70006AE08 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = ../../../../../../../System/Library/Frameworks/CoreAudioKit.framework; sourceTree = "<group>"; };
 		B0892E571AA479D70006AE08 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = ../../../../../../../System/Library/Frameworks/AudioUnit.framework; sourceTree = "<group>"; };
-		B0892E791AA47ACC0006AE08 /* AudioUnitPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitPlayer.cpp; sourceTree = "<group>"; };
-		B0892E7A1AA47ACC0006AE08 /* AudioUnitPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitPlayer.h; sourceTree = "<group>"; };
+		B0892E791AA47ACC0006AE08 /* AudioUnitController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitController.cpp; sourceTree = "<group>"; };
+		B0892E7A1AA47ACC0006AE08 /* AudioUnitController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitController.h; sourceTree = "<group>"; };
+		B09A59611AAADD1100CAE080 /* AudioUnitFilePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitFilePlayer.cpp; sourceTree = "<group>"; };
+		B09A59621AAADD1100CAE080 /* AudioUnitFilePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitFilePlayer.h; sourceTree = "<group>"; };
+		B09A59641AAADD4C00CAE080 /* AudioUnitInstrument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitInstrument.cpp; sourceTree = "<group>"; };
+		B09A59651AAADD4C00CAE080 /* AudioUnitInstrument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitInstrument.h; sourceTree = "<group>"; };
+		B09A59671AAADDA100CAE080 /* AudioUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioUnits.h; sourceTree = "<group>"; };
+		B09A596D1AAC545000CAE080 /* AudioUnitBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitBase.cpp; sourceTree = "<group>"; };
+		B09A596E1AAC545000CAE080 /* AudioUnitBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitBase.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -270,6 +283,8 @@
 				B0892E151AA479BF0006AE08 /* Sequence.h */,
 				B0892E161AA479BF0006AE08 /* Sequencer.cpp */,
 				B0892E171AA479BF0006AE08 /* Sequencer.h */,
+				B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */,
+				B040FEF81AADD0D800DD432F /* MidiSequencer.h */,
 			);
 			name = src;
 			path = ../../Control/src;
@@ -365,8 +380,15 @@
 		B0892E721AA479FE0006AE08 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				B0892E791AA47ACC0006AE08 /* AudioUnitPlayer.cpp */,
-				B0892E7A1AA47ACC0006AE08 /* AudioUnitPlayer.h */,
+				B09A59671AAADDA100CAE080 /* AudioUnits.h */,
+				B09A596D1AAC545000CAE080 /* AudioUnitBase.cpp */,
+				B09A596E1AAC545000CAE080 /* AudioUnitBase.h */,
+				B09A59611AAADD1100CAE080 /* AudioUnitFilePlayer.cpp */,
+				B09A59621AAADD1100CAE080 /* AudioUnitFilePlayer.h */,
+				B09A59641AAADD4C00CAE080 /* AudioUnitInstrument.cpp */,
+				B09A59651AAADD4C00CAE080 /* AudioUnitInstrument.h */,
+				B0892E791AA47ACC0006AE08 /* AudioUnitController.cpp */,
+				B0892E7A1AA47ACC0006AE08 /* AudioUnitController.h */,
 			);
 			name = src;
 			path = ../src;
@@ -556,8 +578,10 @@
 				B0892E6C1AA479D70006AE08 /* TPCircularBuffer.c in Sources */,
 				B0892E581AA479D70006AE08 /* AUParamInfo.cpp in Sources */,
 				B0892E601AA479D70006AE08 /* ofxAudioUnitHardwareUtils.cpp in Sources */,
+				B09A59631AAADD1100CAE080 /* AudioUnitFilePlayer.cpp in Sources */,
 				B0892E1B1AA479CE0006AE08 /* GuiColor.cpp in Sources */,
 				B0892E1C1AA479CE0006AE08 /* GuiElement.cpp in Sources */,
+				B09A59661AAADD4C00CAE080 /* AudioUnitInstrument.cpp in Sources */,
 				B0892E1D1AA479CE0006AE08 /* GuiMenu.cpp in Sources */,
 				B0892E1E1AA479CE0006AE08 /* GuiPanel.cpp in Sources */,
 				B0892E641AA479D70006AE08 /* ofxAudioUnitMixer.cpp in Sources */,
@@ -566,16 +590,18 @@
 				B0892E6B1AA479D70006AE08 /* ofxAudioUnitTap.cpp in Sources */,
 				B0892E5D1AA479D70006AE08 /* ofxAudioUnitDSPNode.cpp in Sources */,
 				B0892E1F1AA479CE0006AE08 /* GuiRangeSlider.cpp in Sources */,
+				B040FEF91AADD0D800DD432F /* MidiSequencer.cpp in Sources */,
 				B0892E5E1AA479D70006AE08 /* ofxAudioUnitFftNode.cpp in Sources */,
 				B0892E201AA479CE0006AE08 /* GuiSlider.cpp in Sources */,
 				B0892E5C1AA479D70006AE08 /* ofxAudioUnitCocoaUtilties.mm in Sources */,
 				B0892E651AA479D70006AE08 /* ofxAudioUnitNetReceive.cpp in Sources */,
-				B0892E7B1AA47ACC0006AE08 /* AudioUnitPlayer.cpp in Sources */,
+				B0892E7B1AA47ACC0006AE08 /* AudioUnitController.cpp in Sources */,
 				B0892E691AA479D70006AE08 /* ofxAudioUnitSampler.cpp in Sources */,
 				B0892E671AA479D70006AE08 /* ofxAudioUnitOutput.cpp in Sources */,
 				B0892E5B1AA479D70006AE08 /* ofxAudioUnit.cpp in Sources */,
 				B0892E211AA479CE0006AE08 /* GuiWidget.cpp in Sources */,
 				B0892E5F1AA479D70006AE08 /* ofxAudioUnitFilePlayer.cpp in Sources */,
+				B09A596F1AAC545000CAE080 /* AudioUnitBase.cpp in Sources */,
 				B0892E221AA479CE0006AE08 /* GuiWidgetBase.cpp in Sources */,
 				B0892E231AA479CE0006AE08 /* Sequence.cpp in Sources */,
 				B0892E241AA479CE0006AE08 /* Sequencer.cpp in Sources */,

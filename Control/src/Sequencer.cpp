@@ -16,10 +16,17 @@ Sequencer::SequenceElementPair::~SequenceElementPair()
     delete sequence;
 }
 
-void Sequencer::SequenceElementPair::updateElementFromSequencer()
+void Sequencer::SequenceElementPair::setElementFromSequence()
 {
     if (linked && sequence->getActive()) {
         element->setValueFromSequence(*sequence);
+    }
+}
+
+void Sequencer::SequenceElementPair::setSequenceFromElement(int column)
+{
+    if (linked) {
+        element->setSequenceFromValue(*sequence, column);
     }
 }
 
@@ -109,7 +116,7 @@ void Sequencer::SequenceGroupPair::updateWidgetFromSequencer()
     else
     {
         for (auto p : pairs) {
-            p->updateElementFromSequencer();
+            p->setElementFromSequence();
         }
     }
 }
@@ -357,6 +364,16 @@ void Sequencer::selectColumn(int column)
     }
 }
 
+void Sequencer::setColumnToCurrentValues(int column)
+{
+    for (auto p : sequencePairs)
+    {
+        for (auto &e : p->getElementPairs()) {
+            e->setSequenceFromElement(column);
+        }
+    }
+}
+
 void Sequencer::next()
 {
     bpmTime = ofGetElapsedTimeMillis();
@@ -479,6 +496,11 @@ bool Sequencer::keyPressed(int key)
         else if (key >= 49 && key <= 57)
         {
             selectColumn(key-49);
+            return true;
+        }
+        else if (key == OF_KEY_RETURN && rectSelectColumnMouseOver != -1)
+        {
+            setColumnToCurrentValues(rectSelectColumnMouseOver);
             return true;
         }
     }

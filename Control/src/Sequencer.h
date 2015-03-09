@@ -48,7 +48,8 @@ private:
         Sequence * getSequence() {return sequence;}
         GuiElement * getElement() {return element;}
         
-        void updateElementFromSequencer();
+        void setElementFromSequence();
+        void setSequenceFromElement(int column);
         void lerpWidgetToSequencer(int lerpNumFrames);
     
     private:
@@ -107,6 +108,7 @@ private:
     void setAllSequencersActive(bool allSequencesActive);
     void randomizeSequencer();
     void selectColumn(int column);
+    void setColumnToCurrentValues(int column);
     void next();
 
     void eventSequencerMenuSelection(GuiElementEventArgs & evt);
