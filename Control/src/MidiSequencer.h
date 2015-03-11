@@ -9,13 +9,13 @@
 
 
 
-
 struct GuiMidiEventArgs
 {
     int type;
     int note;
     int velocity;
-    GuiMidiEventArgs(int type, int note, int velocity) {
+    GuiMidiEventArgs(int type, int note, int velocity)
+    {
         this->type = type;
         this->note = note;
         this->velocity = velocity;
@@ -26,77 +26,31 @@ struct GuiMidiEventArgs
 class MidiSequencerEvent : public GuiElement
 {
 public:
-    MidiSequencerEvent(int row, float t1, float t2, int velocity) : GuiElement("")
-    {
-        this->t1 = t1;
-        this->t2 = t2;
-        this->row = row;
-        this->velocity = velocity;
-        
-        setAutoDraw(false);
-        setAutoUpdate(false);
-        
-        expired = false;
-        on = false;
-    }
+    MidiSequencerEvent(int row, int velocity, int start, int end);
     
-    void setBeginning(float t1) {
-        this->t1 = t1;
-    }
+    void setRow(float row) {this->row = row;}
+    void setVelocity(float velocity) {this->velocity = velocity;}
+    void setStart(int start) {this->start = start;}
+    void setEnd(int end) {this->end = end;}
 
-    void setEnd(float t2) {
-        this->t2 = t2;
-        cout << "set t1 " << t1 << " " << t2 << endl;
-    }
-
-    void setRow(float row) {
-        this->row = row;
-    }
-    
-    void setVelocity(float velocity) {
-        this->velocity = velocity;
-    }
-    
-    float getBeginning() {return t1;}
-    float getEnd() {return t2;}
     int getRow() {return row;}
     int getVelocity() {return velocity;}
-
-    void setOn(bool on) {this->on = on;}
-    bool getOn() {return on;}
-    
-    void checkNote(double t) {
-
-        if (!expired) {
-            if (t >= t1 && t <= t2) {
-                cout << "FIRE NOTE " << row << " " <<velocity << endl;
-                on = true;
-            }
-            else {
-                if (on) {
-                    cout << "DONE " << row << " " <<velocity << endl;
-                    on = false;
-                    expired = true;
-                }
-            }
-        }
-    }
-    
-    void draw()
-    {
-        ofRect(rectangle);
-    }
+    int getStart() {return start;}
+    int getEnd() {return end;}
 
     bool mouseMoved(int mouseX, int mouseY);
     bool mousePressed(int mouseX, int mouseY);
     bool mouseDragged(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
 
-    float t1, t2;
+    void draw();
+    
+private:
+    
+    int start;
+    int end;
     int row;
     int velocity;
-    
-    bool on, expired;
 };
 
 
@@ -106,6 +60,12 @@ public:
     MidiSequencer(string name);
     ~MidiSequencer();
     
+    void setActive(bool active);
+    void setNumberRows(int rows);
+    void setNumberBeats(int numBeats);
+    
+    void addMidiEvent(int row, int velocity, int start, int end);
+    void removeEvent(MidiSequencerEvent *event);
     
     void update();
     void draw();
@@ -114,27 +74,31 @@ public:
     bool mousePressed(int mouseX, int mouseY);
     bool mouseDragged(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
+    bool keyPressed(int key);
     
     ofEvent<GuiMidiEventArgs> midiEvent;
-    
+
 private:
     
+    void eventBeat();
     void setupGuiComponents();
     
-    
-    long time;
-    long period;
-    double tt;
-    
+    void setMidiEventRectangle(MidiSequencerEvent* event);
     
     int rows;
     float rowHeight;
     
-    
-    vector<MidiSequencerEvent*> events;
     MidiSequencerEvent *newEvent;
+    MidiSequencerEvent *selectedEvent;
+    vector<MidiSequencerEvent*> events;
+    vector<vector<MidiSequencerEvent*> > midiOnEvents;
+    vector<vector<MidiSequencerEvent*> > midiOffEvents;
     
-    
-    
+    Bpm clock;
+    float dt = 0.1f;
+    float period = 36.0f;
+    int numBeats;
+    int beat;
+    bool active;
 };
 
