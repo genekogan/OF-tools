@@ -3,10 +3,11 @@
 #include "ofBitmapFont.h"
 #include "Parameter.h"
 #include "GuiElement.h"
+#include "GuiWidgetBase.h"
 #include "Sequence.h"
 
 
-class Gui2dPad : public GuiElement
+class Gui2dPad : public GuiWidgetBase
 {
 public:
     Gui2dPad(Parameter<ofPoint> *parameter);
@@ -27,6 +28,7 @@ public:
     void addPoint(Parameter<ofPoint> *parameter);
     void addPoint(ofPoint *value);
     void addPoint();
+    void removePoint(int idx);
     
     bool getDrawConnectedPoints() {return connectPoints;}
     void setDrawConnectedPoints(bool connectPoints) {this->connectPoints = connectPoints;}
@@ -49,9 +51,27 @@ public:
     void draw();
     
     
+    ///////
+    void getXml(ofXml &xml) {
+        ofXml xmlPoints;
+  //      xmlPoints.addChild("Points");
+    //    xmlPoints.setTo("Points");
+
+        xml.addValue("Name", getName());
+//        xml.addXml(xmlPoints);
+       // xml.addValue<float>("value", getValue());
+    }
+    void setFromXml(ofXml &xml) {
+
+    }
+    
+    //////
+
+    
 protected:
     
     void setupPad();
+    void setupGuiPositions();
     void choosePoint(float x, float y);
     void updateValueString();
     
@@ -67,11 +87,14 @@ protected:
     bool toUpdateValueString;
     float valueStringWidth, stringHeight;
     bool connectPoints;
+    
+    ofRectangle padRectangle;
+    bool mouseOverPad;
 };
 
 
 template<typename L, typename M>
-Gui2dPad::Gui2dPad(Parameter<ofPoint> *parameter, L *listener, M method) : GuiElement(parameter->getName())
+Gui2dPad::Gui2dPad(Parameter<ofPoint> *parameter, L *listener, M method) : GuiWidgetBase(parameter->getName())
 {
     parameters.push_back(parameter);
     padValue.push_back(ofPoint(ofClamp((parameter->get().x - parameter->getMin().x) / (parameter->getMax().x - parameter->getMin().x), 0.0, 1.0),
@@ -82,7 +105,7 @@ Gui2dPad::Gui2dPad(Parameter<ofPoint> *parameter, L *listener, M method) : GuiEl
 }
 
 template<typename L, typename M>
-Gui2dPad::Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method) : GuiElement(name)
+Gui2dPad::Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *listener, M method) : GuiWidgetBase(name)
 {
     Parameter<ofPoint> *parameter = new Parameter<ofPoint>(name, value, min, max);
     parameters.push_back(parameter);
@@ -94,7 +117,7 @@ Gui2dPad::Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max, L *lis
 }
 
 template<typename L, typename M>
-Gui2dPad::Gui2dPad(string name, ofPoint min, ofPoint max, L *listener, M method) : GuiElement(name)
+Gui2dPad::Gui2dPad(string name, ofPoint min, ofPoint max, L *listener, M method) : GuiWidgetBase(name)
 {
     this->min = min;
     this->max = max;

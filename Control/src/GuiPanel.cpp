@@ -1,14 +1,16 @@
 #include "GuiPanel.h"
 
 
-GuiPanel::GuiPanel(string name) : GuiWidget(name)
-{
-    initialize();
-}
-
 GuiPanel::GuiPanel() : GuiWidget()
 {
-    initialize();
+    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
+    controlRow = false;
+    sequencerMade = false;
+    hasParent = false;
+    bOsc = false;
+    bSeq = false;
+    bXml = false;
+    enableControlRow();
 }
 
 GuiPanel::~GuiPanel()
@@ -16,90 +18,98 @@ GuiPanel::~GuiPanel()
     if (controlRow) {
         disableControlRow();
     }
-    
-    if (bSeq) {
-        delete sequencer;
-    }
 }
 
-void GuiPanel::initialize()
+void GuiPanel::setPosition(int x, int y)
 {
-    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
-    bOsc = false;
-    bSeq = false;
-    bXml = false;
-    enableControlRow();
+    GuiWidget::setPosition(x, y);
+    if (controlRow) {
+        meta->setPosition(rectangle.x + rectangle.width + 4, rectangle.y);
+    }
 }
 
 void GuiPanel::enableControlRow()
 {
-    controlRow = true;
-    
-    controllerHeight = GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT;
-    
-    tOsc = new GuiToggle("osc", &bOsc);
-    tSeq = new GuiToggle("seq", &bSeq, this, &GuiPanel::eventToggleSequencer);
-    tXml = new GuiToggle("xml", &bXml);
-    tOsc->setParent(this);
-    tSeq->setParent(this);
-    tXml->setParent(this);
-    tOsc->setAutoUpdate(false);
-    tSeq->setAutoUpdate(false);
-    tXml->setAutoUpdate(false);
-    tOsc->setAutoDraw(false);
-    tSeq->setAutoDraw(false);
-    tXml->setAutoDraw(false);
+    if (!controlRow)
+    {
+        controlRow = true;
+        controllerHeight = GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT;
+        
+        tOsc = new GuiToggle("osc", &bOsc);
+        tSeq = new GuiToggle("seq", &bSeq, this, &GuiPanel::eventToggleSequencer);
+        tXml = new GuiToggle("xml", &bXml);
+        tOsc->setParent(this);
+        tSeq->setParent(this);
+        tXml->setParent(this);
+        tOsc->setAutoUpdate(false);
+        tSeq->setAutoUpdate(false);
+        tXml->setAutoUpdate(false);
+        tOsc->setAutoDraw(false);
+        tSeq->setAutoDraw(false);
+        tXml->setAutoDraw(false);
+        
+        sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
+        sequencer->setParent(this);
+        sequencer->setAutoUpdate(false);
+        sequencer->setAutoDraw(false);
+        addBoundWidget(sequencer);
+
+        meta = new GuiWidget("Meta");
+        meta->setParent(this);
+        meta->setPosition(rectangle.x + rectangle.width + 4, rectangle.y);
+        meta->setAutoUpdate(false);
+        meta->setAutoDraw(false);
+
+        meta->addButton("save me", this, &GuiPanel::savePresetPrompt);
+        meta->addButton("load me", this, &GuiPanel::loadPresetPrompt);
+    }
 }
 
 void GuiPanel::disableControlRow()
 {
-    controlRow = false;
-    controllerHeight = 0;
-    delete tOsc;
-    delete tSeq;
-    delete tXml;
-}
+    if (controlRow)
+    {
+        controlRow = false;
+        controllerHeight = 0;
+        
+        removeBoundWidget(sequencer);
+        
+        bOsc = false;
+        bSeq = false;
+        bXml = false;
 
+        delete tOsc;
+        delete tSeq;
+        delete tXml;
+        
+        delete meta;
+        delete sequencer;
+    }
+}
 
 GuiWidget * GuiPanel::addWidget(string name)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
     GuiWidget * widget = new GuiWidget(name);
-    widget->setParent(this);
-    elementGroup->addElement(widget);
-    setupElementGroup(elementGroup);
-    ofAddListener(widget->widgetChanged, this, &GuiPanel::eventWidgetChanged);
+    addWidget(widget);
     return widget;
 }
 
 void GuiPanel::addWidget(GuiWidget *widget)
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
+    widget->disableControlRow();
+    widget->setAddress(getAddress()+widget->getAddress());
     widget->setParent(this);
     elementGroup->addElement(widget);
     setupElementGroup(elementGroup);
     ofAddListener(widget->widgetChanged, this, &GuiPanel::eventWidgetChanged);
 }
 
-void GuiPanel::enableSequencer()
+void GuiPanel::setupGuiPositions()
 {
-    bSeq = true;
-    sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
-    sequencer->setParent(this);
-    sequencer->setAutoUpdate(false);
-    sequencer->setAutoDraw(false);
-}
-
-void GuiPanel::disableSequencer()
-{
-    bSeq = false;
-    delete sequencer;
-}
-
-void GuiPanel::setupGuiComponents()
-{
-    GuiWidget::setupGuiComponents();
-    if (controlRow) {
+    GuiWidget::setupGuiPositions();
+    if (controlRow)
+    {
         int width = rectangle.width / 3.0;
         tOsc->setRectangle(rectangle.x + 4, rectangle.y + headerHeight + 5, width - 8, 15);
         tSeq->setRectangle(rectangle.x + 4 + width, rectangle.y + headerHeight + 5, width - 8, 15);
@@ -110,13 +120,17 @@ void GuiPanel::setupGuiComponents()
 void GuiPanel::update()
 {
     GuiWidget::update();
-    if (controlRow) {
+    if (controlRow)
+    {
         tOsc->update();
         tSeq->update();
         tXml->update();
     }
-    if (bSeq) {
+    if (sequencerMade) {
         sequencer->update();
+    }
+    if (bXml) {
+        meta->update();
     }
 }
 
@@ -144,6 +158,10 @@ void GuiPanel::draw()
         if (bSeq) {
             sequencer->draw();
         }
+        
+        if (bXml) {
+            meta->draw();
+        }
     }
     
     ofPopStyle();
@@ -159,6 +177,9 @@ bool GuiPanel::mouseMoved(int mouseX, int mouseY)
     if (bSeq) {
         if (sequencer->mouseMoved(mouseX, mouseY)) return true;
     }
+    if (bXml) {
+        if (meta->mouseMoved(mouseX, mouseY)) return true;
+    }
     return GuiWidget::mouseMoved(mouseX, mouseY);
 }
 
@@ -171,6 +192,9 @@ bool GuiPanel::mousePressed(int mouseX, int mouseY)
     }
     if (bSeq) {
         if (sequencer->mousePressed(mouseX, mouseY)) return true;
+    }
+    if (bXml) {
+        if (meta->mousePressed(mouseX, mouseY)) return true;
     }
     return GuiWidget::mousePressed(mouseX, mouseY);
 }
@@ -185,6 +209,9 @@ bool GuiPanel::mouseDragged(int mouseX, int mouseY)
     if (bSeq) {
         if (sequencer->mouseDragged(mouseX, mouseY)) return true;
     }
+    if (bXml) {
+        if (meta->mouseDragged(mouseX, mouseY)) return true;
+    }
     return GuiWidget::mouseDragged(mouseX, mouseY);
 }
 
@@ -197,6 +224,9 @@ bool GuiPanel::mouseReleased(int mouseX, int mouseY)
     }
     if (bSeq) {
         if (sequencer->mouseReleased(mouseX, mouseY)) return true;
+    }
+    if (bXml) {
+        if (meta->mouseReleased(mouseX, mouseY)) return true;
     }
     return GuiWidget::mouseReleased(mouseX, mouseY);
 }
@@ -211,20 +241,22 @@ bool GuiPanel::keyPressed(int key)
     if (bSeq) {
         if (sequencer->keyPressed(key)) return true;
     }
+    if (bXml) {
+        if (meta->keyPressed(key)) return true;
+    }
     return GuiWidget::keyPressed(key);
-}
-
-void GuiPanel::eventWidgetChanged(string & s)
-{
-    setupGuiComponents();
 }
 
 void GuiPanel::eventToggleSequencer(GuiElementEventArgs &e)
 {
-    if (bSeq) {
-        enableSequencer();
+    if (!sequencerMade)
+    {
+        sequencer->resetSequencerElements();
+        sequencerMade = true;
     }
-    else {
-        disableSequencer();
-    }
+}
+
+void GuiPanel::eventWidgetChanged(string & s)
+{
+    setupGuiPositions();
 }

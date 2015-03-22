@@ -27,9 +27,6 @@ void ofApp::setup(){
     menu2->addToggle("suesday piphoplok");
     menu2->addToggle("suwati lok");
     
-
-    // enable sequencer (can be done through gui also)
-    panel.enableSequencer();
 }
 
 //--------------------------------------------------------------

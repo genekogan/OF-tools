@@ -1,6 +1,12 @@
 #include "Sequence.h"
 
 
+Sequence::SequenceKeyboardEventArgs::SequenceKeyboardEventArgs(int column, float value)
+{
+    this->column = column;
+    this->value = value;
+}
+
 Sequence::Sequence(string name, int numCells) : GuiElement(name)
 {
     setSize(numCells);
@@ -28,7 +34,7 @@ void Sequence::setupSequence()
     mouseOverSequencer = false;
 }
 
-void Sequence::setupGuiComponents()
+void Sequence::setupGuiPositions()
 {
     activeRectangle = ofRectangle(rectangle.x, rectangle.y + rectangle.height / 8, rectangle.height - rectangle.height / 4, rectangle.height - rectangle.height / 4);
     sequenceRectangle = ofRectangle(rectangle.x + rectangle.height, rectangle.y, rectangle.width - rectangle.height, rectangle.height);
@@ -161,7 +167,39 @@ bool Sequence::mouseDragged(int mouseX, int mouseY)
 
 bool Sequence::keyPressed(int key)
 {
-    return mouseOver;
+    GuiElement::keyPressed(key);
+    if (mouseOverSequencer)
+    {
+        if (key == 46 || (key >= 48 && key <= 57))
+        {
+            if (editing) {
+                editingValue += key;
+            }
+            else
+            {
+                editing = true;
+                editingValue = key;
+            }
+            return true;
+        }
+        else if (key == ' ')
+        {
+            if (getDiscrete())
+            {
+                setValueAtCell(activeCell, 1.0 - values[activeCell]);
+                GuiElementEventArgs args(name, activeCell, values[activeCell]);
+                ofNotifyEvent(elementEvent, args, this);
+            }
+        }
+        else if (key == OF_KEY_RETURN)
+        {
+            SequenceKeyboardEventArgs args(activeCell, ofToFloat(editingValue));
+            ofNotifyEvent(keyboardEvent, args, this);
+            editingValue = "";
+            return true;
+        }
+    }
+    return false;
 }
 
 void Sequence::update()
@@ -179,7 +217,7 @@ void Sequence::draw()
     
     if (mouseOverActive)
     {
-        ofSetColor(colorActive);
+        ofSetColor(editing ? GUI_DEFAULT_COLOR_ACTIVE_EDIT : colorActive);
         ofNoFill();
         ofSetLineWidth(2);
         ofCircle(activeRectangle.x + activeRectangle.width / 2, activeRectangle.y + activeRectangle.height / 2, activeRectangle.width / 2);

@@ -27,22 +27,44 @@ public:
     bool isDiscrete() {return true;}
 
     void setTriggerAll(bool triggerAll);
+    void setLeftJustified(bool leftJustified) {this->leftJustified = leftJustified;}
     
     bool getValue();
     void setValue(bool value, bool sendChangeNotification=false);
-    void setValueFromSequence(Sequence &sequence);
-    void setSequenceFromValue(Sequence &sequence, int column);
+
     void lerpTo(float nextValue, int numFrames);
+    
+    int getMenuIndex() {return menuIndex;}
+    void setMenuIndex(int menuIndex) {this->menuIndex = menuIndex;}
     
     virtual void update();
     virtual void draw();
     
+    
+    ///////
+    void getXml(ofXml &xml) {
+        xml.addValue("Name", getName());
+        xml.addValue<bool>("Value", getValue());
+    }
+    void setFromXml(ofXml &xml) {
+        setValue(xml.getValue<bool>("Value"), true);
+    }
+    
+    //////
+
+    
 protected:
     
     void setupButton();
-    
+
+    void setValueFromSequence(Sequence &sequence);
+    void setSequenceFromValue(Sequence &sequence, int column);
+    void setSequenceFromExplicitValue(Sequence &sequence, int column, float value);
+
     Parameter<bool> *parameter;
+    int menuIndex;
     float stringWidth, stringHeight;
+    bool leftJustified;
     
     float lerpNextValue;;
     int lerpFrame, lerpNumFrames;

@@ -25,9 +25,23 @@ public:
     void lerpTo(float nextValue, int numFrames);
     void setValueFromSequence(Sequence &sequence);
     void setSequenceFromValue(Sequence &sequence, int column);
-    
+
     virtual void update();
     virtual void draw();
+    
+    
+    ///////
+    void getXml(ofXml &xml)
+    {
+        xml.addValue("Name", getName());
+        xml.addValue<float>("Value", getValue());
+    }
+    void setFromXml(ofXml &xml)
+    {
+        setValue(xml.getValue<float>("Value"));
+    }
+    
+    //////
     
 protected:
     
@@ -37,6 +51,7 @@ protected:
     virtual void decrement() { }
     virtual void increment() { }
     
+    virtual void setSequenceFromExplicitValue(Sequence &sequence, int column, float value) { }
     virtual void setParameterValueFromString(string valueString) { }
     virtual string getParameterValueString() { }
     virtual void updateValueString() { }
@@ -81,6 +96,7 @@ private:
     void decrement();
     void increment();
     
+    void setSequenceFromExplicitValue(Sequence &sequence, int column, float value);
     void setParameterValueFromString(string valueString);
     string getParameterValueString() {return ofToString(parameter->get(), 2);}
     void updateValueString();
@@ -153,7 +169,7 @@ void GuiSlider<T>::setParameterValue(T value)
     parameter->set(value);
     sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
     updateValueString();
-    adjustSliderValue();
+    adjustSliderValue();    // this can just be an inline int for setValue<int> instead
     GuiElementEventArgs args(name, 0, (float) parameter->get());
     ofNotifyEvent(elementEvent, args, this);
 }
@@ -184,6 +200,13 @@ void GuiSlider<T>::increment()
 template<> inline void GuiSlider<int>::increment()
 {
     setParameterValue(ofClamp(getParameterValue() + 1, parameter->getMin(), parameter->getMax()));
+}
+
+template<typename T>
+void GuiSlider<T>::setSequenceFromExplicitValue(Sequence &sequence, int column, float value)
+{
+    float sequenceValue = ofClamp((float) (value - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
+    sequence.setValueAtCell(column, sequenceValue);
 }
 
 template<typename T>

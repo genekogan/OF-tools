@@ -92,6 +92,13 @@ void ofApp::setup(){
     // setAutoDraw toggles automatic drawing -- if false, you are responsible for drawing widget
     //panel.setAutoUpdate(false);
     //panel.setAutoDraw(false);
+    
+    
+
+    
+
+    //ofExit();
+    
 }
 
 //--------------------------------------------------------------
@@ -102,7 +109,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 100);
+    ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 60);
+    ofCircle(600, 500, 100);
 }
 
 //--------------------------------------------------------------

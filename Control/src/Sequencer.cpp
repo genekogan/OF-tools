@@ -8,7 +8,7 @@ Sequencer::SequenceElementPair::SequenceElementPair(GuiElement *element)
     sequence->setAutoUpdate(false);
     sequence->setAutoDraw(false);
     sequence->setDiscrete(element->isDiscrete());
-    linked = true;
+    ofAddListener(sequence->keyboardEvent, this, &SequenceElementPair::eventSetSequenceFromKey);
 }
 
 Sequencer::SequenceElementPair::~SequenceElementPair()
@@ -18,23 +18,26 @@ Sequencer::SequenceElementPair::~SequenceElementPair()
 
 void Sequencer::SequenceElementPair::setElementFromSequence()
 {
-    if (linked && sequence->getActive()) {
+    if (sequence->getActive()) {
         element->setValueFromSequence(*sequence);
     }
 }
 
 void Sequencer::SequenceElementPair::setSequenceFromElement(int column)
 {
-    if (linked) {
-        element->setSequenceFromValue(*sequence, column);
-    }
+    element->setSequenceFromValue(*sequence, column);
 }
 
 void Sequencer::SequenceElementPair::lerpWidgetToSequencer(int lerpNumFrames)
 {
-    if (linked && sequence->getActive()) {
+    if (sequence->getActive()) {
         element->lerpTo(sequence->getValueAtCurrentCursor(), lerpNumFrames);
     }
+}
+
+void Sequencer::SequenceElementPair::eventSetSequenceFromKey(Sequence::SequenceKeyboardEventArgs & s)
+{
+    element->setSequenceFromExplicitValue(*sequence, s.column, s.value);
 }
 
 Sequencer::SequenceGroupPair::SequenceGroupPair(GuiElementGroup *elementGroup, GuiWidgetBase *parent)
@@ -95,7 +98,8 @@ void Sequencer::SequenceGroupPair::randomizeSequence(float density, float range)
             }
         }
     }
-    else {
+    else
+    {
         for (auto p : pairs) {
             p->getSequence()->randomize(density, range);
         }
@@ -158,7 +162,7 @@ Sequencer::Sequencer(string name, GuiWidgetBase * panel, int numCols) : GuiWidge
     lerpNumFrames = 1;
 
     ofAddListener(panel->elementDeletedEvent, this, &Sequencer::eventElementDeleted);
-    getElementGroupsFromWidget(panel);
+    //getElementGroupsFromWidget(panel);
     setupSequencer();
     
     setList(false);
@@ -193,6 +197,17 @@ Sequencer::~Sequencer()
     removeElementGroupsFromWidget(panel);
 }
 
+void Sequencer::resetSequencerElements()
+{
+    
+    // TODO :: unsafe, can happen multiple times?
+    
+    
+    cout << "RESET " << endl;
+    getElementGroupsFromWidget(panel);
+    setupGuiPositions();
+}
+
 void Sequencer::getElementGroupsFromWidget(GuiWidgetBase * widget)
 {
     vector<GuiElementGroup*> &groups = widget->getElementGroups();
@@ -209,8 +224,11 @@ void Sequencer::getElementGroupsFromWidget(GuiWidgetBase * widget)
                 newGroup->addElement(element);
             }
         }
-        if (newGroup->getElements().size() > 0) {
-            sequencePairs.push_back(new SequenceGroupPair(newGroup, widget));
+        if (newGroup->getElements().size() > 0)
+        {
+            SequenceGroupPair *newPair = new SequenceGroupPair(newGroup, widget);
+            newPair->setNumberColumns(numCols);
+            sequencePairs.push_back(newPair);
         }
     }
     ofAddListener(widget->widgetChanged, this, &Sequencer::eventWidgetCollapsed);
@@ -259,7 +277,7 @@ void Sequencer::setupSequencer()
     ofAddListener(sNumCol->elementEvent, this, &Sequencer::eventNumColumns);
 }
 
-void Sequencer::setupGuiComponents()
+void Sequencer::setupGuiPositions()
 {
     setupSequencesFromPanel();
     
@@ -271,15 +289,18 @@ void Sequencer::setupGuiComponents()
     sNumCol->setRectangle(rectangle.x + 287, rectangle.y + marginInner+2,  56, 15);
     bRandom->setRectangle(rectangle.x + 348, rectangle.y + marginInner+2,  14, 15);
     
-    ofRectangle rectTopSeq = sequencePairs[0]->getElementPairs()[0]->getSequence()->getSequenceRectangle();
-    rectSelectColumnMouseOver = -1;
-    rectToggleAllSeqMouseOver = false;
-    bToggleAllSequencers.set(rectangle.x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.height, rectTopSeq.height);
-    bColumnSelectors.resize(numCols);
-    for (int i = 0; i < numCols; i++)
+    if (sequencePairs.size() > 0)
     {
-        float x = ofMap(i + 0.15, 0, numCols, rectTopSeq.x, rectTopSeq.x + rectTopSeq.width);
-        bColumnSelectors[i].set(x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.width * 0.7 / numCols, rectTopSeq.height * 0.7);
+        ofRectangle rectTopSeq = sequencePairs[0]->getElementPairs()[0]->getSequence()->getSequenceRectangle();
+        rectSelectColumnMouseOver = -1;
+        rectToggleAllSeqMouseOver = false;
+        bToggleAllSequencers.set(rectangle.x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.height, rectTopSeq.height);
+        bColumnSelectors.resize(numCols);
+        for (int i = 0; i < numCols; i++)
+        {
+            float x = ofMap(i + 0.15, 0, numCols, rectTopSeq.x, rectTopSeq.x + rectTopSeq.width);
+            bColumnSelectors[i].set(x, rectTopSeq.y - rectTopSeq.height, rectTopSeq.width * 0.7 / numCols, rectTopSeq.height * 0.7);
+        }
     }
 }
 
@@ -328,7 +349,7 @@ void Sequencer::setNumberColumns(int numCols)
     for (auto p : sequencePairs) {
         p->setNumberColumns(numCols);
     }
-    setupGuiComponents();
+    setupGuiPositions();
 }
 
 void Sequencer::randomizeSequencer()
@@ -614,7 +635,7 @@ void Sequencer::eventActive(GuiElementEventArgs &b)
 
 void Sequencer::eventWidgetCollapsed(string &s)
 {
-    setupGuiComponents();
+    setupGuiPositions();
 }
 
 void Sequencer::eventRandomizeSequencer(GuiElementEventArgs &b)
@@ -642,6 +663,13 @@ void Sequencer::eventSequencerMenuSelection(GuiElementEventArgs & evt)
     }
 }
 
+
+
+
+//////////////////
+/////
+// TODO: fix this
+
 void Sequencer::eventElementDeleted(GuiElement * &elementToDelete)
 {
     vector<SequenceGroupPair*>::iterator itg = sequencePairs.begin();
@@ -661,5 +689,5 @@ void Sequencer::eventElementDeleted(GuiElement * &elementToDelete)
         }
         ++itg;
     }
-    setupGuiComponents();
+    setupGuiPositions();
 }

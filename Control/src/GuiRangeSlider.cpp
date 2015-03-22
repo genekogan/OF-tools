@@ -38,7 +38,7 @@ void GuiRangeSliderBase::setValue(float sliderValue)
 {
     if (selection == MIDDLE)
     {
-        float diff = sliderValue - sliderValuePrev;
+        float diff = ofClamp(sliderValue - sliderValuePrev, -sliderLow, 1.0 - sliderHigh);
         setValueLow(sliderLow + diff);
         setValueHigh(sliderHigh + diff);
         sliderValuePrev = sliderValue;
@@ -80,7 +80,6 @@ void GuiRangeSliderBase::lerpTo(float nextLow, float nextHigh, int numFrames)
         setValueHigh(nextHigh);
     }
 }
-
 
 void GuiRangeSliderBase::setValueFromSequence(Sequence &sequence)
 {

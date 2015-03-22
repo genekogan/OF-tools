@@ -21,7 +21,7 @@ public:
     virtual ofxAudioUnit * getAudioUnit() { }
 
     GuiPanel & getGuiPanel() {return panel;}
-    void setGuiPosition(int x, int y) {panel.setPosition(x, y);}
+    virtual void setGuiPosition(int x, int y) {panel.setPosition(x, y);}
 
 protected:
 

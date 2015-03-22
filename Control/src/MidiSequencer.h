@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "GuiSlider.h"
+#include "GuiRangeSlider.h"
 #include "GuiWidgetBase.h"
 #include "GuiMenu.h"
 #include "Bpm.h"
@@ -9,96 +10,128 @@
 
 
 
-struct GuiMidiEventArgs
+struct MidiEventArgs
 {
     int type;
     int note;
     int velocity;
-    GuiMidiEventArgs(int type, int note, int velocity)
-    {
-        this->type = type;
-        this->note = note;
-        this->velocity = velocity;
-    }
-};
-
-
-class MidiSequencerEvent : public GuiElement
-{
-public:
-    MidiSequencerEvent(int row, int velocity, int start, int end);
-    
-    void setRow(float row) {this->row = row;}
-    void setVelocity(float velocity) {this->velocity = velocity;}
-    void setStart(int start) {this->start = start;}
-    void setEnd(int end) {this->end = end;}
-
-    int getRow() {return row;}
-    int getVelocity() {return velocity;}
-    int getStart() {return start;}
-    int getEnd() {return end;}
-
-    bool mouseMoved(int mouseX, int mouseY);
-    bool mousePressed(int mouseX, int mouseY);
-    bool mouseDragged(int mouseX, int mouseY);
-    bool mouseReleased(int mouseX, int mouseY);
-
-    void draw();
-    
-private:
-    
-    int start;
-    int end;
-    int row;
-    int velocity;
+    MidiEventArgs(int type, int note, int velocity);
 };
 
 
 class MidiSequencer : public GuiWidgetBase
 {
 public:
+
+    class MidiSequencerEvent : public GuiElement
+    {
+    public:
+        MidiSequencerEvent(int note, int velocity, int start, int end);
+        void draw();
+        int start, end;
+        int note, velocity;
+    };
+
     MidiSequencer(string name);
     ~MidiSequencer();
     
+    void setBpm(int bpm);
+    void setPeriod(int measures);
     void setActive(bool active);
-    void setNumberRows(int rows);
-    void setNumberBeats(int numBeats);
-    
-    void addMidiEvent(int row, int velocity, int start, int end);
-    void removeEvent(MidiSequencerEvent *event);
-    
-    void update();
+    void setNoteDisplayRange(int noteMin, int noteMax);
+    void setTimeDisplayRange(float start, float end);
+
     void draw();
-    
+
     bool mouseMoved(int mouseX, int mouseY);
     bool mousePressed(int mouseX, int mouseY);
     bool mouseDragged(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
     bool keyPressed(int key);
     
-    ofEvent<GuiMidiEventArgs> midiEvent;
+    ofEvent<MidiEventArgs> midiEvent;
 
 private:
+
+    enum MidiEventMouseMode { MIDDLE, LEFT, RIGHT, TOP, BOTTOM };
+    
+    MidiSequencerEvent * addMidiEvent(int row, int velocity, int start, int end);
+    void removeSelectedEvents();
+    void removeEvent(MidiSequencerEvent *event, bool toDelete=true);
+    void repositionMidiEvent(MidiSequencerEvent* event);
+    
+    void setNumberBeats(int numBeats);
+    
+    void setupKeys();
+    void setupGuiPositions();
+    void setMidiEventRectangle(MidiSequencerEvent *event);
+    
+    void drawGrid();
+    void drawKeyboard();
+    void drawVelocity();
+    void drawToolbar();
     
     void eventBeat();
-    void setupGuiComponents();
+    void eventSelectRoot(GuiElementEventArgs &e);
+    void eventSelectKey(GuiElementEventArgs &e);
+    void eventPlay(GuiElementEventArgs &e);
+    void eventPause(GuiElementEventArgs &e);
+    void eventStop(GuiElementEventArgs &e);
+    void eventSetBpm(GuiElementEventArgs &e);
+    void eventSetPeriod(GuiElementEventArgs &e);
+    void eventSetTimeView(GuiElementEventArgs &e);
     
-    void setMidiEventRectangle(MidiSequencerEvent* event);
-    
-    int rows;
-    float rowHeight;
+    GuiMenu *keySelect;
+    GuiMenu *rootSelect;
+    GuiButton *play, *pause, *stop, *clear;
+    GuiSlider<int> *sBpm, *sPeriod;
+    GuiRangeSlider<float> *rTime;
     
     MidiSequencerEvent *newEvent;
-    MidiSequencerEvent *selectedEvent;
+    MidiSequencerEvent *selectedEvent, *mouseOverEvent;
     vector<MidiSequencerEvent*> events;
     vector<vector<MidiSequencerEvent*> > midiOnEvents;
     vector<vector<MidiSequencerEvent*> > midiOffEvents;
     
+    int numRows;
+    float rowHeight, colWidth;
+    int noteMin, noteMax;
+    float start, end;
+
+    int root, key;
+    map<int, bool> rootIsMajor;
+    map<int, bool> rootIsMinor;
+    
     Bpm clock;
-    float dt = 0.1f;
-    float period = 36.0f;
+    int bpm;
+    int measures;
     int numBeats;
     int beat;
     bool active;
+    
+    bool shift;
+    ofPoint pMouse;
+    int pNoteMin, pNoteMax;
+    float pStart, pEnd;
+    int selectedNote;
+    bool noteSelected;
+    MidiEventMouseMode mouseOverEventMode;
+    ofPoint pMouseOverEventNoteVelocity;
+    ofPoint pMouseOverEventStartEnd;
+    ofRectangle selection;
+    
+    ofRectangle rectGrid;
+    ofRectangle rectKeyboard;
+    ofRectangle rectVelocity;
+    ofRectangle rectToolbar;
+    ofRectangle rectTimebar;
+    bool mouseOverGrid;
+    bool mouseOverKeyboard;
+    bool mouseOverVelocity;
+    int keyboardSkip;
+    int keyboardWidth;
+    int velocityHeight;
+    int toolbarHeight;
+    int timeScrollHeight;
 };
 

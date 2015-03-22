@@ -18,6 +18,17 @@ public:
     template <typename L, typename M>
     GuiColor(string name, ofFloatColor *value, L *listener, M method);
     
+    
+    ///////
+    void getXml(ofXml &xml) {
+        xml.addValue("Name", getName());
+    }
+    void setFromXml(ofXml &xml) {
+
+    }
+    
+    //////
+
 private:
     
     void setupColor();

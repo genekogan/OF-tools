@@ -51,7 +51,7 @@ public:
     virtual bool keyPressed(int key);
     
     virtual void update() { }
-    virtual void draw() { }
+    virtual void draw();
     
     virtual bool isWidget() {return false;}
     virtual bool isDiscrete() {return false;}
@@ -59,6 +59,7 @@ public:
     virtual void lerpTo(float nextSliderValue, int lerpNumFrames) { }
     virtual void setValueFromSequence(Sequence &sequence) { }
     virtual void setSequenceFromValue(Sequence &sequence, int column) { }
+    virtual void setSequenceFromExplicitValue(Sequence &sequence, int column, float value) { }
     
     virtual void setRectangle(ofRectangle rectangle);
     virtual void setRectangle(int x, int y, int width, int height);
@@ -84,12 +85,20 @@ public:
     ofColor getColorText() {return colorText;}
     ofColor getColorActive() {return colorActive;}
     
+    
+    ////////
+    
+    virtual void getXml(ofXml &xml) { }
+    virtual void setFromXml(ofXml &xml) { }
+    ////////
+    
+    
     ofEvent<GuiElementEventArgs> elementEvent;
     
 protected:
     
     virtual void initialize();
-    virtual void setupGuiComponents() { }
+    virtual void setupGuiPositions() { }
     
     void mouseMoved(ofMouseEventArgs &evt);
     void mousePressed(ofMouseEventArgs &evt);

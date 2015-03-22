@@ -1,4 +1,4 @@
-New repository of tools and templates to replace [OF-Tools-And-Templates](https://github.com/genekogan/OF-tools-and-templates) which is now deprecated. More documentation soon.
+New repository of tools and templates to replace [OF-Tools-And-Templates](https://github.com/genekogan/OF-tools-and-templates) which is no longer being maintained.  More documentation soon.
 
 
 Notes:

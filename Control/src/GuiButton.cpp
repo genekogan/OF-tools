@@ -35,6 +35,8 @@ void GuiButtonBase::setupButton()
     stringWidth = ofBitmapStringGetBoundingBox(name, 0, 0).width;
     stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
     setTriggerAll(false);
+    setLeftJustified(false);
+    menuIndex = -1;
 }
 
 void GuiButtonBase::setTriggerAll(bool triggerAll)
@@ -48,7 +50,7 @@ void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
     parameter->set(value);
     if (sendChangeNotification && ((value != previous) || triggerAll))
     {
-        GuiElementEventArgs args(name, 0, value ? 1.0 : 0.0);
+        GuiElementEventArgs args(name, menuIndex, value ? 1.0 : 0.0);
         ofNotifyEvent(elementEvent, args, this);
     }
 }
@@ -67,7 +69,12 @@ void GuiButtonBase::setValueFromSequence(Sequence &sequence)
 
 void GuiButtonBase::setSequenceFromValue(Sequence &sequence, int column)
 {
-    sequence.setValueAtCell(column, getValue() > 0.5);
+    sequence.setValueAtCell(column, parameter->get() > 0.5);
+}
+
+void GuiButtonBase::setSequenceFromExplicitValue(Sequence &sequence, int column, float value)
+{
+    sequence.setValueAtCell(column, value > 0.5);
 }
 
 bool GuiButtonBase::getValue()
@@ -112,7 +119,7 @@ void GuiButtonBase::draw()
     {
         ofSetColor(colorText);
         ofDrawBitmapString(name,
-                           rectangle.x + 0.5 * (rectangle.width - stringWidth),
+                           rectangle.x + (leftJustified ? 4 : 0.5 * (rectangle.width - stringWidth)),
                            rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
     }
     

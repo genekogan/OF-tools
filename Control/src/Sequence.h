@@ -8,6 +8,14 @@
 class Sequence : public GuiElement
 {
 public:
+
+    struct SequenceKeyboardEventArgs
+    {
+        int column;
+        float value;
+        SequenceKeyboardEventArgs(int column, float value);
+    };
+
     Sequence(string name, int numCells);
     Sequence(string name);
     ~Sequence();
@@ -45,11 +53,13 @@ public:
     
     void update();
     void draw();
+    
+    ofEvent<SequenceKeyboardEventArgs> keyboardEvent;
         
 protected:
     
     void setupSequence();
-    void setupGuiComponents();
+    void setupGuiPositions();
 
     bool active;
     bool discrete;
@@ -61,4 +71,6 @@ protected:
     float cursor, cursorLerp;
     ofRectangle activeRectangle, sequenceRectangle;
     bool mouseOverActive, mouseOverSequencer;
+    bool editing;
+    string editingValue;
 };

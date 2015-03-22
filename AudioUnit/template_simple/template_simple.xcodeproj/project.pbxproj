@@ -7,20 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B040FEF91AADD0D800DD432F /* MidiSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */; };
-		B0892E181AA479CE0006AE08 /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892DFB1AA479BF0006AE08 /* Bpm.cpp */; };
-		B0892E191AA479CE0006AE08 /* Gui2dPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892DFE1AA479BF0006AE08 /* Gui2dPad.cpp */; };
-		B0892E1A1AA479CE0006AE08 /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E001AA479BF0006AE08 /* GuiButton.cpp */; };
-		B0892E1B1AA479CE0006AE08 /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E021AA479BF0006AE08 /* GuiColor.cpp */; };
-		B0892E1C1AA479CE0006AE08 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E051AA479BF0006AE08 /* GuiElement.cpp */; };
-		B0892E1D1AA479CE0006AE08 /* GuiMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E071AA479BF0006AE08 /* GuiMenu.cpp */; };
-		B0892E1E1AA479CE0006AE08 /* GuiPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E091AA479BF0006AE08 /* GuiPanel.cpp */; };
-		B0892E1F1AA479CE0006AE08 /* GuiRangeSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E0B1AA479BF0006AE08 /* GuiRangeSlider.cpp */; };
-		B0892E201AA479CE0006AE08 /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E0D1AA479BF0006AE08 /* GuiSlider.cpp */; };
-		B0892E211AA479CE0006AE08 /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E0F1AA479BF0006AE08 /* GuiWidget.cpp */; };
-		B0892E221AA479CE0006AE08 /* GuiWidgetBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E111AA479BF0006AE08 /* GuiWidgetBase.cpp */; };
-		B0892E231AA479CE0006AE08 /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E141AA479BF0006AE08 /* Sequence.cpp */; };
-		B0892E241AA479CE0006AE08 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E161AA479BF0006AE08 /* Sequencer.cpp */; };
 		B0892E581AA479D70006AE08 /* AUParamInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E281AA479D70006AE08 /* AUParamInfo.cpp */; };
 		B0892E591AA479D70006AE08 /* CAAUParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E2A1AA479D70006AE08 /* CAAUParameter.cpp */; };
 		B0892E5A1AA479D70006AE08 /* CADebugMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0892E2C1AA479D70006AE08 /* CADebugMacros.cpp */; };
@@ -49,6 +35,34 @@
 		B09A59631AAADD1100CAE080 /* AudioUnitFilePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A59611AAADD1100CAE080 /* AudioUnitFilePlayer.cpp */; };
 		B09A59661AAADD4C00CAE080 /* AudioUnitInstrument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A59641AAADD4C00CAE080 /* AudioUnitInstrument.cpp */; };
 		B09A596F1AAC545000CAE080 /* AudioUnitBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B09A596D1AAC545000CAE080 /* AudioUnitBase.cpp */; };
+		B0AE65131AB559AF0042F386 /* ofxOscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64EC1AB559AF0042F386 /* ofxOscBundle.cpp */; };
+		B0AE65141AB559AF0042F386 /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64EE1AB559AF0042F386 /* ofxOscMessage.cpp */; };
+		B0AE65151AB559AF0042F386 /* ofxOscParameterSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64F01AB559AF0042F386 /* ofxOscParameterSync.cpp */; };
+		B0AE65161AB559AF0042F386 /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64F21AB559AF0042F386 /* ofxOscReceiver.cpp */; };
+		B0AE65171AB559AF0042F386 /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64F41AB559AF0042F386 /* ofxOscSender.cpp */; };
+		B0AE65181AB559AF0042F386 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64FA1AB559AF0042F386 /* IpEndpointName.cpp */; };
+		B0AE65191AB559AF0042F386 /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE64FF1AB559AF0042F386 /* NetworkingUtils.cpp */; };
+		B0AE651A1AB559AF0042F386 /* UdpSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65001AB559AF0042F386 /* UdpSocket.cpp */; };
+		B0AE651B1AB559AF0042F386 /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE650A1AB559AF0042F386 /* OscOutboundPacketStream.cpp */; };
+		B0AE651C1AB559AF0042F386 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE650D1AB559AF0042F386 /* OscPrintReceivedElements.cpp */; };
+		B0AE651D1AB559AF0042F386 /* OscReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE650F1AB559AF0042F386 /* OscReceivedElements.cpp */; };
+		B0AE651E1AB559AF0042F386 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65111AB559AF0042F386 /* OscTypes.cpp */; };
+		B0AE65501AB55A0B0042F386 /* Bpm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE652D1AB559FC0042F386 /* Bpm.cpp */; };
+		B0AE65511AB55A0B0042F386 /* Gui2dPad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65301AB559FC0042F386 /* Gui2dPad.cpp */; };
+		B0AE65521AB55A0B0042F386 /* GuiButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65321AB559FC0042F386 /* GuiButton.cpp */; };
+		B0AE65531AB55A0B0042F386 /* GuiColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65341AB559FC0042F386 /* GuiColor.cpp */; };
+		B0AE65541AB55A0B0042F386 /* GuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65371AB559FC0042F386 /* GuiElement.cpp */; };
+		B0AE65551AB55A0B0042F386 /* GuiMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65391AB559FC0042F386 /* GuiMenu.cpp */; };
+		B0AE65561AB55A0B0042F386 /* GuiPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE653B1AB559FC0042F386 /* GuiPanel.cpp */; };
+		B0AE65571AB55A0B0042F386 /* GuiRangeSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE653D1AB559FC0042F386 /* GuiRangeSlider.cpp */; };
+		B0AE65581AB55A0B0042F386 /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE653F1AB559FC0042F386 /* GuiSlider.cpp */; };
+		B0AE65591AB55A0B0042F386 /* GuiTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65411AB559FC0042F386 /* GuiTextBox.cpp */; };
+		B0AE655A1AB55A0B0042F386 /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65431AB559FC0042F386 /* GuiWidget.cpp */; };
+		B0AE655B1AB55A0B0042F386 /* GuiWidgetBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65451AB559FC0042F386 /* GuiWidgetBase.cpp */; };
+		B0AE655C1AB55A0B0042F386 /* MidiSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65471AB559FC0042F386 /* MidiSequencer.cpp */; };
+		B0AE655D1AB55A0B0042F386 /* OscManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE65491AB559FC0042F386 /* OscManager.cpp */; };
+		B0AE655E1AB55A0B0042F386 /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE654C1AB559FC0042F386 /* Sequence.cpp */; };
+		B0AE655F1AB55A0B0042F386 /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0AE654E1AB559FC0042F386 /* Sequencer.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -101,37 +115,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MidiSequencer.cpp; sourceTree = "<group>"; };
-		B040FEF81AADD0D800DD432F /* MidiSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MidiSequencer.h; sourceTree = "<group>"; };
-		B0892DFB1AA479BF0006AE08 /* Bpm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
-		B0892DFC1AA479BF0006AE08 /* Bpm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
-		B0892DFD1AA479BF0006AE08 /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
-		B0892DFE1AA479BF0006AE08 /* Gui2dPad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gui2dPad.cpp; sourceTree = "<group>"; };
-		B0892DFF1AA479BF0006AE08 /* Gui2dPad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gui2dPad.h; sourceTree = "<group>"; };
-		B0892E001AA479BF0006AE08 /* GuiButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiButton.cpp; sourceTree = "<group>"; };
-		B0892E011AA479BF0006AE08 /* GuiButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiButton.h; sourceTree = "<group>"; };
-		B0892E021AA479BF0006AE08 /* GuiColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiColor.cpp; sourceTree = "<group>"; };
-		B0892E031AA479BF0006AE08 /* GuiColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
-		B0892E041AA479BF0006AE08 /* GuiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiConstants.h; sourceTree = "<group>"; };
-		B0892E051AA479BF0006AE08 /* GuiElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiElement.cpp; sourceTree = "<group>"; };
-		B0892E061AA479BF0006AE08 /* GuiElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiElement.h; sourceTree = "<group>"; };
-		B0892E071AA479BF0006AE08 /* GuiMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiMenu.cpp; sourceTree = "<group>"; };
-		B0892E081AA479BF0006AE08 /* GuiMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiMenu.h; sourceTree = "<group>"; };
-		B0892E091AA479BF0006AE08 /* GuiPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiPanel.cpp; sourceTree = "<group>"; };
-		B0892E0A1AA479BF0006AE08 /* GuiPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiPanel.h; sourceTree = "<group>"; };
-		B0892E0B1AA479BF0006AE08 /* GuiRangeSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiRangeSlider.cpp; sourceTree = "<group>"; };
-		B0892E0C1AA479BF0006AE08 /* GuiRangeSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiRangeSlider.h; sourceTree = "<group>"; };
-		B0892E0D1AA479BF0006AE08 /* GuiSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiSlider.cpp; sourceTree = "<group>"; };
-		B0892E0E1AA479BF0006AE08 /* GuiSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiSlider.h; sourceTree = "<group>"; };
-		B0892E0F1AA479BF0006AE08 /* GuiWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
-		B0892E101AA479BF0006AE08 /* GuiWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
-		B0892E111AA479BF0006AE08 /* GuiWidgetBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidgetBase.cpp; sourceTree = "<group>"; };
-		B0892E121AA479BF0006AE08 /* GuiWidgetBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidgetBase.h; sourceTree = "<group>"; };
-		B0892E131AA479BF0006AE08 /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
-		B0892E141AA479BF0006AE08 /* Sequence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
-		B0892E151AA479BF0006AE08 /* Sequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
-		B0892E161AA479BF0006AE08 /* Sequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
-		B0892E171AA479BF0006AE08 /* Sequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
 		B0892E281AA479D70006AE08 /* AUParamInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AUParamInfo.cpp; sourceTree = "<group>"; };
 		B0892E291AA479D70006AE08 /* AUParamInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AUParamInfo.h; sourceTree = "<group>"; };
 		B0892E2A1AA479D70006AE08 /* CAAUParameter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CAAUParameter.cpp; sourceTree = "<group>"; };
@@ -188,6 +171,73 @@
 		B09A59671AAADDA100CAE080 /* AudioUnits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioUnits.h; sourceTree = "<group>"; };
 		B09A596D1AAC545000CAE080 /* AudioUnitBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioUnitBase.cpp; sourceTree = "<group>"; };
 		B09A596E1AAC545000CAE080 /* AudioUnitBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioUnitBase.h; sourceTree = "<group>"; };
+		B0AE64EA1AB559AF0042F386 /* ofxOsc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOsc.h; sourceTree = "<group>"; };
+		B0AE64EB1AB559AF0042F386 /* ofxOscArg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscArg.h; sourceTree = "<group>"; };
+		B0AE64EC1AB559AF0042F386 /* ofxOscBundle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscBundle.cpp; sourceTree = "<group>"; };
+		B0AE64ED1AB559AF0042F386 /* ofxOscBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscBundle.h; sourceTree = "<group>"; };
+		B0AE64EE1AB559AF0042F386 /* ofxOscMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscMessage.cpp; sourceTree = "<group>"; };
+		B0AE64EF1AB559AF0042F386 /* ofxOscMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscMessage.h; sourceTree = "<group>"; };
+		B0AE64F01AB559AF0042F386 /* ofxOscParameterSync.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscParameterSync.cpp; sourceTree = "<group>"; };
+		B0AE64F11AB559AF0042F386 /* ofxOscParameterSync.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscParameterSync.h; sourceTree = "<group>"; };
+		B0AE64F21AB559AF0042F386 /* ofxOscReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscReceiver.cpp; sourceTree = "<group>"; };
+		B0AE64F31AB559AF0042F386 /* ofxOscReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
+		B0AE64F41AB559AF0042F386 /* ofxOscSender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
+		B0AE64F51AB559AF0042F386 /* ofxOscSender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
+		B0AE64FA1AB559AF0042F386 /* IpEndpointName.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IpEndpointName.cpp; sourceTree = "<group>"; };
+		B0AE64FB1AB559AF0042F386 /* IpEndpointName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IpEndpointName.h; sourceTree = "<group>"; };
+		B0AE64FC1AB559AF0042F386 /* NetworkingUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkingUtils.h; sourceTree = "<group>"; };
+		B0AE64FD1AB559AF0042F386 /* PacketListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PacketListener.h; sourceTree = "<group>"; };
+		B0AE64FF1AB559AF0042F386 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkingUtils.cpp; sourceTree = "<group>"; };
+		B0AE65001AB559AF0042F386 /* UdpSocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UdpSocket.cpp; sourceTree = "<group>"; };
+		B0AE65011AB559AF0042F386 /* TimerListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimerListener.h; sourceTree = "<group>"; };
+		B0AE65021AB559AF0042F386 /* UdpSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UdpSocket.h; sourceTree = "<group>"; };
+		B0AE65071AB559AF0042F386 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageMappingOscPacketListener.h; sourceTree = "<group>"; };
+		B0AE65081AB559AF0042F386 /* OscException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscException.h; sourceTree = "<group>"; };
+		B0AE65091AB559AF0042F386 /* OscHostEndianness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscHostEndianness.h; sourceTree = "<group>"; };
+		B0AE650A1AB559AF0042F386 /* OscOutboundPacketStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscOutboundPacketStream.cpp; sourceTree = "<group>"; };
+		B0AE650B1AB559AF0042F386 /* OscOutboundPacketStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscOutboundPacketStream.h; sourceTree = "<group>"; };
+		B0AE650C1AB559AF0042F386 /* OscPacketListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscPacketListener.h; sourceTree = "<group>"; };
+		B0AE650D1AB559AF0042F386 /* OscPrintReceivedElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscPrintReceivedElements.cpp; sourceTree = "<group>"; };
+		B0AE650E1AB559AF0042F386 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscPrintReceivedElements.h; sourceTree = "<group>"; };
+		B0AE650F1AB559AF0042F386 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscReceivedElements.cpp; sourceTree = "<group>"; };
+		B0AE65101AB559AF0042F386 /* OscReceivedElements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscReceivedElements.h; sourceTree = "<group>"; };
+		B0AE65111AB559AF0042F386 /* OscTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscTypes.cpp; sourceTree = "<group>"; };
+		B0AE65121AB559AF0042F386 /* OscTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscTypes.h; sourceTree = "<group>"; };
+		B0AE652D1AB559FC0042F386 /* Bpm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bpm.cpp; sourceTree = "<group>"; };
+		B0AE652E1AB559FC0042F386 /* Bpm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bpm.h; sourceTree = "<group>"; };
+		B0AE652F1AB559FC0042F386 /* Control.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
+		B0AE65301AB559FC0042F386 /* Gui2dPad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gui2dPad.cpp; sourceTree = "<group>"; };
+		B0AE65311AB559FC0042F386 /* Gui2dPad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gui2dPad.h; sourceTree = "<group>"; };
+		B0AE65321AB559FC0042F386 /* GuiButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiButton.cpp; sourceTree = "<group>"; };
+		B0AE65331AB559FC0042F386 /* GuiButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiButton.h; sourceTree = "<group>"; };
+		B0AE65341AB559FC0042F386 /* GuiColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiColor.cpp; sourceTree = "<group>"; };
+		B0AE65351AB559FC0042F386 /* GuiColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiColor.h; sourceTree = "<group>"; };
+		B0AE65361AB559FC0042F386 /* GuiConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiConstants.h; sourceTree = "<group>"; };
+		B0AE65371AB559FC0042F386 /* GuiElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiElement.cpp; sourceTree = "<group>"; };
+		B0AE65381AB559FC0042F386 /* GuiElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiElement.h; sourceTree = "<group>"; };
+		B0AE65391AB559FC0042F386 /* GuiMenu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiMenu.cpp; sourceTree = "<group>"; };
+		B0AE653A1AB559FC0042F386 /* GuiMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiMenu.h; sourceTree = "<group>"; };
+		B0AE653B1AB559FC0042F386 /* GuiPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiPanel.cpp; sourceTree = "<group>"; };
+		B0AE653C1AB559FC0042F386 /* GuiPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiPanel.h; sourceTree = "<group>"; };
+		B0AE653D1AB559FC0042F386 /* GuiRangeSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiRangeSlider.cpp; sourceTree = "<group>"; };
+		B0AE653E1AB559FC0042F386 /* GuiRangeSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiRangeSlider.h; sourceTree = "<group>"; };
+		B0AE653F1AB559FC0042F386 /* GuiSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiSlider.cpp; sourceTree = "<group>"; };
+		B0AE65401AB559FC0042F386 /* GuiSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiSlider.h; sourceTree = "<group>"; };
+		B0AE65411AB559FC0042F386 /* GuiTextBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiTextBox.cpp; sourceTree = "<group>"; };
+		B0AE65421AB559FC0042F386 /* GuiTextBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiTextBox.h; sourceTree = "<group>"; };
+		B0AE65431AB559FC0042F386 /* GuiWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
+		B0AE65441AB559FC0042F386 /* GuiWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
+		B0AE65451AB559FC0042F386 /* GuiWidgetBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidgetBase.cpp; sourceTree = "<group>"; };
+		B0AE65461AB559FC0042F386 /* GuiWidgetBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidgetBase.h; sourceTree = "<group>"; };
+		B0AE65471AB559FC0042F386 /* MidiSequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MidiSequencer.cpp; sourceTree = "<group>"; };
+		B0AE65481AB559FC0042F386 /* MidiSequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MidiSequencer.h; sourceTree = "<group>"; };
+		B0AE65491AB559FC0042F386 /* OscManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscManager.cpp; sourceTree = "<group>"; };
+		B0AE654A1AB559FC0042F386 /* OscManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscManager.h; sourceTree = "<group>"; };
+		B0AE654B1AB559FC0042F386 /* Parameter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parameter.h; sourceTree = "<group>"; };
+		B0AE654C1AB559FC0042F386 /* Sequence.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequence.cpp; sourceTree = "<group>"; };
+		B0AE654D1AB559FC0042F386 /* Sequence.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequence.h; sourceTree = "<group>"; };
+		B0AE654E1AB559FC0042F386 /* Sequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Sequencer.cpp; sourceTree = "<group>"; };
+		B0AE654F1AB559FC0042F386 /* Sequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sequencer.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -246,48 +296,9 @@
 		B029044D1A984B4B003C0512 /* Control */ = {
 			isa = PBXGroup;
 			children = (
-				B0892DFA1AA479BF0006AE08 /* src */,
+				B0AE652C1AB559FC0042F386 /* src */,
 			);
 			name = Control;
-			sourceTree = "<group>";
-		};
-		B0892DFA1AA479BF0006AE08 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				B0892DFB1AA479BF0006AE08 /* Bpm.cpp */,
-				B0892DFC1AA479BF0006AE08 /* Bpm.h */,
-				B0892DFD1AA479BF0006AE08 /* Control.h */,
-				B0892DFE1AA479BF0006AE08 /* Gui2dPad.cpp */,
-				B0892DFF1AA479BF0006AE08 /* Gui2dPad.h */,
-				B0892E001AA479BF0006AE08 /* GuiButton.cpp */,
-				B0892E011AA479BF0006AE08 /* GuiButton.h */,
-				B0892E021AA479BF0006AE08 /* GuiColor.cpp */,
-				B0892E031AA479BF0006AE08 /* GuiColor.h */,
-				B0892E041AA479BF0006AE08 /* GuiConstants.h */,
-				B0892E051AA479BF0006AE08 /* GuiElement.cpp */,
-				B0892E061AA479BF0006AE08 /* GuiElement.h */,
-				B0892E071AA479BF0006AE08 /* GuiMenu.cpp */,
-				B0892E081AA479BF0006AE08 /* GuiMenu.h */,
-				B0892E091AA479BF0006AE08 /* GuiPanel.cpp */,
-				B0892E0A1AA479BF0006AE08 /* GuiPanel.h */,
-				B0892E0B1AA479BF0006AE08 /* GuiRangeSlider.cpp */,
-				B0892E0C1AA479BF0006AE08 /* GuiRangeSlider.h */,
-				B0892E0D1AA479BF0006AE08 /* GuiSlider.cpp */,
-				B0892E0E1AA479BF0006AE08 /* GuiSlider.h */,
-				B0892E0F1AA479BF0006AE08 /* GuiWidget.cpp */,
-				B0892E101AA479BF0006AE08 /* GuiWidget.h */,
-				B0892E111AA479BF0006AE08 /* GuiWidgetBase.cpp */,
-				B0892E121AA479BF0006AE08 /* GuiWidgetBase.h */,
-				B0892E131AA479BF0006AE08 /* Parameter.h */,
-				B0892E141AA479BF0006AE08 /* Sequence.cpp */,
-				B0892E151AA479BF0006AE08 /* Sequence.h */,
-				B0892E161AA479BF0006AE08 /* Sequencer.cpp */,
-				B0892E171AA479BF0006AE08 /* Sequencer.h */,
-				B040FEF71AADD0D800DD432F /* MidiSequencer.cpp */,
-				B040FEF81AADD0D800DD432F /* MidiSequencer.h */,
-			);
-			name = src;
-			path = ../../Control/src;
 			sourceTree = "<group>";
 		};
 		B0892E251AA479D70006AE08 /* ofxAudioUnit */ = {
@@ -394,12 +405,153 @@
 			path = ../src;
 			sourceTree = "<group>";
 		};
+		B0AE64E81AB559AF0042F386 /* ofxOsc */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64E91AB559AF0042F386 /* src */,
+				B0AE64F61AB559AF0042F386 /* libs */,
+			);
+			name = ofxOsc;
+			sourceTree = "<group>";
+		};
+		B0AE64E91AB559AF0042F386 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64EA1AB559AF0042F386 /* ofxOsc.h */,
+				B0AE64EB1AB559AF0042F386 /* ofxOscArg.h */,
+				B0AE64EC1AB559AF0042F386 /* ofxOscBundle.cpp */,
+				B0AE64ED1AB559AF0042F386 /* ofxOscBundle.h */,
+				B0AE64EE1AB559AF0042F386 /* ofxOscMessage.cpp */,
+				B0AE64EF1AB559AF0042F386 /* ofxOscMessage.h */,
+				B0AE64F01AB559AF0042F386 /* ofxOscParameterSync.cpp */,
+				B0AE64F11AB559AF0042F386 /* ofxOscParameterSync.h */,
+				B0AE64F21AB559AF0042F386 /* ofxOscReceiver.cpp */,
+				B0AE64F31AB559AF0042F386 /* ofxOscReceiver.h */,
+				B0AE64F41AB559AF0042F386 /* ofxOscSender.cpp */,
+				B0AE64F51AB559AF0042F386 /* ofxOscSender.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxOsc/src;
+			sourceTree = "<group>";
+		};
+		B0AE64F61AB559AF0042F386 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64F71AB559AF0042F386 /* oscpack */,
+			);
+			name = libs;
+			path = ../../../addons/ofxOsc/libs;
+			sourceTree = "<group>";
+		};
+		B0AE64F71AB559AF0042F386 /* oscpack */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64F81AB559AF0042F386 /* src */,
+			);
+			path = oscpack;
+			sourceTree = "<group>";
+		};
+		B0AE64F81AB559AF0042F386 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64F91AB559AF0042F386 /* ip */,
+				B0AE65061AB559AF0042F386 /* osc */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		B0AE64F91AB559AF0042F386 /* ip */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64FA1AB559AF0042F386 /* IpEndpointName.cpp */,
+				B0AE64FB1AB559AF0042F386 /* IpEndpointName.h */,
+				B0AE64FC1AB559AF0042F386 /* NetworkingUtils.h */,
+				B0AE64FD1AB559AF0042F386 /* PacketListener.h */,
+				B0AE64FE1AB559AF0042F386 /* posix */,
+				B0AE65011AB559AF0042F386 /* TimerListener.h */,
+				B0AE65021AB559AF0042F386 /* UdpSocket.h */,
+			);
+			path = ip;
+			sourceTree = "<group>";
+		};
+		B0AE64FE1AB559AF0042F386 /* posix */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE64FF1AB559AF0042F386 /* NetworkingUtils.cpp */,
+				B0AE65001AB559AF0042F386 /* UdpSocket.cpp */,
+			);
+			path = posix;
+			sourceTree = "<group>";
+		};
+		B0AE65061AB559AF0042F386 /* osc */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE65071AB559AF0042F386 /* MessageMappingOscPacketListener.h */,
+				B0AE65081AB559AF0042F386 /* OscException.h */,
+				B0AE65091AB559AF0042F386 /* OscHostEndianness.h */,
+				B0AE650A1AB559AF0042F386 /* OscOutboundPacketStream.cpp */,
+				B0AE650B1AB559AF0042F386 /* OscOutboundPacketStream.h */,
+				B0AE650C1AB559AF0042F386 /* OscPacketListener.h */,
+				B0AE650D1AB559AF0042F386 /* OscPrintReceivedElements.cpp */,
+				B0AE650E1AB559AF0042F386 /* OscPrintReceivedElements.h */,
+				B0AE650F1AB559AF0042F386 /* OscReceivedElements.cpp */,
+				B0AE65101AB559AF0042F386 /* OscReceivedElements.h */,
+				B0AE65111AB559AF0042F386 /* OscTypes.cpp */,
+				B0AE65121AB559AF0042F386 /* OscTypes.h */,
+			);
+			path = osc;
+			sourceTree = "<group>";
+		};
+		B0AE652C1AB559FC0042F386 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B0AE652D1AB559FC0042F386 /* Bpm.cpp */,
+				B0AE652E1AB559FC0042F386 /* Bpm.h */,
+				B0AE652F1AB559FC0042F386 /* Control.h */,
+				B0AE65301AB559FC0042F386 /* Gui2dPad.cpp */,
+				B0AE65311AB559FC0042F386 /* Gui2dPad.h */,
+				B0AE65321AB559FC0042F386 /* GuiButton.cpp */,
+				B0AE65331AB559FC0042F386 /* GuiButton.h */,
+				B0AE65341AB559FC0042F386 /* GuiColor.cpp */,
+				B0AE65351AB559FC0042F386 /* GuiColor.h */,
+				B0AE65361AB559FC0042F386 /* GuiConstants.h */,
+				B0AE65371AB559FC0042F386 /* GuiElement.cpp */,
+				B0AE65381AB559FC0042F386 /* GuiElement.h */,
+				B0AE65391AB559FC0042F386 /* GuiMenu.cpp */,
+				B0AE653A1AB559FC0042F386 /* GuiMenu.h */,
+				B0AE653B1AB559FC0042F386 /* GuiPanel.cpp */,
+				B0AE653C1AB559FC0042F386 /* GuiPanel.h */,
+				B0AE653D1AB559FC0042F386 /* GuiRangeSlider.cpp */,
+				B0AE653E1AB559FC0042F386 /* GuiRangeSlider.h */,
+				B0AE653F1AB559FC0042F386 /* GuiSlider.cpp */,
+				B0AE65401AB559FC0042F386 /* GuiSlider.h */,
+				B0AE65411AB559FC0042F386 /* GuiTextBox.cpp */,
+				B0AE65421AB559FC0042F386 /* GuiTextBox.h */,
+				B0AE65431AB559FC0042F386 /* GuiWidget.cpp */,
+				B0AE65441AB559FC0042F386 /* GuiWidget.h */,
+				B0AE65451AB559FC0042F386 /* GuiWidgetBase.cpp */,
+				B0AE65461AB559FC0042F386 /* GuiWidgetBase.h */,
+				B0AE65471AB559FC0042F386 /* MidiSequencer.cpp */,
+				B0AE65481AB559FC0042F386 /* MidiSequencer.h */,
+				B0AE65491AB559FC0042F386 /* OscManager.cpp */,
+				B0AE654A1AB559FC0042F386 /* OscManager.h */,
+				B0AE654B1AB559FC0042F386 /* Parameter.h */,
+				B0AE654C1AB559FC0042F386 /* Sequence.cpp */,
+				B0AE654D1AB559FC0042F386 /* Sequence.h */,
+				B0AE654E1AB559FC0042F386 /* Sequencer.cpp */,
+				B0AE654F1AB559FC0042F386 /* Sequencer.h */,
+			);
+			name = src;
+			path = ../../Control/src;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
 				B0892E701AA479E50006AE08 /* AudioUnit */,
 				B029044D1A984B4B003C0512 /* Control */,
 				B0892E251AA479D70006AE08 /* ofxAudioUnit */,
+				B0AE64E81AB559AF0042F386 /* ofxOsc */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -569,45 +721,59 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B0892E181AA479CE0006AE08 /* Bpm.cpp in Sources */,
+				B0AE65501AB55A0B0042F386 /* Bpm.cpp in Sources */,
+				B0AE65511AB55A0B0042F386 /* Gui2dPad.cpp in Sources */,
+				B0AE65521AB55A0B0042F386 /* GuiButton.cpp in Sources */,
+				B0AE65531AB55A0B0042F386 /* GuiColor.cpp in Sources */,
+				B0AE65541AB55A0B0042F386 /* GuiElement.cpp in Sources */,
+				B0AE65551AB55A0B0042F386 /* GuiMenu.cpp in Sources */,
+				B0AE65561AB55A0B0042F386 /* GuiPanel.cpp in Sources */,
+				B0AE65571AB55A0B0042F386 /* GuiRangeSlider.cpp in Sources */,
+				B0AE65581AB55A0B0042F386 /* GuiSlider.cpp in Sources */,
+				B0AE65591AB55A0B0042F386 /* GuiTextBox.cpp in Sources */,
+				B0AE655A1AB55A0B0042F386 /* GuiWidget.cpp in Sources */,
+				B0AE655B1AB55A0B0042F386 /* GuiWidgetBase.cpp in Sources */,
+				B0AE655C1AB55A0B0042F386 /* MidiSequencer.cpp in Sources */,
+				B0AE655D1AB55A0B0042F386 /* OscManager.cpp in Sources */,
+				B0AE655E1AB55A0B0042F386 /* Sequence.cpp in Sources */,
+				B0AE655F1AB55A0B0042F386 /* Sequencer.cpp in Sources */,
 				B0892E6A1AA479D70006AE08 /* ofxAudioUnitSpeechSynth.cpp in Sources */,
+				B0AE651C1AB559AF0042F386 /* OscPrintReceivedElements.cpp in Sources */,
 				B0892E621AA479D70006AE08 /* ofxAudioUnitMatrixMixer.cpp in Sources */,
-				B0892E191AA479CE0006AE08 /* Gui2dPad.cpp in Sources */,
-				B0892E1A1AA479CE0006AE08 /* GuiButton.cpp in Sources */,
+				B0AE651D1AB559AF0042F386 /* OscReceivedElements.cpp in Sources */,
+				B0AE65181AB559AF0042F386 /* IpEndpointName.cpp in Sources */,
 				B0892E661AA479D70006AE08 /* ofxAudioUnitNetSend.cpp in Sources */,
+				B0AE651B1AB559AF0042F386 /* OscOutboundPacketStream.cpp in Sources */,
 				B0892E6C1AA479D70006AE08 /* TPCircularBuffer.c in Sources */,
 				B0892E581AA479D70006AE08 /* AUParamInfo.cpp in Sources */,
 				B0892E601AA479D70006AE08 /* ofxAudioUnitHardwareUtils.cpp in Sources */,
 				B09A59631AAADD1100CAE080 /* AudioUnitFilePlayer.cpp in Sources */,
-				B0892E1B1AA479CE0006AE08 /* GuiColor.cpp in Sources */,
-				B0892E1C1AA479CE0006AE08 /* GuiElement.cpp in Sources */,
+				B0AE651A1AB559AF0042F386 /* UdpSocket.cpp in Sources */,
 				B09A59661AAADD4C00CAE080 /* AudioUnitInstrument.cpp in Sources */,
-				B0892E1D1AA479CE0006AE08 /* GuiMenu.cpp in Sources */,
-				B0892E1E1AA479CE0006AE08 /* GuiPanel.cpp in Sources */,
+				B0AE651E1AB559AF0042F386 /* OscTypes.cpp in Sources */,
 				B0892E641AA479D70006AE08 /* ofxAudioUnitMixer.cpp in Sources */,
 				B0892E611AA479D70006AE08 /* ofxAudioUnitInput.cpp in Sources */,
 				B0892E591AA479D70006AE08 /* CAAUParameter.cpp in Sources */,
 				B0892E6B1AA479D70006AE08 /* ofxAudioUnitTap.cpp in Sources */,
 				B0892E5D1AA479D70006AE08 /* ofxAudioUnitDSPNode.cpp in Sources */,
-				B0892E1F1AA479CE0006AE08 /* GuiRangeSlider.cpp in Sources */,
-				B040FEF91AADD0D800DD432F /* MidiSequencer.cpp in Sources */,
 				B0892E5E1AA479D70006AE08 /* ofxAudioUnitFftNode.cpp in Sources */,
-				B0892E201AA479CE0006AE08 /* GuiSlider.cpp in Sources */,
+				B0AE65171AB559AF0042F386 /* ofxOscSender.cpp in Sources */,
+				B0AE65151AB559AF0042F386 /* ofxOscParameterSync.cpp in Sources */,
+				B0AE65141AB559AF0042F386 /* ofxOscMessage.cpp in Sources */,
 				B0892E5C1AA479D70006AE08 /* ofxAudioUnitCocoaUtilties.mm in Sources */,
 				B0892E651AA479D70006AE08 /* ofxAudioUnitNetReceive.cpp in Sources */,
 				B0892E7B1AA47ACC0006AE08 /* AudioUnitController.cpp in Sources */,
+				B0AE65131AB559AF0042F386 /* ofxOscBundle.cpp in Sources */,
 				B0892E691AA479D70006AE08 /* ofxAudioUnitSampler.cpp in Sources */,
+				B0AE65161AB559AF0042F386 /* ofxOscReceiver.cpp in Sources */,
 				B0892E671AA479D70006AE08 /* ofxAudioUnitOutput.cpp in Sources */,
 				B0892E5B1AA479D70006AE08 /* ofxAudioUnit.cpp in Sources */,
-				B0892E211AA479CE0006AE08 /* GuiWidget.cpp in Sources */,
 				B0892E5F1AA479D70006AE08 /* ofxAudioUnitFilePlayer.cpp in Sources */,
 				B09A596F1AAC545000CAE080 /* AudioUnitBase.cpp in Sources */,
-				B0892E221AA479CE0006AE08 /* GuiWidgetBase.cpp in Sources */,
-				B0892E231AA479CE0006AE08 /* Sequence.cpp in Sources */,
-				B0892E241AA479CE0006AE08 /* Sequencer.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				B0892E5A1AA479D70006AE08 /* CADebugMacros.cpp in Sources */,
 				B0892E631AA479D70006AE08 /* ofxAudioUnitMidi.cpp in Sources */,
+				B0AE65191AB559AF0042F386 /* NetworkingUtils.cpp in Sources */,
 				B0892E681AA479D70006AE08 /* ofxAudioUnitRecorder.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 			);
@@ -767,7 +933,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_52)",
 				);
 				PRODUCT_NAME = template_simpleDebug;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = ../../../addons/ofxOsc/libs/oscpack/src/;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -853,7 +1019,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
 				);
 				PRODUCT_NAME = template_simple;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = ../../../addons/ofxOsc/libs/oscpack/src/;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

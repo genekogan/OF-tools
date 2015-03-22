@@ -16,46 +16,29 @@ public:
     ofxAudioUnit * getAudioUnit() {return instrument;}
     ofxAudioUnitSampler * getAudioUnitSampler() {return instrument;}
     
-    
-    
-    
-    
-    MidiSequencer *midi;
-    void setMidiSequencer(MidiSequencer * midi) {
-        this->midi = midi;
-        ofAddListener(midi->midiEvent, this, &AudioUnitInstrument::midiEvent);
-    }
-    
-    
-    
-    void midiEvent(GuiMidiEventArgs & e) {
-        cout << e.type << " "<< e.note << " " << e.velocity << endl;
-        
-        if (e.type == 1)
-            instrument->midiNoteOn(4*e.note + 60, 120);
-        else
-            instrument->midiNoteOff(4*e.note + 60, 120);
-    }
-    
-    
+    void setMidiSequencer(MidiSequencer * midi_);
+    void createMidiSequencer();
     
 private:
     
     struct AudioUnitInstrumentParameter
     {
+        ofxAudioUnitSampler *instrument;
+        int idx;
         AudioUnitInstrumentParameter(AudioUnitParameterInfo &parameter, GuiWidget *parentWidget, ofxAudioUnitSampler *instrument, int idx);
         void parameterChanged(GuiElementEventArgs &e);
-    private:
-        int idx;
-        ofxAudioUnitSampler *instrument;
     };
+    
+    void midiEvent(MidiEventArgs & e);
 
     void eventShowUI(GuiElementEventArgs &e);
+    void eventShowMidi(GuiElementEventArgs &e);
     void setupParameterGui();
 
     vector<AudioUnitInstrumentParameter*> parameters;
     ofxAudioUnitSampler *instrument;
+    MidiSequencer *midi;
+    bool hasMidiSequencer;
+    bool midiVisible;
 };
-
-
 

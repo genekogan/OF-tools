@@ -7,14 +7,20 @@
 #include "GuiElement.h"
 
 
+
 class GuiElementGroup
 {
 public:
     ~GuiElementGroup();
+    
     void addElement(GuiElement * element);
+    void removeElement(string name);
+    void clearToggles();
+    
     vector<GuiElement*> & getElements() {return elements;}
     
 private:
+    
     vector<GuiElement*> elements;
 };
 
@@ -25,15 +31,20 @@ public:
     GuiWidgetBase();
     GuiWidgetBase(string name);
     virtual ~GuiWidgetBase();
-    
     void initialize();
+    
+    virtual void savePreset(string path);
+    virtual void loadPreset(string path);
     
     void setParent(GuiWidgetBase *parent);
     GuiWidgetBase * getParent() {return parent;}
     bool getHasParent() {return hasParent;}
     
     void setName(string name);
-    
+    void setAddress(string address);
+    string getAddress() {return address;}
+
+    virtual vector<ParameterBase*> getParameters();
     vector<GuiElementGroup*> & getElementGroups();
     void getAllElementGroups(vector<GuiElementGroup*> & allGroups);
     void getAllElements(vector<GuiElement*> & allElements);
@@ -46,6 +57,9 @@ public:
     bool & getList() {return list;}
     bool getCollapsed() {return hasParent ? collapsed || parent->getCollapsed() : collapsed;}
     bool isWidget() {return true;}
+    
+    void addBoundWidget(GuiWidgetBase *other);
+    void removeBoundWidget(GuiWidgetBase *other);
     
     virtual bool mouseMoved(int mouseX, int mouseY);
     virtual bool mousePressed(int mouseX, int mouseY);
@@ -71,22 +85,30 @@ public:
     int getMarginOuterY() {return marginOuterY;}
     int getMarginInner() {return marginInner;}
 
+    void setRectangle(ofRectangle rectangle);
+    void setRectangle(int x, int y, int width, int height);
+
     virtual bool isMenu() {return false;}
     
     ofEvent<string> widgetChanged;
     ofEvent<GuiElement*> elementDeletedEvent;
-
     
 protected:
     
-    void setupElementGroup(GuiElementGroup * elementGroup);
-    void setupGuiComponents();
+    virtual void getXml(ofXml &xml);
+    virtual void setFromXml(ofXml &xml);
+
+    virtual void setupElementGroup(GuiElementGroup *elementGroup);
+    virtual void setupGuiPositions();
     void scrollFocus(int scroll);
     
     // elements
+    vector<ParameterBase*> parameters;
     vector<GuiElementGroup*> elementGroups;
+    vector<GuiWidgetBase*> boundWidgets;
     GuiWidgetBase *parent;
     bool hasParent;
+    string address;
     
     // header
     ofRectangle headerRectangle;
@@ -94,6 +116,8 @@ protected:
     bool list, collapsed;
     string header;
     float headerStringHeight;
+    ofPoint pMouse;
+    ofPoint pPosition;
     
     // style
     ofColor headerColor;

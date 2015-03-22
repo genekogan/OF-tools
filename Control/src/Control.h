@@ -9,6 +9,7 @@
 
 #include "GuiElement.h"
 #include "GuiButton.h"
+#include "GuiTextBox.h"
 #include "GuiSlider.h"
 #include "GuiRangeSlider.h"
 #include "Gui2dPad.h"
@@ -21,10 +22,13 @@
 #include "Bpm.h"
 #include "Sequence.h"
 #include "Sequencer.h"
-#include "MidiSequencer.h"
+
+#include "MidiSequencer.h"  // should this be in control?
 
 #include "GuiWidget.h"
 #include "GuiPanel.h"
+
+#include "OscManager.h"
 
 
 /*

@@ -83,7 +83,7 @@ void GuiElement::setAutoDraw(bool autoDraw)
 void GuiElement::setRectangle(ofRectangle rectangle)
 {
     this->rectangle = rectangle;
-    setupGuiComponents();
+    setupGuiPositions();
 }
 
 void GuiElement::setRectangle(int x, int y, int width, int height)
@@ -183,4 +183,11 @@ void GuiElement::update(ofEventArgs &data)
 void GuiElement::draw(ofEventArgs &data)
 {
     draw();
+}
+
+void GuiElement::draw()
+{
+    ofPushStyle();
+    ofSetColor(colorBackground);
+    ofPopStyle();
 }

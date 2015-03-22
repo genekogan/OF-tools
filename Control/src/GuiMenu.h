@@ -28,12 +28,17 @@ public:
     template <typename L, typename M>
     void addToggle(string choice, L *listener, M method);
     
+    void removeToggle(string toggleName);
+    void clearToggles();
+    
     void setAutoClose(bool autoClose) {this->autoClose = autoClose;}
     void setMultipleChoice(bool multipleChoice) {this->multipleChoice = multipleChoice;}
     
     bool getAutoClose() {return autoClose;}
     bool getMultipleChoice() {return multipleChoice;}
     bool isMenu() {return true;}
+    
+    vector<ParameterBase*> getParameters() {return parameters;}
     
 private:
     
@@ -46,6 +51,7 @@ private:
     
     GuiElementGroup *menuGroup;
     map<string, GuiToggle*> toggles;
+    vector<ParameterBase*> parameters;
 };
 
 template <typename L, typename M>

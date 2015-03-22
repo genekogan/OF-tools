@@ -4,14 +4,42 @@
 GuiElementGroup::~GuiElementGroup()
 {
     for (auto e : elements) {
-        //delete e;  //?
+        // TODO: something's going wrong here
+        //delete e;
     }
     elements.clear();
+    
+    
+    // clearToggles()  ?????
 }
 
 void GuiElementGroup::addElement(GuiElement * element)
 {
     elements.push_back(element);
+}
+
+void GuiElementGroup::removeElement(string name)
+{
+    vector<GuiElement*>::iterator it = elements.begin();
+    while (it != elements.end())
+    {
+        if ((*it)->getName() == name) {
+            delete *it;
+            elements.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+}
+
+void GuiElementGroup::clearToggles()
+{
+    for (auto e : elements) {
+        // TODO: something's going wrong here???
+        delete e;
+    }
+    elements.clear();
 }
 
 GuiWidgetBase::GuiWidgetBase() : GuiElement()
@@ -42,11 +70,10 @@ void GuiWidgetBase::initialize()
     marginOuterY = GUI_DEFAULT_MARGIN_OUTER_Y;
     marginInner = GUI_DEFAULT_MARGIN_INNER;
     
+    parent = NULL;
+    
     GuiElement::setAutoUpdate(true);
     GuiElement::setAutoDraw(true);
-    
-    elementGroups.clear();
-    hasParent = false;
 }
 
 void GuiWidgetBase::setParent(GuiWidgetBase *parent)
@@ -59,12 +86,40 @@ void GuiWidgetBase::setName(string name)
 {
     GuiElement::setName(name);
     header = name;
-    setupGuiComponents();
+    address = "/"+name;
+    setupGuiPositions();
+}
+
+void GuiWidgetBase::setAddress(string address)
+{
+    this->address = address;
 }
 
 vector<GuiElementGroup*> & GuiWidgetBase::getElementGroups()
 {
     return elementGroups;
+}
+
+vector<ParameterBase*> GuiWidgetBase::getParameters()
+{
+    vector<ParameterBase*> allParameters;
+    for (auto p : parameters) {
+        allParameters.push_back(p);
+    }
+    for (auto group : elementGroups)
+    {
+        for (auto &e : group->getElements())
+        {
+            if (e->isWidget())
+            {
+                vector<ParameterBase*> widgetParameters = ((GuiWidgetBase *) e)->getParameters();
+                for (auto p : widgetParameters) {
+                    allParameters.push_back(p);
+                }
+            }
+        }
+    }
+    return allParameters;
 }
 
 void GuiWidgetBase::getAllElementGroups(vector<GuiElementGroup*> & allGroups)
@@ -118,6 +173,15 @@ GuiElement * GuiWidgetBase::getElement(string name)
     ofLog(OF_LOG_ERROR, "No element found in "+getName()+" called "+name);
 }
 
+
+
+
+
+
+
+
+
+
 void GuiWidgetBase::removeElement(string name)
 {
     vector<GuiElementGroup*>::iterator it = elementGroups.begin();
@@ -133,6 +197,13 @@ void GuiWidgetBase::removeElement(string name)
             // TODO: messy and doesn't work right for widgets inside widgets
             
             
+            
+            // ALSO need to delete the associated parameter from parameters
+            
+            
+            // ALSO -- if removing a widget -- need to clear innerWidgets in GuiPanel
+            
+            
             if ((*ite)->getName() == name)
             {
                 ofNotifyEvent(elementDeletedEvent, (*ite), this);
@@ -145,8 +216,93 @@ void GuiWidgetBase::removeElement(string name)
         }
         ++it;
     }
-    setupGuiComponents();
+    setupGuiPositions();
     ofNotifyEvent(widgetChanged, name, this);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void GuiWidgetBase::savePreset(string path)
+{
+    ofXml xml;
+    xml.addChild("Preset");
+    xml.setTo("Preset");
+    getXml(xml);
+    xml.save(path);
+}
+
+void GuiWidgetBase::loadPreset(string path)
+{
+    ofXml xml;
+    xml.load(path);
+    xml.setTo("Preset");
+    setFromXml(xml);
+}
+
+void GuiWidgetBase::getXml(ofXml &xml)
+{
+    vector<GuiElementGroup*> allGroups;
+    getAllElementGroups(allGroups);
+    
+    ofXml xmlElements;
+    xmlElements.addChild("Elements");
+    xmlElements.setTo("Elements");
+    for (auto group : allGroups)
+    {
+        for (auto &element : group->getElements())
+        {
+            ofXml xmlElement;
+            xmlElement.addChild("Element");
+            xmlElement.setTo("Element");
+            element->getXml(xmlElement);
+            xmlElements.addXml(xmlElement);
+        }
+    }
+    xml.addXml(xmlElements);
+}
+
+void GuiWidgetBase::setFromXml(ofXml &xml)
+{
+    if (!xml.exists("Elements"))
+    {
+        ofLog(OF_LOG_ERROR, "No elements found in preset");
+        return;
+    }
+    
+    vector<GuiElement*> allElements;
+    getAllElements(allElements);
+    
+    xml.setTo("Elements");
+    if (xml.exists("Element[0]"))
+    {
+        xml.setTo("Element[0]");
+        do {
+            string name = xml.getValue<string>("Name");
+            for (auto element : allElements)
+            {
+                if (element->getName() == name) {
+                    element->setFromXml(xml);
+                }
+            }
+        }
+        while(xml.setToSibling());
+        xml.setToParent();
+    }
+    xml.setToParent();
 }
 
 void GuiWidgetBase::setList(bool list)
@@ -160,8 +316,39 @@ void GuiWidgetBase::setList(bool list)
 void GuiWidgetBase::setCollapsed(bool collapsed)
 {
     this->collapsed = list ? collapsed : false;
-    setupGuiComponents();
+    setupGuiPositions();
     ofNotifyEvent(widgetChanged, name, this);
+}
+
+void GuiWidgetBase::setRectangle(ofRectangle rectangle)
+{
+    GuiElement::setRectangle(rectangle);
+    for (auto w : boundWidgets) {
+        w->setPosition(rectangle.x + rectangle.width + marginOuterX, rectangle.y);
+    }
+}
+
+void GuiWidgetBase::setRectangle(int x, int y, int width, int height)
+{
+    setRectangle(ofRectangle(x, y, width, height));
+}
+
+void GuiWidgetBase::addBoundWidget(GuiWidgetBase *other)
+{
+    boundWidgets.push_back(other);
+}
+
+void GuiWidgetBase::removeBoundWidget(GuiWidgetBase *other)
+{
+    vector<GuiWidgetBase*>::iterator it = boundWidgets.begin();
+    while (it != boundWidgets.end()) {
+        if (*it == other) {
+            boundWidgets.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
 }
 
 void GuiWidgetBase::setupElementGroup(GuiElementGroup *elementGroup)
@@ -176,7 +363,7 @@ void GuiWidgetBase::setupElementGroup(GuiElementGroup *elementGroup)
     setList(elementGroups.size() > 1);
 }
 
-void GuiWidgetBase::setupGuiComponents()
+void GuiWidgetBase::setupGuiPositions()
 {
     for (auto group : elementGroups)
     {
@@ -293,10 +480,11 @@ bool GuiWidgetBase::mousePressed(int mouseX, int mouseY)
     if (GuiElement::mousePressed(mouseX, mouseY)) return true;
     if (mouseOver)
     {
-        if (list && headerRectangle.inside(mouseX, mouseY))
+        if (headerRectangle.inside(mouseX, mouseY))
         {
-            setCollapsed(!collapsed);
-            return true;
+            pMouse.set(mouseX, mouseY);
+            pPosition.set(getRectangle().x, getRectangle().y);
+            return;
         }
         for (auto group : elementGroups)
         {
@@ -315,6 +503,11 @@ bool GuiWidgetBase::mouseReleased(int mouseX, int mouseY)
     {
         for (auto group : elementGroups)
         {
+            if (list && headerRectangle.inside(mouseX, mouseY) && mouseX == pMouse.x && mouseY == pMouse.y)
+            {
+                setCollapsed(!collapsed);
+                return true;
+            }
             for (auto &e : group->getElements()) {
                 if (e->mouseReleased(mouseX, mouseY)) return true;
             }
@@ -334,6 +527,12 @@ bool GuiWidgetBase::mouseDragged(int mouseX, int mouseY)
                 if (e->mouseDragged(mouseX, mouseY)) return true;
             }
         }
+
+        if (headerRectangle.inside(mouseX, mouseY) && parent == NULL)
+        {
+            setPosition(pPosition.x + mouseX - pMouse.x, pPosition.y + mouseY - pMouse.y);
+            return true;
+        }
     }
     return false;
 }
@@ -343,11 +542,13 @@ bool GuiWidgetBase::keyPressed(int key)
     GuiElement::keyPressed(key);
     if (mouseOver)
     {
-        if (key == OF_KEY_UP) {
+        if (key == OF_KEY_UP)
+        {
             scrollFocus(-1);
             return true;
         }
-        else if (key == OF_KEY_DOWN) {
+        else if (key == OF_KEY_DOWN)
+        {
             scrollFocus(1);
             return true;
         }
@@ -386,6 +587,7 @@ void GuiWidgetBase::scrollFocus(int scroll)
 {
     vector<GuiElement*> allElements;
     getAllElements(allElements);
+    if (allElements.size() == 0)  return;
     for (int i = 0; i < allElements.size(); i++)
     {
         if (allElements[i]->getMouseOver())

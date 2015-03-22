@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "GuiButton.h"
+#include "GuiTextBox.h"
 #include "GuiSlider.h"
 #include "GuiRangeSlider.h"
 #include "Gui2dPad.h"
@@ -35,6 +36,15 @@ public:
     template<typename L, typename M>
     GuiToggle * addToggle(string name, L *listener, M method);
     
+    GuiTextBox * addTextBox(Parameter<string> *parameter);
+    GuiTextBox * addTextBox(string name, string *value);
+    template<typename L, typename M>
+    GuiTextBox * addTextBox(Parameter<string> *parameter, L *listener, M method);
+    template<typename L, typename M>
+    GuiTextBox * addTextBox(string name, string *value, L *listener, M method);
+    template<typename L, typename M>
+    GuiTextBox * addTextBox(string name, L *listener, M method);
+
     template<typename T>
     void addSlider(Parameter<T> *parameter);
     template<typename T>
@@ -77,7 +87,10 @@ public:
     template<typename L, typename M>
     GuiMenu * addMenu(string name, L *listener, M method, bool multipleChoice=false, bool autoClose=false);
 
-private:
+    virtual void enableControlRow() { }
+    virtual void disableControlRow() { }
+
+protected:
     
     template<typename T>
     void createSliders(GuiElementGroup * elementGroup, Parameter<T> *parameter);
@@ -96,43 +109,73 @@ private:
 template<typename L, typename M>
 GuiButton * GuiWidget::addButton(Parameter<bool> *parameter, L *listener, M method)
 {
-    addButton(parameter);
+    GuiButton *newButton = addButton(parameter);
     addListenersFromLastElementGroup(listener, method);
+    return newButton;
 }
 
 template<typename L, typename M>
 GuiButton * GuiWidget::addButton(string name, bool *value, L *listener, M method)
 {
-    addButton(new Parameter<bool>(name, value));
+    GuiButton *newButton = addButton(new Parameter<bool>(name, value));
     addListenersFromLastElementGroup(listener, method);
+    return newButton;
 }
 
 template<typename L, typename M>
 GuiButton * GuiWidget::addButton(string name, L *listener, M method)
 {
-    addButton(new Parameter<bool>(name, new bool()));
+    GuiButton *newButton = addButton(new Parameter<bool>(name, new bool()));
     addListenersFromLastElementGroup(listener, method);
+    return newButton;
 }
 
 template<typename L, typename M>
 GuiToggle * GuiWidget::addToggle(Parameter<bool> *parameter, L *listener, M method)
 {
-    addToggle(parameter);
+    GuiToggle *newToggle = addToggle(parameter);
     addListenersFromLastElementGroup(listener, method);
+    return newToggle;
 }
 
 template<typename L, typename M>
 GuiToggle * GuiWidget::addToggle(string name, bool *value, L *listener, M method)
 {
-    addToggle(new Parameter<bool>(name, value));
+    GuiToggle *newToggle = addToggle(new Parameter<bool>(name, value));
     addListenersFromLastElementGroup(listener, method);
+    return newToggle;
 }
 
 template<typename L, typename M>
 GuiToggle * GuiWidget::addToggle(string name, L *listener, M method)
 {
-    addToggle(new Parameter<bool>(name, new bool()));
+    GuiToggle *newToggle = addToggle(new Parameter<bool>(name, new bool()));
     addListenersFromLastElementGroup(listener, method);
+    return newToggle;
+}
+
+template<typename L, typename M>
+GuiTextBox * GuiWidget::addTextBox(Parameter<string> *parameter, L *listener, M method)
+{
+    GuiTextBox *newTextBox = addTextBox(parameter);
+    addListenersFromLastElementGroup(listener, method);
+    return newTextBox;
+}
+
+template<typename L, typename M>
+GuiTextBox * GuiWidget::addTextBox(string name, string *value, L *listener, M method)
+{
+    GuiTextBox *newTextBox = addTextBox(new Parameter<string>(name, value));
+    addListenersFromLastElementGroup(listener, method);
+    return newTextBox;
+}
+
+template<typename L, typename M>
+GuiTextBox * GuiWidget::addTextBox(string name, L *listener, M method)
+{
+    GuiTextBox *newTextBox = addTextBox(new Parameter<string>(name, new string()));
+    addListenersFromLastElementGroup(listener, method);
+    return newTextBox;
 }
 
 template<typename T>
@@ -140,6 +183,8 @@ void GuiWidget::addSlider(Parameter<T> *parameter)
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
     createSliders(elementGroup, parameter);
+    parameter->setOscAddress(getAddress()+parameter->getOscAddress());
+    parameters.push_back(parameter);
     setupElementGroup(elementGroup);
 }
 
@@ -168,6 +213,10 @@ void GuiWidget::addRangeSlider(string name, Parameter<T> *parameterLow, Paramete
 {
     GuiElementGroup *elementGroup = new GuiElementGroup();
     createRangeSliders(elementGroup, name, parameterLow, parameterHigh);
+    parameterLow->setOscAddress(getAddress()+parameterLow->getOscAddress());
+    parameterHigh->setOscAddress(getAddress()+parameterHigh->getOscAddress());
+    parameters.push_back(parameterLow);
+    parameters.push_back(parameterHigh);
     setupElementGroup(elementGroup);
 }
 
@@ -234,14 +283,9 @@ GuiColor * GuiWidget::addColor(Parameter<ofFloatColor> *parameter, L *listener, 
 template<typename L, typename M>
 GuiMenu * GuiWidget::addMenu(string name, vector<string> choices, L *listener, M method, bool multipleChoice, bool autoClose)
 {
-    GuiMenu *menu = new GuiMenu(name, choices, multipleChoice, autoClose);
-    menu->setParent(this);
-    GuiElementGroup *elementGroup = new GuiElementGroup();
-    elementGroup->addElement(menu);
-    setupElementGroup(elementGroup);
-    ofAddListener(menu->widgetChanged, this, &GuiWidget::eventWidgetChanged);
-    ofAddListener(menu->elementEvent, listener, method);
-    return menu;
+    GuiMenu *newMenu = addMenu(name, choices, multipleChoice, autoClose);
+    ofAddListener(newMenu->elementEvent, listener, method);
+    return newMenu;
 }
 
 template<typename L, typename M>

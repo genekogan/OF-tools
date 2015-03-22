@@ -346,6 +346,7 @@ void OpenNI::eventSetupMask(GuiElementEventArgs & e)
         maskFBO.allocate(kinectWidth, kinectHeight, GL_RGB);    // fbo for drawing a new mask
         
         maskPad = new Gui2dPad("mask", ofPoint(0, 0), ofPoint(kinectWidth, kinectHeight));
+        maskPad->setList(false);
         maskPad->setDrawConnectedPoints(true);
         maskPad->setRectangle(ofRectangle(200, 0, kinectWidth, kinectHeight));
         maskPad->setColorBackground(ofColor(0, 0, 0, 0));

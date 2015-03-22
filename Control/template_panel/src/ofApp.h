@@ -8,6 +8,7 @@ class ofApp : public ofBaseApp
 {
     
 public:
+    
     void setup();
     void update();
     void draw();
@@ -19,6 +20,16 @@ public:
     void colorEvent(GuiElementEventArgs & e);
     void panelToggleEvent(GuiElementEventArgs & e);
     void multiChoiceMenuSelect(GuiElementEventArgs & e);
+    
+    
+    void keyPressed(int key) {
+        if (key=='q') {
+            panel.savePreset("/Users/Gene/Desktop/testXml2.xml");
+        }
+        else if (key=='w') {
+            panel.loadPreset("/Users/Gene/Desktop/testXml2.xml");
+        }
+    }
     
 
     GuiPanel panel;
