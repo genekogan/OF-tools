@@ -4,16 +4,13 @@
 Scene::Scene()
 {
     bgColor.set(0, 0, 0, 1);
+    
     toClear = false;
     upsideDown = false;
     width = ofGetWidth();
     height = ofGetHeight();
     
-    control.addToggle("clear", &toClear);
-    control.addColor("bgColor", &bgColor);
-    
     setName("Scene");
-    setAutoUpdate(true);
 }
 
 Scene::~Scene()
@@ -38,11 +35,15 @@ void Scene::setAutoUpdate(bool autoUpdate)
     }
 }
 
-void Scene::setup(int width, int height)
+void Scene::setup(int width, int height, bool clearControls)
 {
     this->width = width;
     this->height = height;
-    setup();
+    if (clearControls)
+    {
+        control.addToggle("clear", &toClear);
+        control.addColor("bgColor", &bgColor);
+    }
 }
 
 void Scene::update(ofEventArgs &data)
@@ -50,7 +51,18 @@ void Scene::update(ofEventArgs &data)
     update();
 }
 
+void Scene::update()
+{
+
+}
+
 void Scene::draw(int x, int y)
+{
+    beginDraw(x, y);
+    endDraw();
+}
+
+void Scene::beginDraw(int x, int y)
 {
     ofPushMatrix();
     ofPushStyle();
@@ -76,9 +88,10 @@ void Scene::draw(int x, int y)
     }
     
     ofSetColor(255, 255);
-    
-    draw();
-    
+}
+
+void Scene::endDraw()
+{
     ofPopStyle();
     ofPopMatrix();
 }

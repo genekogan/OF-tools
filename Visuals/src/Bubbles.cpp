@@ -46,9 +46,9 @@ void Bubbles::BubbleCreator::threadedFunction()
     }
 }
 
-void Bubbles::setup()
+void Bubbles::setup(int width, int height, bool clearControls)
 {
-    setName("Bubbles");
+    Scene::setup(width, height, clearControls);
 
     control.addSlider("speed", &speed, 0.0f, 0.1f);
     control.addSlider("numBubbles", &numBubbles, 1, 2048);
@@ -156,8 +156,10 @@ void Bubbles::update()
     time += speed;
 }
 
-void Bubbles::draw()
+void Bubbles::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     ofSetRectMode(OF_RECTMODE_CENTER);
     for (int i=0; i<position.size(); i++)
     {
@@ -173,14 +175,7 @@ void Bubbles::draw()
                             (int)(pos.y + height * (1 + abs(ceil(pos.y / height)))) % height,
                             maxSize * size[i], maxSize * size[i]);
     }
+    
+    Scene::endDraw();
 }
 
-void Bubbles::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Bubbles::draw(int x, int y)
-{
-    Scene::draw(x, y);
-}

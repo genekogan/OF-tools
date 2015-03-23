@@ -181,7 +181,7 @@ GuiTextBox * GuiWidget::addTextBox(string name, L *listener, M method)
 template<typename T>
 void GuiWidget::addSlider(Parameter<T> *parameter)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     createSliders(elementGroup, parameter);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
     parameters.push_back(parameter);
@@ -211,7 +211,7 @@ void GuiWidget::addSlider(string name, T *value, T min, T max, L *listener, M me
 template<typename T>
 void GuiWidget::addRangeSlider(string name, Parameter<T> *parameterLow, Parameter<T> *parameterHigh)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameterLow->getName());
     createRangeSliders(elementGroup, name, parameterLow, parameterHigh);
     parameterLow->setOscAddress(getAddress()+parameterLow->getOscAddress());
     parameterHigh->setOscAddress(getAddress()+parameterHigh->getOscAddress());

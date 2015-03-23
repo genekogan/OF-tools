@@ -134,7 +134,7 @@ void OscManager::OscPanel::addParameter(ParameterBase *parameter)
     parameters.push_back(pair);
     ofAddListener(pair->parameterOscEvent, (OscManager *) parent, &OscManager::eventParameterOscAction);
 
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     elementGroup->addElement(pair->getToggleIn());
     elementGroup->addElement(pair->getToggleOut());
     elementGroup->addElement(pair->getToggleAddress());
@@ -175,7 +175,7 @@ OscManager::OscPanel * OscManager::addOscGroup(string name)
 
 void OscManager::addOscGroup(OscPanel *oscGroup)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(oscGroup->getName());
     oscGroup->setAddress(getAddress()+oscGroup->getAddress());
     oscGroup->setParent(this);
     elementGroup->addElement(oscGroup);

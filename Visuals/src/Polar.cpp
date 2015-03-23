@@ -85,9 +85,9 @@ void PolarEq::draw()
     }
 }
 
-void Polar::setup()
+void Polar::setup(int width, int height, bool clearControls)
 {
-    setName("Polar");
+    Scene::setup(width, height, clearControls);
     
     nx = 3;
     ny = 3;
@@ -163,8 +163,10 @@ void Polar::update()
     }
 }
 
-void Polar::draw()
+void Polar::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     for (int i=0; i<nx; i++)
     {
         for (int j=0; j<ny; j++)
@@ -177,6 +179,8 @@ void Polar::draw()
             ofPopMatrix();
         }
     }
+    
+    Scene::endDraw();
 }
 
 PolarEq::~PolarEq()
@@ -191,15 +195,4 @@ Polar::~Polar()
         delete polars[i];
     }
     polars.clear();
-    ofRemoveListener(ofEvents().update, (Scene*) this, &Scene::update);
-}
-
-void Polar::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Polar::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }

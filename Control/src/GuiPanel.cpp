@@ -96,7 +96,7 @@ GuiWidget * GuiPanel::addWidget(string name)
 
 void GuiPanel::addWidget(GuiWidget *widget)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(widget->getName());
     widget->disableControlRow();
     widget->setAddress(getAddress()+widget->getAddress());
     widget->setParent(this);
@@ -108,6 +108,7 @@ void GuiPanel::addWidget(GuiWidget *widget)
 void GuiPanel::setupGuiPositions()
 {
     GuiWidget::setupGuiPositions();
+    list = true;
     if (controlRow)
     {
         int width = rectangle.width / 3.0;

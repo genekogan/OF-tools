@@ -52,13 +52,11 @@ private:
 class Subdivide : public Scene
 {
 public:
-    void setup();
-    void update();
-    void draw();
-    
-    void setup(int width, int height);
+    Subdivide() {setName("Subdivide");}
+    void setup(int width, int height, bool clearControls=true);
+	void update();
     void draw(int x, int y);
-
+    
 private:
     void setDrawType(GuiElementEventArgs &e);
     

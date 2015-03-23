@@ -3,36 +3,105 @@
 //http://patriciogonzalezvivo.com/2015/thebookofshaders/
 
 
-//--------
-void Shader::setup() {
+Shader::Shader(bool colorShader)
+{
     setName("Shader");
-    width = 1280;
-    height = 800;
+    hasTexture = false;
+    if (colorShader) {
+        enableColorShaderMenu();
+    }
+    else {
+        enableTextureShaderMenu();
+    }
+    paramWidget = control.addWidget("Parameters");
+//    paramWidget = new GuiPanel();
+//    paramWidget->setName("Parameters");
+//    paramWidget->enableControlRow();
+//    control.addWidget(paramWidget);
 }
 
-//--------
-void Shader::setShader(string vert, string frag) {
+void Shader::setup(int width, int height, bool clearControls)
+{
+    Scene::setup(width, height, clearControls);
+}
+
+void Shader::enableTextureShaderMenu()
+{
+    menuChoose = control.addMenu("choose shader", this, &Shader::chooseTextureShader);
+    menuChoose->addToggle("BrCoSa");
+    menuChoose->addToggle("Pixelate");
+    menuChoose->addToggle("BilateralFilter");
+    menuChoose->addToggle("Blur");
+    menuChoose->addToggle("Channels");
+    menuChoose->addToggle("Deform");
+    menuChoose->addToggle("Edges");
+    menuChoose->addToggle("HalftoneCmyk");
+    menuChoose->addToggle("Halftone");
+    menuChoose->addToggle("Hue");
+    menuChoose->addToggle("Invert");
+    menuChoose->addToggle("Neon");
+    menuChoose->addToggle("Patches");
+    menuChoose->addToggle("PixelRolls");
+    menuChoose->addToggle("Grayscale");
+    menuChoose->addToggle("Threshold");
+    menuChoose->addToggle("Wrap");
+}
+
+void Shader::enableColorShaderMenu()
+{
+    menuChoose = control.addMenu("choose shader", this, &Shader::chooseColorShader);
+    menuChoose->addToggle("Blobby");
+    menuChoose->addToggle("Bits");
+    menuChoose->addToggle("BitsExperimental");
+    menuChoose->addToggle("Electro");
+    menuChoose->addToggle("Channels");
+    menuChoose->addToggle("Eye");
+    menuChoose->addToggle("Edges");
+    menuChoose->addToggle("HerokuBubbles");
+    menuChoose->addToggle("Landscape");
+    menuChoose->addToggle("Monjori");
+    menuChoose->addToggle("Nebula");
+    menuChoose->addToggle("Noisy");
+    menuChoose->addToggle("Ikeda");
+    menuChoose->addToggle("Rain");
+    menuChoose->addToggle("Sinewave");
+    menuChoose->addToggle("SinewaveExp");
+    menuChoose->addToggle("FractalScope");
+    menuChoose->addToggle("FractalFlower");
+    menuChoose->addToggle("Curtains");
+
+    
+    
+}
+
+void Shader::setShader(string vert, string frag)
+{
     vector<string> fragName = ofSplitString(frag, "/");
     shader.load(vert, frag);
-    Scene::setup(width, height);
     setName(fragName[fragName.size()-1]);
+    
+    paramWidget->clearElements();
+    
 }
 
-//--------
-void Shader::setTexture(ofFbo *fboTex){
-    if (fboTex != NULL) {
+void Shader::setTexture(ofFbo *fboTex)
+{
+    if (fboTex != NULL)
+    {
         this->fboTex = fboTex;
         hasTexture = true;
     }
 }
 
-//--------
-void Shader::update(){
+void Shader::update()
+{
 
 }
 
-//--------
-void Shader::draw() {
+void Shader::draw(int x, int y)
+{
+    Scene::beginDraw(x, y);
+
     shader.begin();
 
     shader.setUniform2f("resolution", width, height);
@@ -55,40 +124,40 @@ void Shader::draw() {
     }
     
     shader.end();
+
+    Scene::endDraw();
 }
 
-//--------
-void Shader::addParameter(string name, float min, float max){
-    float *var = new float();
-    control.addParameter(name, var, min, max);
-    *var = (min+max)*0.5;
+void Shader::addParameter(string name, float min, float max)
+{
+    float *var = new float((min+max)*0.5);
+    paramWidget->addSlider(name, var, min, max);
     shaderParameters.push_back(new ShaderParameter<float>(name, var));
 }
 
-//--------
-void Shader::addParameter(string name, ofVec2f min, ofVec2f max) {
+void Shader::addParameter(string name, ofVec2f min, ofVec2f max)
+{
     ofVec2f *var = new ofVec2f((min+max)*0.5);
-    control.addParameter(name, var, min, max);
+    paramWidget->addSlider(name, var, min, max);
     shaderParameters.push_back(new ShaderParameter<ofVec2f>(name, var));
 }
 
-//--------
-void Shader::addParameter(string name, ofVec3f min, ofVec3f max){
+void Shader::addParameter(string name, ofVec3f min, ofVec3f max)
+{
     ofVec3f *var = new ofVec3f((min+max)*0.5);
-    control.addParameter(name, var, min, max);
+    paramWidget->addSlider(name, var, min, max);
     shaderParameters.push_back(new ShaderParameter<ofVec3f>(name, var));
 }
 
-//--------
-void Shader::addParameter(string name, ofColor min, ofColor max){
-    ofColor *var = new ofColor((min+max)*0.5);
-    control.addColor(name, var);
-    shaderParameters.push_back(new ShaderParameter<ofColor>(name, var));
+void Shader::addParameter(string name, ofFloatColor min, ofFloatColor max)
+{
+    ofFloatColor *var = new ofFloatColor((min+max)*0.5);
+    paramWidget->addColor(name, var);
+    shaderParameters.push_back(new ShaderParameter<ofFloatColor>(name, var));
 }
 
 
-
-/*  COLOR PRESETS */
+//  COLOR PRESETS
 //------------------
 
 void Shader::setupBlobby(){
@@ -211,8 +280,8 @@ void Shader::setupCurtains(){
 
 
 
-/*  TEXTURE PRESETS */
-//--------------------
+//  TEXTURE PRESETS
+//------------------
 
 void Shader::setupBrCoSa(){
     setShader("shaders_texture/standard.vert", "shaders_texture/brcosa.frag");

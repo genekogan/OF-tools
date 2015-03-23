@@ -31,11 +31,9 @@ public:
 class Agents : public Scene
 {
 public:
-    void setup();
+    Agents() {setName("Agents");}
+    void setup(int width, int height, bool clearControls=true);
     void update();
-    void draw();
-    
-    void setup(int width, int height);
     void draw(int x, int y);
     
 protected:

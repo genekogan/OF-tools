@@ -187,6 +187,62 @@ void GuiWidgetBase::removeElement(string name)
     vector<GuiElementGroup*>::iterator it = elementGroups.begin();
     while (it != elementGroups.end())
     {
+        if ((*it)->getName() == name)
+        {         
+            vector<GuiElement*>::iterator ite = (*it)->getElements().begin();
+            while (ite != (*it)->getElements().end())
+            {
+                ofNotifyEvent(elementDeletedEvent, (*ite), this);
+                cout << "delete " << (*ite)->getName() << endl;
+                delete *ite;
+                (*it)->getElements().erase(ite);
+            }
+            elementGroups.erase(it);
+            
+        }
+        
+        else
+        {
+            vector<GuiElement*>::iterator ite = (*it)->getElements().begin();
+            while (ite != (*it)->getElements().end())
+            {
+                
+                
+                //////////////
+                ///////
+                // TODO: messy and doesn't work right for widgets inside widgets
+                
+                
+                
+                // ALSO need to delete the associated parameter from parameters
+                
+                
+                // ALSO -- if removing a widget -- need to clear innerWidgets in GuiPanel
+                
+                
+                if ((*ite)->getName() == name)
+                {
+                    ofNotifyEvent(elementDeletedEvent, (*ite), this);
+                    delete *ite;
+                    (*it)->getElements().erase(ite);
+                }
+                else {
+                    ++ite;
+                }
+            }
+            ++it;
+        }
+        
+    }
+    setupGuiPositions();
+    ofNotifyEvent(widgetChanged, name, this);
+}
+
+void GuiWidgetBase::clearElements()
+{
+    vector<GuiElementGroup*>::iterator it = elementGroups.begin();
+    while (it != elementGroups.end())
+    {
         vector<GuiElement*>::iterator ite = (*it)->getElements().begin();
         while (ite != (*it)->getElements().end())
         {
@@ -203,22 +259,18 @@ void GuiWidgetBase::removeElement(string name)
             
             // ALSO -- if removing a widget -- need to clear innerWidgets in GuiPanel
             
-            
-            if ((*ite)->getName() == name)
-            {
-                ofNotifyEvent(elementDeletedEvent, (*ite), this);
-                delete *ite;
-                (*it)->getElements().erase(ite);
-            }
-            else {
-                ++ite;
-            }
+            ofNotifyEvent(elementDeletedEvent, (*ite), this);
+            delete *ite;
+            (*it)->getElements().erase(ite);
         }
-        ++it;
+        delete *it;
+        elementGroups.erase(it);
     }
     setupGuiPositions();
     ofNotifyEvent(widgetChanged, name, this);
 }
+
+
 
 
 
@@ -323,7 +375,8 @@ void GuiWidgetBase::setCollapsed(bool collapsed)
 void GuiWidgetBase::setRectangle(ofRectangle rectangle)
 {
     GuiElement::setRectangle(rectangle);
-    for (auto w : boundWidgets) {
+    for (auto w : boundWidgets)
+    {
         w->setPosition(rectangle.x + rectangle.width + marginOuterX, rectangle.y);
     }
 }
@@ -336,6 +389,7 @@ void GuiWidgetBase::setRectangle(int x, int y, int width, int height)
 void GuiWidgetBase::addBoundWidget(GuiWidgetBase *other)
 {
     boundWidgets.push_back(other);
+    other->setPosition(rectangle.x + rectangle.width + marginOuterX, rectangle.y);
 }
 
 void GuiWidgetBase::removeBoundWidget(GuiWidgetBase *other)

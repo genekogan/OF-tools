@@ -18,7 +18,7 @@ GuiWidget::~GuiWidget()
 
 GuiButton * GuiWidget::addButton(Parameter<bool> *parameter)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     GuiButton *newButton = new GuiButton(parameter);
     elementGroup->addElement(newButton);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
@@ -34,7 +34,7 @@ GuiButton * GuiWidget::addButton(string name, bool *value)
 
 GuiToggle * GuiWidget::addToggle(Parameter<bool> *parameter)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     GuiToggle *newToggle = new GuiToggle(parameter);
     elementGroup->addElement(newToggle);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
@@ -50,7 +50,7 @@ GuiToggle * GuiWidget::addToggle(string name, bool *value)
 
 GuiTextBox * GuiWidget::addTextBox(Parameter<string> *parameter)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     GuiTextBox *newTextBox = new GuiTextBox(parameter);
     elementGroup->addElement(newTextBox);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
@@ -66,7 +66,7 @@ GuiTextBox * GuiWidget::addTextBox(string name, string *value)
 
 Gui2dPad * GuiWidget::add2dPad(Parameter<ofPoint> *parameter)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     Gui2dPad *new2dPad = new Gui2dPad(parameter);
     elementGroup->addElement(new2dPad);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
@@ -85,7 +85,7 @@ GuiColor * GuiWidget::addColor(Parameter<ofFloatColor> *parameter)
 {
     GuiColor *color = new GuiColor(parameter);
     color->setParent(this);
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     elementGroup->addElement(color);
     parameter->setOscAddress(getAddress()+parameter->getOscAddress());
     parameters.push_back(parameter);
@@ -109,7 +109,7 @@ GuiMenu * GuiWidget::addMenu(string name, vector<string> choices, bool multipleC
     GuiMenu *newMenu = new GuiMenu(name, choices, multipleChoice, autoClose);
     newMenu->setAddress(getAddress()+newMenu->getAddress());
     newMenu->setParent(this);
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(name);
     elementGroup->addElement(newMenu);
     setupElementGroup(elementGroup);
     ofAddListener(newMenu->widgetChanged, this, &GuiWidget::eventWidgetChanged);

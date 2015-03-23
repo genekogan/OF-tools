@@ -156,9 +156,9 @@ void Subdivision::drawCircle()
     ofEllipse(x+width/2, y+height/2, width, height);
 }
 
-void Subdivide::setup()
+void Subdivide::setup(int width, int height, bool clearControls)
 {
-    setName("Subdivide");
+    Scene::setup(width, height, clearControls);
 
     control.addColor("color", &color);
     control.addColor("varColor", &varColor);
@@ -194,17 +194,9 @@ void Subdivide::update()
     
 }
 
-void Subdivide::draw()
-{
-    start->draw(drawStrategy);
-}
-
-void Subdivide::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
 void Subdivide::draw(int x, int y)
 {
-    Scene::draw(x, y);
+    Scene::beginDraw(x, y);
+    start->draw(drawStrategy);
+    Scene::endDraw();
 }

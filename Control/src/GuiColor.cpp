@@ -17,7 +17,7 @@ void GuiColor::setupColor()
 {
     marginOuterX = 2;
     marginOuterY = 2;
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
     elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".r", &parameter->getReference()->r, 0.0f, 1.0f));
     elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".g", &parameter->getReference()->g, 0.0f, 1.0f));
     elementGroup->addElement(new GuiSlider<float>(parameter->getName()+".b", &parameter->getReference()->b, 0.0f, 1.0f));

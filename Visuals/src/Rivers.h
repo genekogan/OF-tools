@@ -27,11 +27,10 @@ public:
 class Rivers : public Scene
 {
 public:
-    void setup();
-    void update();
-    void draw();
+    Rivers() {setName("Rivers");}
 
-    void setup(int width, int height);
+    void setup(int width, int height, bool clearControls=true);
+    void update();
     void draw(int x, int y);
 
 private:

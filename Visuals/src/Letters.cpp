@@ -7,9 +7,9 @@ const char * Letters::alphanum = {
     "uvwxyz!@#$%^&*()_+;<>?~`"};
 
 
-void Letters::setup()
+void Letters::setup(int width, int height, bool clearControls)
 {
-    setName("Letters");
+    Scene::setup(width, height, clearControls);
 
     nrows = 30;
     ncols = 40;
@@ -78,33 +78,27 @@ void Letters::update()
     }
 }
 
-void Letters::draw()
+void Letters::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     int idx = 0;
-    float x, y;
+    float x0, y0;
     for (int i=0; i<ncols; i++)
     {
         for (int j=0; j<nrows; j++)
         {
-            x = ofMap(i, 0, ncols, 0, width);
-            y = ofMap(j, 0, nrows, 0, height);
+            x0 = ofMap(i, 0, ncols, 0, width);
+            y0 = ofMap(j, 0, nrows, 0, height);
             ofSetColor(color);
             if (chinese) {
-                fontC.drawString(ofToString(char(charsC[idx++])), x, y);
+                fontC.drawString(ofToString(char(charsC[idx++])), x0, y0);
             }
             else {
-                font.drawString(ofToString(chars[idx++]), x, y);
+                font.drawString(ofToString(chars[idx++]), x0, y0);
             }
         }
     }
-}
-
-void Letters::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Letters::draw(int x, int y)
-{
-    Scene::draw(x, y);
+    
+    Scene::endDraw();
 }

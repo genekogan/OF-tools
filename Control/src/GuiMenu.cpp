@@ -24,7 +24,7 @@ void GuiMenu::setupMenu(bool multipleChoice, bool autoClose)
     marginOuterX = 2;
     marginOuterY = 2;
     marginInner = 5;
-    menuGroup = new GuiElementGroup();
+    menuGroup = new GuiElementGroup(name);
     setupElementGroup(menuGroup);
 }
 

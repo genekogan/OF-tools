@@ -8,7 +8,7 @@ void ofApp::setup()
 
 void ofApp::update()
 {
-
+    scene.update();
 }
 
 void ofApp::draw()

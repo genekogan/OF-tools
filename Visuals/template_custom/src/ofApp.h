@@ -7,13 +7,10 @@
 class CustomScene : public Scene
 {
 public:
-    void setup();
-    void update();
-    void draw();
-    
     void setup(int width, int height);
+    void update();
     void draw(int x, int y);
-    
+        
 private:
     
     void menuSelect(GuiElementEventArgs & e);

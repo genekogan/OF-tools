@@ -5,7 +5,7 @@ AudioUnitInstrument::AudioUnitInstrumentParameter::AudioUnitInstrumentParameter(
 {
     this->instrument = instrument;
     this->idx = idx;
-    float *value = new float(parameter.defaultValue);
+    value = new float(parameter.defaultValue);
     parentWidget->addSlider(parameter.name, value, parameter.minValue, parameter.maxValue, this, &AudioUnitInstrumentParameter::parameterChanged);
 }
 
@@ -44,7 +44,41 @@ void AudioUnitInstrument::setupParameterGui()
         parameters.push_back(new AudioUnitInstrumentParameter(synthParameters[p], wGroup, instrument, p));
     }
     wGroup->setCollapsed(true);
+    
+    
+    
+    /////////////
+
+//    CFRunLoopRef runLoop = (CFRunLoopRef)GetCFRunLoopFromEventLoop(GetCurrentEventLoop());
+    
+    AUEventListenerCreate(&AudioUnitInstrument::audioUnitParameterChanged,
+                          this,
+                          CFRunLoopGetCurrent(),
+                          kCFRunLoopDefaultMode,
+                          0.005, // minimum callback interval (seconds)
+                          0.005, // callback granularity (for rate-limiting)
+                          &auEventListener);
+    
+    for (int p=0; p<parameters.size(); p++)
+    {
+        AudioUnitParameter param = {
+            .mAudioUnit = *instrument,
+            .mParameterID = p, //kLowPassParam_CutoffFrequency,
+            .mScope = kAudioUnitScope_Global,
+            .mElement = 0
+        };        
+        AUListenerAddParameter(auEventListener, this, &param);
+    }
+    /////////////
+    
+
 }
+
+void AudioUnitInstrument::audioUnitParameterChanged(void *context, void *object, const AudioUnitEvent *event, UInt64 hostTime, AudioUnitParameterValue parameterValue)
+{
+    *((AudioUnitInstrument *) context)->parameters[event->mArgument.mParameter.mParameterID]->value = parameterValue;
+}
+
 
 void AudioUnitInstrument::setMidiSequencer(MidiSequencer * midi_)
 {

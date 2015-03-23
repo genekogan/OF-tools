@@ -9,13 +9,10 @@
 class Bubbles : public Scene
 {
 public:
-    ~Bubbles();
-  
-    void setup();
+    Bubbles() {setName("Bubbles");}
+    ~Bubbles();  
+    void setup(int width, int height, bool clearControls=true);
     void update();
-    void draw();
-    
-    void setup(int width, int height);
     void draw(int x, int y);
     
 private:

@@ -11,16 +11,24 @@
 class GuiElementGroup
 {
 public:
+    GuiElementGroup(string name) {
+        this->name = name;
+    }
+    GuiElementGroup() {
+        this->name = "";
+    }
     ~GuiElementGroup();
     
     void addElement(GuiElement * element);
     void removeElement(string name);
     void clearToggles();
     
+    string getName() {return name;}
     vector<GuiElement*> & getElements() {return elements;}
     
 private:
     
+    string name;
     vector<GuiElement*> elements;
 };
 
@@ -50,6 +58,7 @@ public:
     void getAllElements(vector<GuiElement*> & allElements);
     GuiElement * getElement(string name);
     void removeElement(string name);
+    void clearElements();
 
     void setList(bool list);
     void setCollapsed(bool collapsed);

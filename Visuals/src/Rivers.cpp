@@ -41,9 +41,9 @@ bool Streak::isActive()
     return age<maxAge;
 }
 
-void Rivers::setup()
+void Rivers::setup(int width, int height, bool clearControls)
 {
-    setName("Rivers");
+    Scene::setup(width, height, clearControls);
     
     numStreaks = 1500;
     complexity = 0.01;
@@ -138,19 +138,13 @@ void Rivers::update()
     }
 }
 
-void Rivers::draw()
+void Rivers::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     for (vector<Streak>::iterator it = streaks.begin(); it != streaks.end(); ++it){
         (*it).draw();
     }
-}
-
-void Rivers::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Rivers::draw(int x, int y)
-{
-    Scene::draw(x, y);
+    
+    Scene::endDraw();
 }

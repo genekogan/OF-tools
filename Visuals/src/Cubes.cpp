@@ -59,9 +59,9 @@ void Cube::draw()
     ofPopMatrix();
 }
 
-void Cubes::setup()
+void Cubes::setup(int width, int height, bool clearControls)
 {
-    setName("Cubes");
+    Scene::setup(width, height, clearControls);
     
     newBoxRate = 3;
     pan = ofVec3f(-8, -3, 0);
@@ -99,8 +99,10 @@ void Cubes::update()
     }
 }
 
-void Cubes::draw()
+void Cubes::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     ofRotateX(ofMap(ofNoise(0.002*ofGetFrameNum()+5), 0, 1, -0.5, 0.5));
     ofRotateY(ofMap(ofNoise(0.002*ofGetFrameNum()+15), 0, 1, -0.5, 0.5));
     ofRotateZ(ofMap(ofNoise(0.002*ofGetFrameNum()+25), 0, 1, -0.5, 0.5));
@@ -109,6 +111,8 @@ void Cubes::draw()
     for (int i=0; i<cubes.size(); i++) {
         cubes[i].draw();
     }
+
+    Scene::endDraw();
 }
 
 void Cubes::addNewBox()
@@ -225,14 +229,4 @@ void Cubes::preset7()
 	targetSize.setConstant(ofVec3f(130, 500, 160));
 	ang.setConstant(ofVec3f(45.84, 0, 0));
 	dAng.setConstant(ofVec3f(0, 0, 5.73));
-}
-
-void Cubes::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Cubes::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }

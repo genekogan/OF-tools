@@ -1,9 +1,9 @@
 #include "Meshy.h"
 
 
-void Meshy::setup()
+void Meshy::setup(int width, int height, bool clearControls)
 {
-    setName("Meshy");
+    Scene::setup(width, height, clearControls);
  
     realtime = true;
     circles = true;
@@ -72,8 +72,10 @@ void Meshy::update()
     vertices = triangulator.getVertices();
 }
 
-void Meshy::draw()
+void Meshy::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     for (int i=0; i<triangles.size(); i++)
     {
         ITRIANGLE t0 = triangles[i];
@@ -111,14 +113,6 @@ void Meshy::draw()
                    v3.x + margin * ofSignedNoise(20, i, triNoise * ofGetFrameNum()),
                    v3.y + margin * ofSignedNoise(25, i, triNoise * ofGetFrameNum()));
     }
-}
 
-void Meshy::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Meshy::draw(int x, int y)
-{
-    Scene::draw(x, y);
+    Scene::endDraw();
 }

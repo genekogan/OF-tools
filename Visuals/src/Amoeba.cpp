@@ -1,9 +1,9 @@
 #include "Amoeba.h"
 
 
-void Amoeba::setup()
+void Amoeba::setup(int width, int height, bool clearControls)
 {
-    setName("Amoeba");
+    Scene::setup(width, height, clearControls);
     
     numVertices = 200;
     center = ofVec2f(width/2, height/2);
@@ -48,8 +48,10 @@ void Amoeba::update()
     time += speed;
 }
 
-void Amoeba::draw()
+void Amoeba::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     if (filled)
     {
         float t = (float) (ofGetFrameNum() % cycleFill) / cycleFill;
@@ -72,6 +74,8 @@ void Amoeba::draw()
             drawAmoeba();
         }
     }
+    
+    Scene::endDraw();
 }
 
 void Amoeba::drawAmoeba()
@@ -91,12 +95,3 @@ void Amoeba::drawAmoeba()
     ofEndShape(true);
 }
 
-void Amoeba::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Amoeba::draw(int x, int y)
-{
-    Scene::draw(x, y);
-}

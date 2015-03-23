@@ -1,8 +1,9 @@
 #include "ofApp.h"
 
 
-void CustomScene::setup()
+void CustomScene::setup(int width, int height)
 {
+    Scene::setup(width, height);
     setName("Custom");
     
     control.addSlider("radius", &radius, 50.0f, 250.0f);
@@ -32,8 +33,10 @@ void CustomScene::update()
     
 }
 
-void CustomScene::draw()
+void CustomScene::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+    
     ofSetCircleResolution(resolution);
     filled ? ofFill() : ofNoFill();
     ofSetColor(myColor);
@@ -43,7 +46,7 @@ void CustomScene::draw()
     ofSetColor(0);
     ofDrawBitmapString(greeting+"\n"+city, position.x, position.y);
     
-    ofSetColor(255);
+    Scene::endDraw();
 }
 
 void CustomScene::menuSelect(GuiElementEventArgs & e)
@@ -58,16 +61,6 @@ void CustomScene::multiChoiceMenuSelect(GuiElementEventArgs & e)
     city  = b1 ? "New York " : "";
     city += b2 ? "Los Angeles " : "";
     city += b3 ? "Chicago" : "";
-}
-
-void CustomScene::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void CustomScene::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }
 
 

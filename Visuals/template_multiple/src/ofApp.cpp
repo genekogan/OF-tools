@@ -18,7 +18,10 @@ void ofApp::setup()
 
 void ofApp::update()
 {
-
+    rivers.update();
+    amoeba.update();
+    bubbles.update();
+    polar.update();
 }
 
 void ofApp::draw()

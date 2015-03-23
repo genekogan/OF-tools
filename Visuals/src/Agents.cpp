@@ -1,9 +1,9 @@
 #include "Agents.h"
 
 
-void Agents::setup()
+void Agents::setup(int width, int height, bool clearControls)
 {
-    setName("Agents");
+    Scene::setup(width, height, clearControls);
 
     numAgents = 16;
     wrapping = true;
@@ -90,8 +90,10 @@ void Agents::drawDebug()
     }
 }
 
-void Agents::draw()
+void Agents::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+    
     if (debug) {
         drawDebug();
         return;
@@ -142,6 +144,8 @@ void Agents::draw()
             }
         }        
     }
+    
+    Scene::endDraw();
 }
 
 void Agent::setup(int x, int y, float baseRad, int width, int height)
@@ -174,7 +178,8 @@ void Agent::update()
     pos += (speed * vel);
 }
 
-bool Agent::isIntersecting(Agent &other) {
+bool Agent::isIntersecting(Agent &other)
+{
     bool isIntersecting = false;
     if ((pos.x - other.pos.x)*(pos.x - other.pos.x) +
         (pos.y - other.pos.y)*(pos.y - other.pos.y) <
@@ -212,14 +217,4 @@ void Agent::draw()
     ofRotate(ofRadToDeg(atan(vel.y / vel.x) + (vel.x < 0 ? PI : 0)), 0, 0, 1);
     ofLine(0, 0, rad, 0);
     ofPopMatrix();
-}
-
-void Agents::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void Agents::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }

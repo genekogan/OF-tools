@@ -1,9 +1,9 @@
 #include "DebugScreen.h"
 
 
-void DebugScreen::setup()
+void DebugScreen::setup(int width, int height, bool clearControls)
 {
-    setName("DebugScreen");
+    Scene::setup(width, height, clearControls);
 
     color1 = ofFloatColor(ofRandom(1), ofRandom(1), ofRandom(1), 1);
     color2 = ofFloatColor(ofRandom(1), ofRandom(1), ofRandom(1), 1);
@@ -44,8 +44,10 @@ void DebugScreen::update()
 {
 }
 
-void DebugScreen::draw()
+void DebugScreen::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     if (type == FULL) {
         drawFull();
     }
@@ -58,6 +60,8 @@ void DebugScreen::draw()
     else if (type == GRADIENT) {
         drawGradient();
     }
+
+    Scene::endDraw();
 }
 
 void DebugScreen::drawFull()
@@ -183,14 +187,4 @@ void DebugScreen::setupGradient(GuiElementEventArgs &evt)
         gradientMesh.addColor(ofColor(color2));
         gradientMesh.addColor(ofColor(color1));
     }
-}
-
-void DebugScreen::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void DebugScreen::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }

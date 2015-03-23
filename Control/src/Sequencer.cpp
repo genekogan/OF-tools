@@ -262,7 +262,7 @@ void Sequencer::setupSequencer()
     mChoose->addToggle("save new");
     mChoose->setCollapsed(true);
     
-    GuiElementGroup *elementGroup = new GuiElementGroup();
+    GuiElementGroup *elementGroup = new GuiElementGroup(name);
     elementGroup->addElement(tActive);
     elementGroup->addElement(tSmooth);
     elementGroup->addElement(sBeatPm);

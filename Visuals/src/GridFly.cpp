@@ -1,9 +1,9 @@
 #include "GridFly.h"
 
 
-void GridFly::setup()
+void GridFly::setup(int width, int height, bool clearControls)
 {
-    setName("GridFly");
+    Scene::setup(width, height, clearControls);
     
     nx = 100;
     ny = 100;
@@ -81,13 +81,17 @@ void GridFly::addRow()
     }
 }
 
-void GridFly::draw()
+void GridFly::draw(int x, int y)
 {
+    Scene::beginDraw(x, y);
+
     ofNoFill();
     ofSetColor(color);
     cam.begin();
     mesh.drawWireframe();
     cam.end();
+
+    Scene::endDraw();
 }
 
 GridFly::~GridFly()
@@ -95,14 +99,4 @@ GridFly::~GridFly()
     cam.disableOrtho();
     cam.disableMouseMiddleButton();
     cam.disableMouseInput();
-}
-
-void GridFly::setup(int width, int height)
-{
-    Scene::setup(width, height);
-}
-
-void GridFly::draw(int x, int y)
-{
-    Scene::draw(x, y);
 }

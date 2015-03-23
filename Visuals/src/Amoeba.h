@@ -7,11 +7,9 @@
 class Amoeba : public Scene
 {
 public:
-    void setup();
+    Amoeba() {setName("Amoeba");}
+    void setup(int width, int height, bool clearControls=true);
     void update();
-    void draw();
-    
-    void setup(int width, int height);
     void draw(int x, int y);
 
 private:
