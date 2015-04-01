@@ -18,19 +18,21 @@ Sequencer::SequenceElementPair::~SequenceElementPair()
 
 void Sequencer::SequenceElementPair::setElementFromSequence()
 {
-    if (sequence->getActive()) {
+    if (element->getActive() && sequence->getActive()) {
         element->setValueFromSequence(*sequence);
     }
 }
 
 void Sequencer::SequenceElementPair::setSequenceFromElement(int column)
 {
-    element->setSequenceFromValue(*sequence, column);
+    if (element->getActive()) {
+        element->setSequenceFromValue(*sequence, column);
+    }
 }
 
 void Sequencer::SequenceElementPair::lerpWidgetToSequencer(int lerpNumFrames)
 {
-    if (sequence->getActive()) {
+    if (element->getActive() && sequence->getActive()) {
         element->lerpTo(sequence->getValueAtCurrentCursor(), lerpNumFrames);
     }
 }
@@ -262,7 +264,7 @@ void Sequencer::setupSequencer()
     mChoose->addToggle("save new");
     mChoose->setCollapsed(true);
     
-    GuiElementGroup *elementGroup = new GuiElementGroup(name);
+    GuiElementGroup *elementGroup = new GuiElementGroup();
     elementGroup->addElement(tActive);
     elementGroup->addElement(tSmooth);
     elementGroup->addElement(sBeatPm);
@@ -313,12 +315,22 @@ void Sequencer::setupSequencesFromPanel()
     {
         for (auto elementPair : groupPair->getElementPairs())
         {
-            if (groupPair->getParent()->getCollapsed()) {
+//            cout << "========== " << endl;
+//            cout << "seq " << groupPair->getParent()->getName() << " -> " << elementPair->getElement()->getName() << endl;
+            
+            if (groupPair->getParent()->getCollapsed() ||
+                !groupPair->getParent()->getActive() ||
+                !elementPair->getElement()->getActive() ||
+                !elementPair->getElement()->getParent()->getActive())
+            {
                 elementPair->getSequence()->setRectangle(0, 0, 0, 0);
+//                cout << " -- disappear"<<endl;
             }
-            else {
+            else
+            {
                 ofRectangle elementRectangle = elementPair->getElement()->getRectangle();
                 elementPair->getSequence()->setRectangle(rectangle.x, elementRectangle.y, sequencerWidth, elementRectangle.height);
+//                cout << " -- Set seq rect " << elementPair->getElement()->getName() <<"  : " << ofToString(elementPair->getSequence()->getRectangle()) << endl;
             }
         }
     }
@@ -364,8 +376,11 @@ void Sequencer::setAllSequencersActive(bool allSequencesActive)
     this->allSequencesActive = allSequencesActive;
     for (auto p : sequencePairs)
     {
-        for (auto &e : p->getElementPairs()) {
-            e->getSequence()->setActive(allSequencesActive);
+        for (auto &e : p->getElementPairs())
+        {
+            if (e->getElement()->getActive()) {
+                e->getSequence()->setActive(allSequencesActive);
+            }
         }
     }
 }
@@ -379,8 +394,11 @@ void Sequencer::selectColumn(int column)
     for (auto p : sequencePairs)
     {
         p->setCursor(cursor);
-        for (auto &e : p->getElementPairs()) {
-            e->lerpWidgetToSequencer(lerpNumFrames);
+        for (auto &e : p->getElementPairs())
+        {
+            if (e->getElement()->getActive()) {
+                e->lerpWidgetToSequencer(lerpNumFrames);
+            }
         }
     }
 }
@@ -389,8 +407,11 @@ void Sequencer::setColumnToCurrentValues(int column)
 {
     for (auto p : sequencePairs)
     {
-        for (auto &e : p->getElementPairs()) {
-            e->setSequenceFromElement(column);
+        for (auto &e : p->getElementPairs())
+        {
+            if (e->getElement()->getActive()) {
+                e->setSequenceFromElement(column);
+            }
         }
     }
 }

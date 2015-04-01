@@ -27,13 +27,15 @@ class GuiElement
 public:
     GuiElement(string name);
     GuiElement();
-    
+    virtual ~GuiElement();
+
     void setParent(GuiElement *parent);
     GuiElement * getParent() {return parent;}
     bool getHasParent() {return hasParent;}
     
-    virtual ~GuiElement();
+    bool getActive() {return active;}
     
+    virtual void setActive(bool active);
     virtual void setAutoUpdate(bool autoUpdate);
     virtual void setAutoDraw(bool autoDraw);
     
@@ -111,7 +113,7 @@ protected:
     void draw(ofEventArgs &data);
     
     string name;
-    bool autoUpdate, autoDraw;
+    bool active, autoUpdate, autoDraw;
     bool mouseOver, mouseDragging;
     
     GuiElement *parent;

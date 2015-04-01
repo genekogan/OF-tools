@@ -111,15 +111,28 @@ void GuiPanel::setupGuiPositions()
     list = true;
     if (controlRow)
     {
-        int width = rectangle.width / 3.0;
-        tOsc->setRectangle(rectangle.x + 4, rectangle.y + headerHeight + 5, width - 8, 15);
-        tSeq->setRectangle(rectangle.x + 4 + width, rectangle.y + headerHeight + 5, width - 8, 15);
-        tXml->setRectangle(rectangle.x + 4 + 2 * width, rectangle.y + headerHeight + 5, width - 8, 15);
+        if (active)
+        {
+            int width = rectangle.width / 3.0;
+            tOsc->setRectangle(rectangle.x + 4, rectangle.y + headerHeight + 5, width - 8, 15);
+            tSeq->setRectangle(rectangle.x + 4 + width, rectangle.y + headerHeight + 5, width - 8, 15);
+            tXml->setRectangle(rectangle.x + 4 + 2 * width, rectangle.y + headerHeight + 5, width - 8, 15);
+        }
+        else
+        {
+            tXml->setRectangle(0, 0, 0, 0);
+            tXml->setRectangle(0, 0, 0, 0);
+            tXml->setRectangle(0, 0, 0, 0);
+        }
     }
 }
 
 void GuiPanel::update()
 {
+    if (!active) {
+        return;
+    }
+    
     GuiWidget::update();
     if (controlRow)
     {
@@ -137,6 +150,10 @@ void GuiPanel::update()
 
 void GuiPanel::draw()
 {
+    if (!active) {
+        return;
+    }
+
     ofPushStyle();
     ofSetLineWidth(1);
     ofSetCircleResolution(16);

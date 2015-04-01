@@ -6,8 +6,8 @@ void ofApp::setup()
 
     canvas.setup("Canvas", 800, 600);
     
-    canvas.addCreator(new Rivers());
     canvas.addCreator(new Amoeba());
+    canvas.addCreator(new Agents());
     canvas.addCreator(new Bubbles());
     canvas.addCreator(new Cubes());
     canvas.addCreator(new DebugScreen());
@@ -18,7 +18,6 @@ void ofApp::setup()
     canvas.addCreator(new Rivers());
     canvas.addCreator(new Shader(true));
     canvas.addCreator(new Subdivide());
-    
     
     canvas.addModifier();
     canvas.addPostGlitch();

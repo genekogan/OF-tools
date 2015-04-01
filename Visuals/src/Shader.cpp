@@ -81,7 +81,6 @@ void Shader::setShader(string vert, string frag)
     setName(fragName[fragName.size()-1]);
     
     paramWidget->clearElements();
-    
 }
 
 void Shader::setTexture(ofFbo *fboTex)

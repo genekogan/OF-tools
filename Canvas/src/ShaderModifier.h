@@ -16,7 +16,7 @@ public:
         shader = new Shader(false);
         shader->setup(width, height, false);
         //        shader->getControl().setPosition(ofRandom(200, 1000), ofRandom(0, 500));
-        shader->getControl().disableControlRow();
+        //shader->getControl().disableControlRow();
     }
     
     GuiPanel & getControl()

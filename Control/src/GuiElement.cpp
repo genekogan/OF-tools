@@ -29,6 +29,7 @@ void GuiElement::initialize()
     mouseOver = false;
     setAutoUpdate(true);
     setAutoDraw(true);
+    setActive(true);
     setRectangle(0, 0, elementWidth, elementHeight);
 }
 
@@ -44,6 +45,26 @@ GuiElement::~GuiElement()
     elementEvent.disable();
     setAutoUpdate(false);
     setAutoDraw(false);
+}
+
+void GuiElement::setActive(bool active)
+{
+    this->active = active;
+    if (active)
+    {
+        setAutoUpdate(autoUpdate);
+        setAutoDraw(autoDraw);
+    }
+    else
+    {
+        ofRemoveListener(ofEvents().mouseMoved, this, &GuiElement::mouseMoved);
+        ofRemoveListener(ofEvents().mousePressed, this, &GuiElement::mousePressed);
+        ofRemoveListener(ofEvents().mouseDragged, this, &GuiElement::mouseDragged);
+        ofRemoveListener(ofEvents().mouseReleased, this, &GuiElement::mouseReleased);
+        ofRemoveListener(ofEvents().keyPressed, this, &GuiElement::keyPressed);
+        ofRemoveListener(ofEvents().update, this, &GuiElement::update);
+        ofRemoveListener(ofEvents().draw, this, &GuiElement::draw);
+    }
 }
 
 void GuiElement::setAutoUpdate(bool autoUpdate)
@@ -121,7 +142,7 @@ void GuiElement::setMouseOver(bool mouseOver)
 
 bool GuiElement::mouseMoved(int mouseX, int mouseY)
 {
-    mouseOver = rectangle.inside(mouseX, mouseY);
+    mouseOver = active && rectangle.inside(mouseX, mouseY);
     return mouseOver;
 }
 

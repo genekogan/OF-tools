@@ -289,6 +289,7 @@ protected:
         string name;
         bool smooth;
         int bpm;
+
         int lerpNumFrames;
         int numCols;
         map<string, vector<float> > sequences;

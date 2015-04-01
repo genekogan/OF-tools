@@ -39,16 +39,20 @@ public:
         {
 //            panel.removeElement(creator->getControl().getName());
 
-            creator->getControl().setAutoDraw(false);
-            creator->getControl().setAutoUpdate(false);
+            //creator->getControl().setAutoDraw(false);
+            //creator->getControl().setAutoUpdate(false);
+          
+            creator->getControl().setActive(false);
         }
         
         creator = creators[e.name];
         
-        creator->getControl().setAutoDraw(true);
-        creator->getControl().setAutoUpdate(true);
+        creator->getControl().setActive(true);
         
-//        panel.addWidget(&creator->getControl());
+        //creator->getControl().setAutoDraw(true);
+        //creator->getControl().setAutoUpdate(true);
+        
+        
 
     }
     
@@ -79,15 +83,25 @@ public:
     {
         creators[creator->getName()] = creator;
         creator->setup(width, height, true);
+        
         creator->getControl().setAutoDraw(false);
         creator->getControl().setAutoUpdate(false);
         
-        panel.addBoundWidget(&creator->getControl());
+        
+        panel.addWidget(&creator->getControl());
+        
+        creator->getControl().setActive(false);
+        
+        
+        
+        //panel.addBoundWidget(&creator->getControl());
 
         menuCreator->addToggle(creator->getName());
         
         if (creators.size() == 1) {
-            this->creator = creators[creator->getName()];
+            GuiElementEventArgs evt(creator->getName(), 0, 0);
+            selectCreator(evt);
+            //this->creator = creators[creator->getName()];
         }
     }
     
@@ -101,8 +115,8 @@ public:
             modifiers[modifiers.size()-1]->getControl().addBoundWidget(&modifier->getControl());
         }
         else {
-            //panel.addBoundWidget(&modifier->shader->getControl());
-            creator->getControl().addBoundWidget(&modifier->getControl());
+            panel.addBoundWidget(&modifier->getControl());
+            //creator->getControl().addBoundWidget(&modifier->getControl());
         }
         
         modifiers.push_back(modifier);
