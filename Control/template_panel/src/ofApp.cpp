@@ -62,6 +62,14 @@ void ofApp::setup(){
     menu2->addToggle("namaste varlda");
     menu2->addToggle("suesday piphoplok");
     menu2->addToggle("suwati lok");
+    
+    
+    GuiMenu *menu3 = innerWidget->addMenu("menu", this, &ofApp::menuSelect);
+    menu3->setAutoClose(false);
+    menu3->addToggle("new york");
+    menu3->addToggle("los angeles");
+    menu3->addToggle("chicago");
+
 
     // sliders can have different types
     panel.addSlider("float slider", &floatSlider, 0.0f, 10.0f);
