@@ -6,9 +6,29 @@
 #include "Sequence.h"
 
 
+class GuiButtonBase;
+
+struct GuiButtonEventArgs
+{
+    GuiButtonBase *button;
+    bool value;
+    
+    GuiButtonEventArgs(GuiButtonBase *button, bool value)
+    {
+        this->button = button;
+        this->value = value;
+    }
+};
+
+
 class GuiButtonBase : public GuiElement
 {
 public:
+    
+    void getParameters(vector<ParameterBase*> & parameters) {
+        parameters.push_back(parameter);
+    }
+    
     template <typename L, typename M>
     GuiButtonBase(Parameter<bool> *parameter, L *listener, M method);
     
@@ -24,52 +44,51 @@ public:
     
     virtual ~GuiButtonBase();
         
-    bool isDiscrete() {return true;}
-
-    void setTriggerAll(bool triggerAll);
     void setLeftJustified(bool leftJustified) {this->leftJustified = leftJustified;}
     
     bool getValue();
     void setValue(bool value, bool sendChangeNotification=false);
+    bool isDiscrete() {return true;}
 
     void lerpTo(float nextValue, int numFrames);
-    
-    int getMenuIndex() {return menuIndex;}
-    void setMenuIndex(int menuIndex) {this->menuIndex = menuIndex;}
     
     virtual void update();
     virtual void draw();
     
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
     
-    ///////
-    void getXml(ofXml &xml) {
-        xml.addValue("Name", getName());
-        xml.addValue<bool>("Value", getValue());
-    }
-    void setFromXml(ofXml &xml) {
-        setValue(xml.getValue<bool>("Value"), true);
-    }
+    ofEvent<GuiButtonEventArgs> buttonEvent;
     
-    //////
+    
 
+    //string display;
+    
+    
+    void setupGuiPositions()
+    {
+        GuiElement::setupGuiPositions();
+        stringWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+        stringHeight = ofBitmapStringGetBoundingBox(display, 0, 0).height;
+    }
+    
+    
+    
     
 protected:
     
-    void setupButton();
+    void initializeButton();
 
     void setValueFromSequence(Sequence &sequence);
     void setSequenceFromValue(Sequence &sequence, int column);
     void setSequenceFromExplicitValue(Sequence &sequence, int column, float value);
 
     Parameter<bool> *parameter;
-    int menuIndex;
     float stringWidth, stringHeight;
     bool leftJustified;
     
     float lerpNextValue;;
     int lerpFrame, lerpNumFrames;
-    
-    bool triggerAll;
 };
 
 
@@ -77,24 +96,24 @@ template <typename L, typename M>
 GuiButtonBase::GuiButtonBase(Parameter<bool> *parameter, L *listener, M method) : GuiElement(name)
 {
     this->parameter = parameter;
-    setupButton();
-    ofAddListener(elementEvent, listener, method);
+    initializeButton();
+    ofAddListener(buttonEvent, listener, method);
 }
 
 template <typename L, typename M>
 GuiButtonBase::GuiButtonBase(string name, bool *value, L *listener, M method) : GuiElement(name)
 {
     parameter = new Parameter<bool>(name, value);
-    setupButton();
-    ofAddListener(elementEvent, listener, method);
+    initializeButton();
+    ofAddListener(buttonEvent, listener, method);
 }
 
 template <typename L, typename M>
 GuiButtonBase::GuiButtonBase(string name, L *listener, M method) : GuiElement(name)
 {
     parameter = new Parameter<bool>(name, new bool());
-    setupButton();
-    ofAddListener(elementEvent, listener, method);
+    initializeButton();
+    ofAddListener(buttonEvent, listener, method);
 }
 
 
@@ -117,6 +136,7 @@ public:
     
     bool mousePressed(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
+    bool keyPressed(int key);
 };
 
 

@@ -1,12 +1,11 @@
 #pragma once
-
+/*
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "Parameter.h"
 #include "GuiButton.h"
 #include "GuiTextBox.h"
-#include "GuiWidgetBase.h"
-#include "GuiPanel.h"
+#include "GuiWidget.h"
 
 
 
@@ -34,9 +33,9 @@ public:
         GuiTextBox * getToggleAddress() {return tOscAddress;}
         ParameterBase * getParameter() {return parameter;}
         
-        void toggleOscIn(GuiElementEventArgs & e);
-        void toggleOscOut(GuiElementEventArgs & e);
-        void editOscAddress(GuiElementEventArgs & e);
+        void toggleOscIn(GuiButtonEventArgs & e);
+        void toggleOscOut(GuiButtonEventArgs & e);
+        void editOscAddress(GuiTextBoxEventArgs & e);
         
         ofEvent<ParameterOscPairEventArgs> parameterOscEvent;
         
@@ -47,7 +46,63 @@ public:
         GuiTextBox *tOscAddress;
     };
     
-    class OscPanel : public GuiWidgetBase
+    
+    void addParameters(vector<ParameterBase*> & parameters)
+    {
+        
+    }
+    
+    void addParameter(ParameterBase* parameter)
+    {
+        
+    }
+    
+    vector<ParameterBase*> sendParameters;
+    map<string, ParameterBase*> receiveParameters;
+
+    
+};
+*/
+
+/*
+class OscManager : public GuiWidget
+{
+public:
+    
+    class ParameterOscPair
+    {
+    public:
+        
+        struct ParameterOscPairEventArgs
+        {
+            ParameterBase *parameter;
+            bool sender;
+            bool toAdd;
+            ParameterOscPairEventArgs(ParameterBase *parameter, bool sender, bool toAdd);
+        };
+        
+        ParameterOscPair(ParameterBase *parameter);
+        ~ParameterOscPair();
+        
+        GuiToggle * getToggleIn() {return tOscIn;}
+        GuiToggle * getToggleOut() {return tOscOut;}
+        GuiTextBox * getToggleAddress() {return tOscAddress;}
+        ParameterBase * getParameter() {return parameter;}
+        
+        void toggleOscIn(GuiButtonEventArgs & e);
+        void toggleOscOut(GuiButtonEventArgs & e);
+        void editOscAddress(GuiTextBoxEventArgs & e);
+        
+        ofEvent<ParameterOscPairEventArgs> parameterOscEvent;
+        
+    private:
+        
+        ParameterBase *parameter;
+        GuiToggle *tOscIn, *tOscOut;
+        GuiTextBox *tOscAddress;
+    };
+    
+    class OscPanel : public GuiWidget
     {
     public:
         OscPanel(string name);
@@ -58,8 +113,8 @@ public:
     private:
         
         void setupGuiPositions();
-        void toggleReceiveAll(GuiElementEventArgs & e);
-        void toggleSendAll(GuiElementEventArgs & e);
+        void toggleReceiveAll(GuiButtonEventArgs & e);
+        void toggleSendAll(GuiButtonEventArgs & e);
         
         GuiToggle *allIn, *allOut;
         vector<ParameterOscPair*> parameters;
@@ -80,7 +135,7 @@ public:
     void addParameterToReceiver(ParameterBase *parameter);
     void removeParameterFromSender(ParameterBase *parameter);
     void removeParameterFromReceiver(ParameterBase *parameter);
-
+    
     void update();
     
 protected:
@@ -95,6 +150,7 @@ protected:
     
     vector<ParameterBase*> sendParameters;
     map<string, ParameterBase*> receiveParameters;
-
+    
     OscPanel *individualParameters;
 };
+*/

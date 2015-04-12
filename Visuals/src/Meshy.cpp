@@ -31,11 +31,11 @@ void Meshy::setup(int width, int height, bool clearControls)
     control.addSlider("lineWidth", &lineWidth, 0.0f, 5.0f);
     control.addButton("triangulate", this, &Meshy::triangulate);
  
-    GuiElementEventArgs s("", 0, 0);
+    GuiButtonEventArgs s(NULL, true);
     triangulate(s);
 }
 
-void Meshy::triangulate(GuiElementEventArgs &evt)
+void Meshy::triangulate(GuiButtonEventArgs &evt)
 {
     if (circles)
     {

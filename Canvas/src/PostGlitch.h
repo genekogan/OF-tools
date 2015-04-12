@@ -10,40 +10,26 @@
 class PostGlitch : public Modifier
 {
 public:
+    PostGlitch() : Modifier()
+    {
+        type = "PostGlitch";
+    }
+
+    void setActive(bool active)
+    {
+        this->active = active;
+        panel.setActive(active);
+    }
+
     void setup(int width, int height);
+    void render(ofFbo *fbo);
     
-    
-    GuiPanel & getControl()
-    {
-        return panel;
-    }
-    
-    void render(ofFbo *fbo)
-    {
-        post.setFbo(fbo);
-        
-        updateEffects();
-        if (delTime != pDelTime)
-            noiseChange();
-        
-        if (customParameters) {
-            post.setShaderParameters((int) ofRandom(stepMin, stepMax),
-                                     sv0.get(), sv1.get(), sv2.get(), sv3.get(),
-                                     rand.get(), m0.get(), m1.get(), b0.get(), b1.get());
-        } else {
-            post.setShaderParameters();
-        }
-        
-        post.generateFx();
-        
-        
-        fbo->draw(0, 0);
-        
-        //fbo = *texLayer->getFbo();
-    }
-    
-    
-    void setDelTime(float delTime) {this->delTime = delTime;}
+    void toggleEffects(GuiMenuEventArgs &evt);
+    void setDelayTime(GuiSliderEventArgs<float> &evt);
+
+    GuiPanel & getControl() {return panel;}
+
+    ofxPostGlitch post;
     
     bool convergence;
     bool glow;
@@ -63,17 +49,9 @@ public:
     bool crRedInvert;
     bool crGreenInvert;
     
-    
-    void updateEffects();
-    void noiseChange();
-    
-    
-    
-    ofxPostGlitch post;
-    
     bool customParameters;
     float stepMin, stepMax;
-    float delTime, pDelTime;
+    float delTime;
     
     TimeFunction<float> sv0, sv1, sv2, sv3;
     TimeFunction<float> rand;
@@ -81,5 +59,4 @@ public:
     TimeFunction<float> b0, b1;
     
     GuiPanel panel;
-
 };

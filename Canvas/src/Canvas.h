@@ -5,14 +5,12 @@
 #include "Shader.h"
 #include "Control.h"
 
-
-
 #include "Modifier.h"
 #include "ShaderModifier.h"
 #include "PostGlitch.h"
 #include "PostProcessing.h"
 #include "PostFX.h"
-
+#include "ProjectionMapping.h"
 
 
 
@@ -20,183 +18,84 @@ class Canvas
 {
 public:
     
-    void setup(string name, int width, int height)
-    {
-        this->name = name;
-        this->width = width;
-        this->height = height;
-        creator = NULL;
-        
-        panel.setName(name);
-        menuCreator = panel.addMenu("Creator", this, &Canvas::selectCreator);
-
-        createNewFbo();
-    }
+    GuiPanel & getControl() {return metaPanel;}
+    GuiPanel & getCreatorPanel() {return creatorPanel;}
     
-    void selectCreator(GuiElementEventArgs &e)
-    {
-        if (creator != NULL)
-        {
-//            panel.removeElement(creator->getControl().getName());
-
-            //creator->getControl().setAutoDraw(false);
-            //creator->getControl().setAutoUpdate(false);
-          
-            creator->getControl().setActive(false);
-        }
-        
-        creator = creators[e.name];
-        
-        creator->getControl().setActive(true);
-        
-        //creator->getControl().setAutoDraw(true);
-        //creator->getControl().setAutoUpdate(true);
-        
-        
-
-    }
     
-    void update()
-    {
-        if (creator == NULL)    return;
-        
-        creator->update();
-        
-        fbo[0].begin();
-        creator->draw(0, 0);
-        fbo[0].end();
-        
-        for (int i = 1; i < fbo.size(); i++)
-        {
-            fbo[i].begin();
-            modifiers[i-1]->render(&fbo[i-1]);
-            fbo[i].end();
-        }
-    }
+    enum CanvasView { CONDENSED, EXPANDED_ATTACHED, EXPANDED_DETACHED };
     
-    void draw(int x, int y)
-    {
-        fbo[fbo.size()-1].draw(x, y);
-    }
+    ~Canvas();
+    void setup(string name, int width, int height);
+    void update();
+    void draw(int x, int y);
     
-    void addCreator(Scene *creator)
-    {
-        creators[creator->getName()] = creator;
-        creator->setup(width, height, true);
-        
-        creator->getControl().setAutoDraw(false);
-        creator->getControl().setAutoUpdate(false);
-        
-        
-        panel.addWidget(&creator->getControl());
-        
-        creator->getControl().setActive(false);
-        
-        
-        
-        //panel.addBoundWidget(&creator->getControl());
+    void addCreator(Scene *creator);
+    void selectCreator(string name);
 
-        menuCreator->addToggle(creator->getName());
-        
-        if (creators.size() == 1) {
-            GuiElementEventArgs evt(creator->getName(), 0, 0);
-            selectCreator(evt);
-            //this->creator = creators[creator->getName()];
-        }
-    }
-    
-    void addModifier()
-    {
-        Modifier *modifier = new ShaderModifier();
-        modifier->setup(width, height);
-        
-        if (modifiers.size() > 0) {
-            //modifiers[modifiers.size()-1]->shader->getControl().addBoundWidget(&modifier->shader->getControl());
-            modifiers[modifiers.size()-1]->getControl().addBoundWidget(&modifier->getControl());
-        }
-        else {
-            panel.addBoundWidget(&modifier->getControl());
-            //creator->getControl().addBoundWidget(&modifier->getControl());
-        }
-        
-        modifiers.push_back(modifier);
-        createNewFbo();
-    }
-    
-    void addPostGlitch()
-    {
-        Modifier *modifier = new PostGlitch();
-        modifier->setup(width, height);
-        
-        if (modifiers.size() > 0) {
-            //modifiers[modifiers.size()-1]->shader->getControl().addBoundWidget(&modifier->shader->getControl());
-            modifiers[modifiers.size()-1]->getControl().addBoundWidget(&modifier->getControl());
-        }
-        else {
-            //panel.addBoundWidget(&modifier->shader->getControl());
-            creator->getControl().addBoundWidget(&modifier->getControl());
-        }
-        
-        modifiers.push_back(modifier);
-        createNewFbo();
-    }
+    Modifier * addShaderModifier() {return addModifier("Shader");}
+    Modifier * addPostProcessing() {return addModifier("PostProcessing");}
+    Modifier * addPostFX() {return addModifier("PostFX");}
+    Modifier * addPostGlitch() {return addModifier("PostGlitch");}
 
-    void addPostProcessing()
-    {
-        Modifier *modifier = new PostProcessingMod();
-        modifier->setup(width, height);
-        
-        if (modifiers.size() > 0) {
-            //modifiers[modifiers.size()-1]->shader->getControl().addBoundWidget(&modifier->shader->getControl());
-            modifiers[modifiers.size()-1]->getControl().addBoundWidget(&modifier->getControl());
-        }
-        else {
-            //panel.addBoundWidget(&modifier->shader->getControl());
-            creator->getControl().addBoundWidget(&modifier->getControl());
-        }
-        
-        modifiers.push_back(modifier);
-        createNewFbo();
-    }
-
-    void addPostFX()
-    {
-        Modifier *modifier = new PostFX();
-        modifier->setup(width, height);
-        
-        if (modifiers.size() > 0) {
-            //modifiers[modifiers.size()-1]->shader->getControl().addBoundWidget(&modifier->shader->getControl());
-            modifiers[modifiers.size()-1]->getControl().addBoundWidget(&modifier->getControl());
-        }
-        else {
-            //panel.addBoundWidget(&modifier->shader->getControl());
-            creator->getControl().addBoundWidget(&modifier->getControl());
-        }
-        
-        modifiers.push_back(modifier);
-        createNewFbo();
-    }
-
+    void loadPreset(string path);
+    void savePreset(string name);
     
-    void createNewFbo()
-    {
-        ofFbo newFbo;
-        newFbo.allocate(width, height);
-        newFbo.begin();
-        ofClear(0, 0);
-        newFbo.end();
-        fbo.push_back(newFbo);
-    }
+    void setGuiDisplayMode(CanvasView canvasView);
+    void toggleGuiVisible();
+    
+private:
+    
+    void createNewFbo();
+    void checkFboSize();
+    void updatePanels();
+    void refreshPresetMenu();
+    void resetGuiPositions();
+    void switchCreator(string name);
+
+    Modifier * addModifier(string type);
+    Modifier * initializeModifier(Modifier *modifier, bool toSetup);
+
+    void eventViewLayer(GuiMenuEventArgs &evt);
+    void eventSelectCreator(GuiMenuEventArgs &e);
+    void eventCreateModifier(GuiMenuEventArgs &evt);
+    void eventRemoveModifier(GuiMenuEventArgs &evt);
+    void eventLoadPreset(GuiMenuEventArgs &evt);
+    void eventSavePreset(GuiButtonEventArgs &evt);
+    void eventToggleMapping(GuiButtonEventArgs &evt);
+    void eventToggleMappingCalibration(GuiButtonEventArgs &evt);
+    void eventSaveCalibration(GuiButtonEventArgs &evt);
+    void eventLoadCalibration(GuiButtonEventArgs &evt);
+    
+    void setFromXml(ofXml &xml);
+    void getXml(ofXml &xml);
+    
+    CanvasView canvasView;
+    bool guiVisible;
     
     string name;
     int width, height;
-    GuiPanel panel;
-    GuiMenu *menuCreator;
 
     map<string, Scene*> creators;
+    Scene *creator;
+    vector<Modifier*> availableModifiers;
     vector<Modifier*> modifiers;
     vector<ofFbo> fbo;
+
+    GuiPanel creatorPanel, metaPanel;
+    GuiMenu *menuCreator;
+    GuiMenu *menuLoadPreset;
+    GuiMenu *menuAddMod;
+    GuiMenu *menuRemove;
+    GuiMenu *menuView;
+    GuiWidget *widgetMapping;
     
-    Scene *creator;
+    ProjectionMapping mapping;
+    bool pmEnabled;
+    bool pmCalibrating;
+    
+    ofFbo mask;
+    ofFbo maskResult;
+    ofShader maskShader;
+    bool maskEnabled;
 };
 

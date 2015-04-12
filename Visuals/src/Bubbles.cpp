@@ -55,12 +55,12 @@ void Bubbles::setup(int width, int height, bool clearControls)
     control.addSlider("maxSizeInitial", &maxSizeInitial, 100, 1000, this, &Bubbles::fboParametersChanged);
     control.addSlider("maxSize", &maxSize, 10, 800);
     control.addColor("baseColor", &baseColor);
-    control.addSlider("varColor", &varColor, ofVec3f(0,0,0), ofVec3f(255,255,255));
-    control.addSlider("noiseMargin", &positionNoiseMargin, ofVec2f(0, 0), ofVec2f(300, 300));
-    control.addSlider("noiseFactor", &positionNoiseFactor, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
-    control.addSlider("sineMargin", &positionSineMargin, ofVec2f(0, 0), ofVec2f(300, 300));
-    control.addSlider("sineFreq", &positionSineFreq, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
-    control.addSlider("timeConstant", &positionTimeConstant, ofVec2f(-10, -10), ofVec2f(10, 10));
+    control.addMultiSlider("varColor", &varColor, ofVec3f(0,0,0), ofVec3f(255,255,255));
+    control.addMultiSlider("noiseMargin", &positionNoiseMargin, ofVec2f(0, 0), ofVec2f(300, 300));
+    control.addMultiSlider("noiseFactor", &positionNoiseFactor, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
+    control.addMultiSlider("sineMargin", &positionSineMargin, ofVec2f(0, 0), ofVec2f(300, 300));
+    control.addMultiSlider("sineFreq", &positionSineFreq, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
+    control.addMultiSlider("timeConstant", &positionTimeConstant, ofVec2f(-10, -10), ofVec2f(10, 10));
     control.addSlider("maxPasses", &maxPasses, 3, 50, this, &Bubbles::fboParametersChanged);
     control.addSlider("blurAmt", &blurAmt, 0, 20, this, &Bubbles::fboParametersChanged);
 
@@ -91,9 +91,9 @@ Bubbles::~Bubbles()
     }
 }
 
-void Bubbles::fboParametersChanged(GuiElementEventArgs &e)
+void Bubbles::fboParametersChanged(GuiSliderEventArgs<int> &e)
 {
-    setupBubblesFbo();
+    //setupBubblesFbo();
 }
 
 void Bubbles::setupBubblesFbo()
@@ -161,6 +161,7 @@ void Bubbles::draw(int x, int y)
     Scene::beginDraw(x, y);
 
     ofSetRectMode(OF_RECTMODE_CENTER);
+    cout << "size :: pos " << position.size() << ", cm " << colorMargin.size() << endl;
     for (int i=0; i<position.size(); i++)
     {
         ofSetColor(255 * baseColor.r + colorMargin[i].x * varColor.x,
@@ -175,7 +176,7 @@ void Bubbles::draw(int x, int y)
                             (int)(pos.y + height * (1 + abs(ceil(pos.y / height)))) % height,
                             maxSize * size[i], maxSize * size[i]);
     }
-    
+
     Scene::endDraw();
 }
 

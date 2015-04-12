@@ -1,19 +1,27 @@
-//
-//  PostGlitch.cpp
-//  template_simple
-//
-//  Created by Eugene Kogan on 3/23/15.
-//
-//
-
 #include "PostProcessing.h"
 
+
+PostProcessingMod::PostProcessingRenderPass::PostProcessingRenderPass(string name, RenderPass::Ptr pass, GuiPanel & panel)
+{
+    this->name = name;
+    this->pass = pass;
+    this->widget = panel.addWidget(name);
+    widget->setCollapsible(true);
+    setEnabled(false);
+}
+
+void PostProcessingMod::PostProcessingRenderPass::setEnabled(bool enabled)
+{
+    this->enabled = enabled;
+    pass->setEnabled(enabled);
+    widget->setActive(enabled);
+}
 
 void PostProcessingMod::setup(int width, int height)
 {
     Modifier::setup(width, height);
     
-    
+    panel.setName("PostProcessing");
     post.init(width, height);
     
     alias = post.createPass<FxaaPass>();
@@ -36,191 +44,215 @@ void PostProcessingMod::setup(int width, int height)
     ssao = post.createPass<SSAOPass>();
     zoomBlur = post.createPass<ZoomBlurPass>();
     
-    //control.setName("PostProcessingMod");
-    panel.addToggle("alias", &aliasEnabled);
-    panel.addToggle("bloom", &bloomEnabled);
-    panel.addToggle("dof", &dofEnabled);
-    panel.addToggle("kaleidoscope", &kaleidoscopeEnabled);
-    panel.addToggle("noiseWarp", &noiseWarpEnabled);
-    panel.addToggle("pixelate", &pixelateEnabled);
-    panel.addToggle("edges", &edgesEnabled);
-    panel.addToggle("vTiltShift", &vTiltShiftEnabled);
-    panel.addToggle("hTiltShift", &hTiltShiftEnabled);
-    panel.addToggle("godRay", &godRayEnabled);
-    panel.addToggle("toon", &toonEnabled);
-    panel.addToggle("bleachBypass", &bleachBypassEnabled);
-    panel.addToggle("convolve", &convolveEnabled);
-    panel.addToggle("fakeSSS", &fakeSSSEnabled);
-    panel.addToggle("limbDarken", &limbDarkenEnabled);
-    panel.addToggle("shift", &shiftEnabled);
-    panel.addToggle("rimHighlight", &rimHighlightEnabled);
-    panel.addToggle("ssao", &ssaoEnabled);
-    panel.addToggle("zoomBlur", &zoomBlurEnabled);
-    
-    /* add all parameters to control, but make them invisible in main gui */
-    /* they are accessible instead in the secondary gui */
-    panel.addSlider("aperture", &dofAperture, 0.0f, 1.0f);
-    panel.addSlider("focus", &dofFocus, 0.95f, 1.0f);
-    panel.addSlider("maxBlur", &dofMaxBlur, 0.0f, 1.0f);
-    panel.addSlider("segments", &kaleidoscopeSegments, 0.0f, 16.0f);
-    panel.addSlider("amplitude", &noiseWarpAmplitude, 0.0f, 1.0f);
-    panel.addSlider("frequency", &noiseWarpFrequency, 0.0f, 1.0f);
-    panel.addSlider("speed", &noiseWarpSpeed, 0.0f, 1.0f);
-    panel.addSlider("resolution", &pixelateResolution, ofVec2f(0, 0), ofVec2f(100, 100));
-    panel.addSlider("hue", &edgesHue, 0.0f, 1.0f);
-    panel.addSlider("saturation", &edgesSaturation, 0.0f, 1.0f);
-    panel.addSlider("V", &vTiltShiftV, 0.0f, 0.1f);
-    panel.addSlider("R", &vTiltShiftR, 0.0f, 0.1f);
-    panel.addSlider("H", &hTiltShiftH, 0.0f, 0.1f);
-    panel.addSlider("R", &hTiltShiftR, 0.0f, 0.1f);
-    panel.addSlider("lightDirDOTviewDir", &godRayLightDirDOTviewDir, 0.0f, 1.0f);
-    panel.addSlider("lightPoisitonOnScreen", &godRayLightPoisitonOnScreen, ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
-    panel.addSlider("specularColor", &toonSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("shinyness", &toonShinyness, 0.0f, 1.0f);
-    panel.addSlider("level", &toonLevel, 0.0f, 1.0f);
+    GuiMenu *menu = panel.addMenu("Effects", this, &PostProcessingMod::toggleEffects);
+    menu->setMultipleChoice(true);
 
-    panel.addToggle("enableSpecular", &toonEnableSpecular);
-    panel.addSlider("edgeThreshold", &toonEdgeThreshold, 0.0f, 1.0f);
-    panel.addSlider("diffuseColor", &toonDiffuseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("ambientColor", &toonAmbientColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("bypassOpacity", &bleachBypassOpacity, 0.0f, 1.0f);
-    panel.addSlider("attenuationOffset", &fakeSSSAttenuationOffset, 0.0f, 1.0f);
-    panel.addSlider("baseColor", &fakeSSSBaseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("extinctionCoefficient", &fakeSSSExtinctionCoefficient, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("lightColor", &fakeSSSLightColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("lightPosition", &fakeSSSLightPosition, ofPoint(0, 0), ofPoint(1, 1));
-    panel.addSlider("materialThickness", &fakeSSSMaterialThickness, 0.0f, 1.0f);
-    panel.addSlider("rimScale", &fakeSSSRimScale, 0.0f, 1.0f);
-    panel.addSlider("specular", &fakeSSSSpecular, 0.0f, 1.0f);
-    panel.addSlider("specularColor", &fakeSSSSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    panel.addSlider("brightness", &limbDarkenBrightness, 0.0f, 1.0f);
-    panel.addSlider("endColor", &limbDarkenEndColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
-    panel.addSlider("radialScale", &limbDarkenRadialScale, 0.0f, 1.0f);
-    panel.addSlider("startColor", &limbDarkenStartColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
-    panel.addSlider("amount", &shiftAmount, 0.0f, 1.0f);
-    panel.addSlider("angle", &shiftAngle, 0.0f, 1.0f);
-    panel.addSlider("cameraNear", &ssaoCameraNear, 0.0f, 1.0f);
-    panel.addSlider("cameraFar", &ssaoCameraFar, 0.0f, 1.0f);
-    panel.addSlider("fogNear", &ssaoFogNear, 0.0f, 1.0f);
-    panel.addSlider("fogFar", &ssaoFogFar, 0.0f, 1.0f);
-    panel.addToggle("fogEnabled", &ssaoFogEnabled);
-    panel.addToggle("onlyAO", &ssaoOnlyAO);
-    panel.addSlider("aoClamp", &ssaoAoClamp, 0.0f, 1.0f);
-    panel.addSlider("lumInfluence", &ssaoLumInfluence, 0.0f, 1.0f);
-    panel.addSlider("centerX", &zoomBlurCenterX, 0.0f, 1.0f);
-    panel.addSlider("centerY", &zoomBlurCenterY, 0.0f, 1.0f);
-    panel.addSlider("exposure", &zoomBlurExposure, 0.0f, 1.0f);
-    panel.addSlider("decay", &zoomBlurDecay, 0.0f, 1.0f);
-    panel.addSlider("density", &zoomBlurDensity, 0.0f, 1.0f);
-    panel.addSlider("weight", &zoomBlurWeight, 0.0f, 1.0f);
-    panel.addSlider("clamp", &zoomBlurClamp, 0.0f, 1.0f);
+    passes["alias"] = new PostProcessingRenderPass("alias", alias, panel);
+    passes["bloom"] = new PostProcessingRenderPass("bloom", bloom, panel);
+    passes["dof"] = new PostProcessingRenderPass("dof", dof, panel);
+    passes["kaleidoscope"] = new PostProcessingRenderPass("kaleidoscope", kaleidoscope, panel);
+    passes["noiseWarp"] = new PostProcessingRenderPass("noiseWarp", noiseWarp, panel);
+    passes["pixelate"] = new PostProcessingRenderPass("pixelate", pixelate, panel);
+    passes["edges"] = new PostProcessingRenderPass("edges", edges, panel);
+    passes["vTiltShift"] = new PostProcessingRenderPass("vTiltShift", vTiltShift, panel);
+    passes["hTiltShift"] = new PostProcessingRenderPass("hTiltShift", hTiltShift, panel);
+    passes["godRay"] = new PostProcessingRenderPass("godRay", godRay, panel);
+    passes["toon"] = new PostProcessingRenderPass("toon", toon, panel);
+    passes["bleachBypass"] = new PostProcessingRenderPass("bleachBypass", bleachBypass, panel);
+    passes["convolve"] = new PostProcessingRenderPass("convolve", convolve, panel);
+    passes["fakeSSS"] = new PostProcessingRenderPass("fakeSSS", fakeSSS, panel);
+    passes["limbDarken"] = new PostProcessingRenderPass("limbDarken", limbDarken, panel);
+    passes["shift"] = new PostProcessingRenderPass("shift", shift, panel);
+    passes["rimHighlight"] = new PostProcessingRenderPass("rimHighlight", rimHighlight, panel);
+    passes["ssao"] = new PostProcessingRenderPass("ssao", ssao, panel);
+    passes["zoomBlur"] = new PostProcessingRenderPass("zoomBlur", zoomBlur, panel);
+    
+    map<string, PostProcessingRenderPass*>::iterator it = passes.begin();
+    for (; it != passes.end(); ++it) {
+        menu->addToggle(it->first, &it->second->enabled);
+    }
+    
+    passes["dof"]->widget->addSlider("aperture", &dofAperture, 0.0f, 1.0f);
+    passes["dof"]->widget->addSlider("focus", &dofFocus, 0.95f, 1.0f);
+    passes["dof"]->widget->addSlider("maxBlur", &dofMaxBlur, 0.0f, 1.0f);
+    
+    passes["kaleidoscope"]->widget->addSlider("segments", &kaleidoscopeSegments, 0.0f, 16.0f);
+    
+    passes["noiseWarp"]->widget->addSlider("amplitude", &noiseWarpAmplitude, 0.0f, 1.0f);
+    passes["noiseWarp"]->widget->addSlider("frequency", &noiseWarpFrequency, 0.0f, 1.0f);
+    passes["noiseWarp"]->widget->addSlider("speed", &noiseWarpSpeed, 0.0f, 1.0f);
+    
+    passes["pixelate"]->widget->addMultiSlider("resolution", &pixelateResolution, ofVec2f(0, 0), ofVec2f(100, 100));
+    
+    passes["edges"]->widget->addSlider("hue", &edgesHue, 0.0f, 1.0f);
+    passes["edges"]->widget->addSlider("saturation", &edgesSaturation, 0.0f, 1.0f);
+    
+    passes["vTiltShift"]->widget->addSlider("V", &vTiltShiftV, 0.0f, 0.1f);
+    passes["vTiltShift"]->widget->addSlider("R", &vTiltShiftR, 0.0f, 0.1f);
+    
+    passes["hTiltShift"]->widget->addSlider("H", &hTiltShiftH, 0.0f, 0.1f);
+    passes["hTiltShift"]->widget->addSlider("R", &hTiltShiftR, 0.0f, 0.1f);
+    
+    passes["godRay"]->widget->addSlider("lightDirDOTviewDir", &godRayLightDirDOTviewDir, 0.0f, 1.0f);
+    passes["godRay"]->widget->addMultiSlider("lightPoisitonOnScreen", &godRayLightPoisitonOnScreen, ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
+    
+    passes["toon"]->widget->addMultiSlider("specularColor", &toonSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    passes["toon"]->widget->addSlider("shinyness", &toonShinyness, 0.0f, 1.0f);
+    passes["toon"]->widget->addSlider("level", &toonLevel, 0.0f, 1.0f);
+    passes["toon"]->widget->addToggle("enableSpecular", &toonEnableSpecular);
+    passes["toon"]->widget->addSlider("edgeThreshold", &toonEdgeThreshold, 0.0f, 1.0f);
+    passes["toon"]->widget->addMultiSlider("diffuseColor", &toonDiffuseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    passes["toon"]->widget->addMultiSlider("ambientColor", &toonAmbientColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    
+    passes["bleachBypass"]->widget->addSlider("bypassOpacity", &bleachBypassOpacity, 0.0f, 1.0f);
+    
+    passes["fakeSSS"]->widget->addSlider("attenuationOffset", &fakeSSSAttenuationOffset, 0.0f, 1.0f);
+    passes["fakeSSS"]->widget->addMultiSlider("baseColor", &fakeSSSBaseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    passes["fakeSSS"]->widget->addMultiSlider("extinctionCoefficient", &fakeSSSExtinctionCoefficient, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    passes["fakeSSS"]->widget->addMultiSlider("lightColor", &fakeSSSLightColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    passes["fakeSSS"]->widget->addMultiSlider("lightPosition", &fakeSSSLightPosition, ofPoint(0, 0), ofPoint(1, 1));
+    passes["fakeSSS"]->widget->addSlider("materialThickness", &fakeSSSMaterialThickness, 0.0f, 1.0f);
+    passes["fakeSSS"]->widget->addSlider("rimScale", &fakeSSSRimScale, 0.0f, 1.0f);
+    passes["fakeSSS"]->widget->addSlider("specular", &fakeSSSSpecular, 0.0f, 1.0f);
+    passes["fakeSSS"]->widget->addMultiSlider("specularColor", &fakeSSSSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    
+    passes["limbDarken"]->widget->addSlider("brightness", &limbDarkenBrightness, 0.0f, 1.0f);
+    passes["limbDarken"]->widget->addMultiSlider("endColor", &limbDarkenEndColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
+    passes["limbDarken"]->widget->addSlider("radialScale", &limbDarkenRadialScale, 0.0f, 1.0f);
+    passes["limbDarken"]->widget->addMultiSlider("startColor", &limbDarkenStartColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
+    
+    passes["shift"]->widget->addSlider("amount", &shiftAmount, 0.0f, 1.0f);
+    passes["shift"]->widget->addSlider("angle", &shiftAngle, 0.0f, 1.0f);
+    
+    passes["ssao"]->widget->addSlider("cameraNear", &ssaoCameraNear, 0.0f, 1.0f);
+    passes["ssao"]->widget->addSlider("cameraFar", &ssaoCameraFar, 0.0f, 1.0f);
+    passes["ssao"]->widget->addSlider("fogNear", &ssaoFogNear, 0.0f, 1.0f);
+    passes["ssao"]->widget->addSlider("fogFar", &ssaoFogFar, 0.0f, 1.0f);
+    passes["ssao"]->widget->addToggle("fogEnabled", &ssaoFogEnabled);
+    passes["ssao"]->widget->addToggle("onlyAO", &ssaoOnlyAO);
+    passes["ssao"]->widget->addSlider("aoClamp", &ssaoAoClamp, 0.0f, 1.0f);
+    passes["ssao"]->widget->addSlider("lumInfluence", &ssaoLumInfluence, 0.0f, 1.0f);
+    
+    passes["zoomBlur"]->widget->addSlider("centerX", &zoomBlurCenterX, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("centerY", &zoomBlurCenterY, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("exposure", &zoomBlurExposure, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("decay", &zoomBlurDecay, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("density", &zoomBlurDensity, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("weight", &zoomBlurWeight, 0.0f, 1.0f);
+    passes["zoomBlur"]->widget->addSlider("clamp", &zoomBlurClamp, 0.0f, 1.0f);
+    
+}
 
-    /*
-     // if to use menu instead of radio list
-     string pp[] = {"alias", "bloom", "dof", "kaleidoscope", "noiseWarp",
-     "pixelate", "edges", "vTiltShift", "hTiltShift", "godRay",
-     "toon", "bleachBypass", "convolve", "fakeSSS",
-     "limbDarken", "shift", "rimHighlights", "ssao", "zoomBlur"};
-     vector<string> items = vector<string>(pp, pp + sizeof(pp) / sizeof(pp[0]));
-     control.setName("PostProcessingMod");
-     control.addMenu("Effects", items, this, &PostProcessingModLayer::enableEffect);
-     */
-    
-    aliasEnabled = false;
-    bloomEnabled = false;
-    dofEnabled = false;
-    kaleidoscopeEnabled = false;
-    noiseWarpEnabled = false;
-    pixelateEnabled = false;
-    edgesEnabled = false;
-    vTiltShiftEnabled = false;
-    hTiltShiftEnabled = false;
-    godRayEnabled = false;
-    toonEnabled = false;
-    bleachBypassEnabled = false;
-    convolveEnabled = false;
-    fakeSSSEnabled = false;
-    limbDarkenEnabled = false;
-    shiftEnabled = false;
-    rimHighlightEnabled = false;
-    ssaoEnabled = false;
-    zoomBlurEnabled = false;
-    
-    
-    
- /*
-        gui.addParameter("aperture", &dofAperture, 0.0f, 1.0f);
-        gui.addParameter("focus", &dofFocus, 0.95f, 1.0f);
-        gui.addParameter("maxBlur", &dofMaxBlur, 0.0f, 1.0f);
- 
-    
-        gui.addParameter("segments", &kaleidoscopeSegments, 0.0f, 16.0f);
+void PostProcessingMod::toggleEffects(GuiMenuEventArgs & evt)
+{
+    passes[evt.toggle->getName()]->setEnabled(evt.value);
+}
 
-        gui.addParameter("amplitude", &noiseWarpAmplitude, 0.0f, 1.0f);
-        gui.addParameter("frequency", &noiseWarpFrequency, 0.0f, 1.0f);
-        gui.addParameter("speed", &noiseWarpSpeed, 0.0f, 1.0f);
+void PostProcessingMod::updateParameters()
+{
+    if (passes["alias"]->enabled) {
+    }
+    if (passes["bloom"]->enabled) {
+    }
+    if (passes["dof"]->enabled) {
+        dof->setAperture(dofAperture);
+        dof->setFocus(dofFocus);
+        dof->setMaxBlur(dofMaxBlur);
+    }
+    if (passes["kaleidoscope"]->enabled) {
+        kaleidoscope->setSegments(kaleidoscopeSegments);
+    }
+    if (passes["noiseWarp"]->enabled) {
+        noiseWarp->setAmplitude(noiseWarpAmplitude);
+        noiseWarp->setFrequency(noiseWarpFrequency);
+        noiseWarp->setSpeed(noiseWarpSpeed);
+    }
+    if (passes["pixelate"]->enabled) {
+        pixelate->setResolution(pixelateResolution);
+    }
+    if (passes["edges"]->enabled) {
+        edges->setHue(edgesHue);
+        edges->setSaturation(edgesSaturation);
+    }
+    if (passes["vTiltShift"]->enabled) {
+        vTiltShift->setV(vTiltShiftV);
+        vTiltShift->setR(vTiltShiftR);
+    }
+    if (passes["hTiltShift"]->enabled) {
+        hTiltShift->setH(hTiltShiftH);
+        hTiltShift->setR(hTiltShiftR);
+    }
+    if (passes["godRay"]->enabled) {
+        godRay->setLightDirDOTviewDir(godRayLightDirDOTviewDir);
+        godRay->setLightPositionOnScreen(godRayLightPoisitonOnScreen);
+    }
+    if (passes["toon"]->enabled) {
+        toon->setSpecularColor(toonSpecularColor);
+        toon->setShinyness(toonShinyness);
+        toon->setLevel(toonLevel);
+        toon->setEnableSpecular(toonEnableSpecular);
+        toon->setEdgeThreshold(toonEdgeThreshold);
+        toon->setDiffuseColor(toonDiffuseColor);
+        toon->setAmbientColor(toonAmbientColor);
+    }
+    if (passes["bleachBypass"]->enabled) {
+        bleachBypass->setOpacity(bleachBypassOpacity);
+    }
+    if (passes["convolve"]->enabled) {
+    }
+    if (passes["fakeSSS"]->enabled) {
+        fakeSSS->setAttenuationOffset(fakeSSSAttenuationOffset);
+        fakeSSS->setBaseColor(fakeSSSBaseColor);
+        fakeSSS->setExtinctionCoefficient(fakeSSSExtinctionCoefficient);
+        fakeSSS->setLightColor(fakeSSSLightColor);
+        fakeSSS->setLightPosition(fakeSSSLightPosition);
+        fakeSSS->setMaterialThickness(fakeSSSMaterialThickness);
+        fakeSSS->setRimScale(fakeSSSRimScale);
+        fakeSSS->setSpecular(fakeSSSSpecular);
+        fakeSSS->setSpecularColor(fakeSSSSpecularColor);
+    }
+    if (passes["limbDarken"]->enabled) {
+        limbDarken->setBrightness(limbDarkenBrightness);
+        limbDarken->setEndColor(limbDarkenEndColor);
+        limbDarken->setRadialScale(limbDarkenRadialScale);
+        limbDarken->setStartColor(limbDarkenStartColor);
+    }
+    if (passes["shift"]->enabled) {
+        shift->setAmount(shiftAmount);
+        shift->setAngle(shiftAngle);
+    }
+    if (passes["rimHighlight"]->enabled) {
+    }
+    if (passes["ssao"]->enabled) {
+        ssao->setCameraNear(ssaoCameraNear);
+        ssao->setCameraFar(ssaoCameraFar);
+        ssao->setFogNear(ssaoFogNear);
+        ssao->setFogFar(ssaoFogFar);
+        ssao->setFogEnabled(ssaoFogEnabled);
+        ssao->setOnlyAO(ssaoOnlyAO);
+        ssao->setAoClamp(ssaoAoClamp);
+        ssao->setLumInfluence(ssaoLumInfluence);
+    }
+    if (passes["zoomBlur"]->enabled) {
+        zoomBlur->setCenterX(zoomBlurCenterX);
+        zoomBlur->setCenterY(zoomBlurCenterY);
+        zoomBlur->setExposure(zoomBlurExposure);
+        zoomBlur->setDecay(zoomBlurDecay);
+        zoomBlur->setDensity(zoomBlurDensity);
+        zoomBlur->setWeight(zoomBlurWeight);
+        zoomBlur->setClamp(zoomBlurClamp);
+    }
+}
 
-        gui.addParameter("resolution", &pixelateResolution, ofVec2f(0, 0), ofVec2f(100, 100));
-
-        gui.addParameter("hue", &edgesHue, 0.0f, 1.0f);
-        gui.addParameter("saturation", &edgesSaturation, 0.0f, 1.0f);
-
-        gui.addParameter("V", &vTiltShiftV, 0.0f, 1.0f);
-        gui.addParameter("R", &vTiltShiftR, 0.0f, 1.0f);
-
-        gui.addParameter("H", &hTiltShiftH, 0.0f, 0.1f);
-        gui.addParameter("R", &hTiltShiftR, 0.0f, 0.1f);
-
+void PostProcessingMod::render(ofFbo *fbo)
+{
+    updateParameters();
     
-        gui.addParameter("lightDirDOTviewDir", &godRayLightDirDOTviewDir, 0.0f, 1.0f);
-        gui.addParameter("lightPoisitonOnScreen", &godRayLightPoisitonOnScreen, ofVec3f(-1, -1, -1), ofVec3f(1, 1, 1));
-
-    
-        gui.addParameter("specularColor", &toonSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-        gui.addParameter("shinyness", &toonShinyness, 0.0f, 1.0f);
-        gui.addParameter("level", &toonLevel, 0.0f, 1.0f);
-        gui.addParameter("enableSpecular", &toonEnableSpecular);
-        gui.addParameter("edgeThreshold", &toonEdgeThreshold, 0.0f, 1.0f);
-        gui.addParameter("diffuseColor", &toonDiffuseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-        gui.addParameter("ambientColor", &toonAmbientColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    
-        gui.addParameter("bypassOpacity", &bleachBypassOpacity, 0.0f, 1.0f);
-    
-        gui.addParameter("attenuationOffset", &fakeSSSAttenuationOffset, 0.0f, 1.0f);
-        gui.addParameter("baseColor", &fakeSSSBaseColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-        gui.addParameter("extinctionCoefficient", &fakeSSSExtinctionCoefficient, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-        gui.addParameter("lightColor", &fakeSSSLightColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-        gui.addParameter("lightPosition", &fakeSSSLightPosition, ofPoint(0, 0), ofPoint(1, 1));
-        gui.addParameter("materialThickness", &fakeSSSMaterialThickness, 0.0f, 1.0f);
-        gui.addParameter("rimScale", &fakeSSSRimScale, 0.0f, 1.0f);
-        gui.addParameter("specular", &fakeSSSSpecular, 0.0f, 1.0f);
-        gui.addParameter("specularColor", &fakeSSSSpecularColor, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    
-        gui.addParameter("brightness", &limbDarkenBrightness, 0.0f, 1.0f);
-        gui.addParameter("endColor", &limbDarkenEndColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
-        gui.addParameter("radialScale", &limbDarkenRadialScale, 0.0f, 1.0f);
-        gui.addParameter("startColor", &limbDarkenStartColor, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
-    
-        gui.addParameter("amount", &shiftAmount, 0.0f, 1.0f);
-        gui.addParameter("angle", &shiftAngle, 0.0f, 1.0f);
-    
-        gui.addParameter("cameraNear", &ssaoCameraNear, 0.0f, 1.0f);
-        gui.addParameter("cameraFar", &ssaoCameraFar, 0.0f, 1.0f);
-        gui.addParameter("fogNear", &ssaoFogNear, 0.0f, 1.0f);
-        gui.addParameter("fogFar", &ssaoFogFar, 0.0f, 1.0f);
-        gui.addParameter("fogEnabled", &ssaoFogEnabled);
-        gui.addParameter("onlyAO", &ssaoOnlyAO);
-        gui.addParameter("aoClamp", &ssaoAoClamp, 0.0f, 1.0f);
-        gui.addParameter("lumInfluence", &ssaoLumInfluence, 0.0f, 1.0f);
-
-        gui.addParameter("centerX", &zoomBlurCenterX, 0.0f, 1.0f);
-        gui.addParameter("centerY", &zoomBlurCenterY, 0.0f, 1.0f);
-        gui.addParameter("exposure", &zoomBlurExposure, 0.0f, 1.0f);
-        gui.addParameter("decay", &zoomBlurDecay, 0.0f, 1.0f);
-        gui.addParameter("density", &zoomBlurDensity, 0.0f, 1.0f);
-        gui.addParameter("weight", &zoomBlurWeight, 0.0f, 1.0f);
-        gui.addParameter("clamp", &zoomBlurClamp, 0.0f, 1.0f);
-*/
-
-    
+    post.begin();
+    ofPushMatrix();
+    ofTranslate(width, height);
+    ofRotate(180);
+    fbo->draw(0, 0);
+    ofPopMatrix();
+    post.end();
 }

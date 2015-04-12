@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 
+#include "Control.h"
+
 #include "Agents.h"
 #include "Amoeba.h"
 #include "Bubbles.h"
@@ -10,6 +12,7 @@
 #include "GridFly.h"
 #include "Letters.h"
 #include "Meshy.h"
+#include "MediaPlayer.h"
 #include "Polar.h"
 #include "Rivers.h"
 #include "Subdivide.h"
@@ -27,4 +30,7 @@ public:
     void keyPressed(int key);
         
     Canvas canvas;
+    
+    //OscManager osc;
+
 };

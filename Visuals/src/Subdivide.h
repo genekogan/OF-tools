@@ -58,7 +58,7 @@ public:
     void draw(int x, int y);
     
 private:
-    void setDrawType(GuiElementEventArgs &e);
+    void setDrawType(GuiMenuEventArgs &e);
     
     DrawStrategy drawStrategy = CIRCLES;
 

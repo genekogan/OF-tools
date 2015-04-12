@@ -31,7 +31,11 @@ public:
 class Agents : public Scene
 {
 public:
-    Agents() {setName("Agents");}
+    Agents()
+    {
+        cout << "SET NAME AGENTS " << endl;
+        setName("Agents");
+    }
     void setup(int width, int height, bool clearControls=true);
     void update();
     void draw(int x, int y);

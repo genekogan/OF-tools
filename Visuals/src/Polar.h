@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "Scene.h"
-#include "ofxTwistedRibbon.h"
+//#include "ofxTwistedRibbon.h"
 
 
 class PolarEq
@@ -51,7 +51,7 @@ private:
     bool *is3d, *isRibbon;
     ofVec3f *speedRotation;
     
-    ofxTwistedRibbon ribbon;
+    //ofxTwistedRibbon ribbon;
     ofEasyCam cam;
 };
 
@@ -68,7 +68,7 @@ public:
     
 private:
     void managePolarCount();
-    void refresh(GuiElementEventArgs &evt);
+    void refresh(GuiButtonEventArgs &evt);
     
     vector<PolarEq *> polars;
     

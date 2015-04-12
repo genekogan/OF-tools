@@ -32,7 +32,7 @@ public:
 
 private:
 
-    void selectPreset(GuiElementEventArgs &evt);
+    void selectPreset(GuiMenuEventArgs &evt);
     void preset1();
     void preset2();
     void preset3();

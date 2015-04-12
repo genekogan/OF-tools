@@ -70,8 +70,8 @@ void Cubes::setup(int width, int height, bool clearControls)
     colorVar = 10;
 
     control.addSlider("newBoxRate", &newBoxRate, 1, 10);
-    control.addSlider("pan", &pan, ofVec3f(-20, -20, -20), ofVec3f(20, 20, 20));
-    control.addSlider("translation", &translation, ofVec2f(0, 0), ofVec2f(width, height));
+    control.addMultiSlider("pan", &pan, ofVec3f(-20, -20, -20), ofVec3f(20, 20, 20));
+    control.addMultiSlider("translation", &translation, ofVec2f(0, 0), ofVec2f(width, height));
     control.addColor("color", &color);
     control.addSlider("colorVar", &colorVar, 0, 200);
     
@@ -143,15 +143,15 @@ void Cubes::resetTimeFunctions()
     dAng.reset();
 }
 
-void Cubes::selectPreset(GuiElementEventArgs &evt)
+void Cubes::selectPreset(GuiMenuEventArgs &evt)
 {
-    if      (evt.name == "classic")  preset1();
-    else if (evt.name == "helix")    preset2();
-    else if (evt.name == "steps")  preset3();
-    else if (evt.name == "disarray")  preset4();
-    else if (evt.name == "flat boards")  preset5();
-    else if (evt.name == "long spiral")  preset6();
-    else if (evt.name == "playpen")  preset7();
+    if      (evt.index == 0)  preset1();
+    else if (evt.index == 1)    preset2();
+    else if (evt.index == 2)  preset3();
+    else if (evt.index == 3)  preset4();
+    else if (evt.index == 4)  preset5();
+    else if (evt.index == 5)  preset6();
+    else if (evt.index == 6)  preset7();
 }
 
 void Cubes::preset1()

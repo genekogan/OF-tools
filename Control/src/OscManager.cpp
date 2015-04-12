@@ -1,6 +1,6 @@
 #include "OscManager.h"
 
-
+/*
 OscManager::ParameterOscPair::ParameterOscPairEventArgs::ParameterOscPairEventArgs(ParameterBase *parameter, bool sender, bool toAdd)
 {
     this->parameter = parameter;
@@ -29,25 +29,25 @@ OscManager::ParameterOscPair::~ParameterOscPair()
     delete tOscAddress;
 }
 
-void OscManager::ParameterOscPair::toggleOscIn(GuiElementEventArgs & e)
+void OscManager::ParameterOscPair::toggleOscIn(GuiButtonEventArgs & e)
 {
     ParameterOscPairEventArgs args(parameter, false, e.value > 0.5);
     ofNotifyEvent(parameterOscEvent, args, this);
 }
 
-void OscManager::ParameterOscPair::toggleOscOut(GuiElementEventArgs & e)
+void OscManager::ParameterOscPair::toggleOscOut(GuiButtonEventArgs & e)
 {
     ParameterOscPairEventArgs args(parameter, true, e.value > 0.5);
     ofNotifyEvent(parameterOscEvent, args, this);
 }
 
-void OscManager::ParameterOscPair::editOscAddress(GuiElementEventArgs & e)
+void OscManager::ParameterOscPair::editOscAddress(GuiTextBoxEventArgs & e)
 {
-    parameter->setOscAddress(e.name);
+    parameter->setOscAddress(e.value);
     tOscAddress->setValue(parameter->getOscAddress());
 }
 
-OscManager::OscPanel::OscPanel(string name) : GuiWidgetBase(name)
+OscManager::OscPanel::OscPanel(string name) : GuiWidget(name)
 {
     allIn = new GuiToggle("receive all", this, &OscPanel::toggleReceiveAll);
     allOut = new GuiToggle("send all", this, &OscPanel::toggleSendAll);
@@ -59,14 +59,14 @@ OscManager::OscPanel::~OscPanel()
     delete allOut;
 }
 
-void OscManager::OscPanel::toggleReceiveAll(GuiElementEventArgs & e)
+void OscManager::OscPanel::toggleReceiveAll(GuiButtonEventArgs & e)
 {
     for (auto p : parameters) {
         p->getToggleIn()->setValue(e.value > 0.5, true);
     }
 }
 
-void OscManager::OscPanel::toggleSendAll(GuiElementEventArgs & e)
+void OscManager::OscPanel::toggleSendAll(GuiButtonEventArgs & e)
 {
     for (auto p : parameters) {
         p->getToggleOut()->setValue(e.value > 0.5, true);
@@ -76,29 +76,30 @@ void OscManager::OscPanel::toggleSendAll(GuiElementEventArgs & e)
 void OscManager::OscPanel::setupGuiPositions()
 {
     ofPoint topLeft = ofPoint(rectangle.x, rectangle.y);
-    if (list)
+    if (getCollapsible())
     {
         headerRectangle.set(rectangle.x, rectangle.y, rectangle.width, headerHeight);
         topLeft.y += headerHeight;
     }
     
-    if (parent->getCollapsed() || collapsed || parameters.size() < 2)
+    if (getCollapsed() || parameters.size() < 2)
     {
         allIn->setRectangle(0, 0, 0, 0);
         allOut->setRectangle(0, 0, 0, 0);
     }
     else
     {
-        topLeft.y += marginOuterY;
-        allIn->setRectangle(topLeft.x + 4, topLeft.y, elementWidth, elementHeight);
-        allOut->setRectangle(topLeft.x + elementWidth + 8, topLeft.y, elementWidth, elementHeight);
-        topLeft.y += elementHeight;
-        topLeft.y += marginOuterY;
+        
+        topLeft.y += marginY;
+        allIn->setRectangle(topLeft.x + 4, topLeft.y, getWidth(), getHeight());
+        allOut->setRectangle(topLeft.x + getWidth() + 8, topLeft.y, getWidth(), getHeight());
+        topLeft.y += getHeight();
+        topLeft.y += marginY;
     }
     
     for (auto p : parameters)
     {
-        if (collapsed)
+        if (getCollapsed())
         {
             p->getToggleIn()->setRectangle(0, 0, 0, 0);
             p->getToggleOut()->setRectangle(0, 0, 0, 0);
@@ -106,13 +107,13 @@ void OscManager::OscPanel::setupGuiPositions()
         }
         else
         {
-            p->getToggleIn()->setRectangle(topLeft.x + 4, topLeft.y, 36, elementHeight);
-            p->getToggleOut()->setRectangle(topLeft.x + 44, topLeft.y, 36, elementHeight);
-            p->getToggleAddress()->setRectangle(topLeft.x + 84, topLeft.y, rectangle.width - 88, elementHeight);
+            p->getToggleIn()->setRectangle(topLeft.x + 4, topLeft.y, 36, getHeight());
+            p->getToggleOut()->setRectangle(topLeft.x + 44, topLeft.y, 36, getHeight());
+            p->getToggleAddress()->setRectangle(topLeft.x + 84, topLeft.y, rectangle.width - 8, getHeight());
             topLeft.y += p->getToggleIn()->getRectangle().getHeight() + 4;
         }
         if (!collapsed) {
-            topLeft.y += marginOuterY - marginInner;
+            topLeft.y += marginY;
         }
     }
     rectangle.height = topLeft.y - rectangle.y;
@@ -129,29 +130,31 @@ void OscManager::OscPanel::addParameter(ParameterBase *parameter)
             return;
         }
     }
-
+    
     ParameterOscPair *pair = new ParameterOscPair(parameter);
     parameters.push_back(pair);
     ofAddListener(pair->parameterOscEvent, (OscManager *) parent, &OscManager::eventParameterOscAction);
-
-    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
-    elementGroup->addElement(pair->getToggleIn());
-    elementGroup->addElement(pair->getToggleOut());
-    elementGroup->addElement(pair->getToggleAddress());
-    setupElementGroup(elementGroup);
+    
+ 
+//    GuiElementGroup *elementGroup = new GuiElementGroup(parameter->getName());
+//    elementGroup->addElement(pair->getToggleIn());
+//    elementGroup->addElement(pair->getToggleOut());
+//    elementGroup->addElement(pair->getToggleAddress());
+//    setupElementGroup(elementGroup);
+ 
 }
 
 OscManager::OscManager() : GuiWidget()
 {
     setName("OSC Manager");
-    marginOuterX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
+    marginX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
     setSize(GUI_DEFAULT_OSCMANAGER_WIDTH, rectangle.height);
     individualParameters = addOscGroup("all parameters");
 }
 
 OscManager::~OscManager()
 {
-
+    
 }
 
 void OscManager::setupSender(string host, int portIn)
@@ -175,12 +178,12 @@ OscManager::OscPanel * OscManager::addOscGroup(string name)
 
 void OscManager::addOscGroup(OscPanel *oscGroup)
 {
-    GuiElementGroup *elementGroup = new GuiElementGroup(oscGroup->getName());
-    oscGroup->setAddress(getAddress()+oscGroup->getAddress());
+    //GuiElementGroup *elementGroup = new GuiElementGroup(oscGroup->getName());
+//    oscGroup->setAddress(getAddress()+oscGroup->getAddress());
     oscGroup->setParent(this);
-    elementGroup->addElement(oscGroup);
-    setupElementGroup(elementGroup);
-    ofAddListener(oscGroup->widgetChanged, this, &OscManager::eventWidgetChanged);
+//    elementGroup->addElement(oscGroup);
+//    setupElementGroup(elementGroup);
+//    ofAddListener(oscGroup->widgetChanged, this, &OscManager::eventWidgetChanged);
 }
 
 void OscManager::addParameters(string groupName, vector<ParameterBase*> parameters)
@@ -287,3 +290,4 @@ void OscManager::eventWidgetChanged(string & s)
 {
     setupGuiPositions();
 }
+*/

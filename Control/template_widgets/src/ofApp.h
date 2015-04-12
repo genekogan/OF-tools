@@ -13,17 +13,33 @@ public:
     void update();
     void draw();
     
-    void toggleNotifier(GuiElementEventArgs & s);
-    void buttonNotifier(GuiElementEventArgs & s);
-    void sliderNotifier(GuiElementEventArgs & s);
-    void menuNotifier(GuiElementEventArgs & s);
-    void menuNotifierMultiChoice(GuiElementEventArgs & s);
+    void keyPressed(int key) {
+       // widget.blah();
+    }
+    
+    void toggleNotifier(GuiButtonEventArgs & s);
+    void buttonNotifier(GuiButtonEventArgs & s);
+    void sliderNotifier(GuiSliderEventArgs<double> & s);
+    
+    void vec3SliderNotifier(GuiMultiSliderEventArgs<ofVec3f> & s);
+    
+    void menuNotifier(GuiButtonEventArgs & s);
+    void menuNotifierMultiChoice(GuiButtonEventArgs & s);
     
     
     GuiButton *button;
     
     GuiToggle *toggle;
     GuiToggle *toggleNotify;
+    
+    
+    
+    Gui2dPad *pad;
+    ofPoint mypt;
+    
+    
+    GuiWidget widget;
+    
     
     GuiSlider<float> *floatSlider;
     GuiSlider<int> *intSlider;
@@ -32,12 +48,17 @@ public:
     GuiRangeSlider<float> *rangeFloatSlider;
     GuiRangeSlider<int> *rangeIntSlider;
     
+    
+    GuiMultiSlider<ofPoint> *vec3Slider;
+
+    /*
     Gui2dPad *pad;
     
     GuiColor *colorPicker;
     
     GuiMenu *menu, *menuMultiChoice;
-
+*/
+    ofPoint vec3val;
     
     
     bool myToggle;

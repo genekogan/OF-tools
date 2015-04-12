@@ -70,7 +70,7 @@ void Rivers::setup(int width, int height, bool clearControls)
     control.addSlider("colorVar", &colorVar, 0, 200);
     control.addButton("refresh", this, &Rivers::setupForceField);
 
-    GuiElementEventArgs evt("", 0, 0);
+    GuiButtonEventArgs evt(NULL, true);
     setupForceField(evt);
 
     for (int i=0; i<numStreaks; i++) {
@@ -78,7 +78,7 @@ void Rivers::setup(int width, int height, bool clearControls)
     }
 }
 
-void Rivers::setupForceField(GuiElementEventArgs &evt)
+void Rivers::setupForceField(GuiButtonEventArgs &evt)
 {
     noiseSeed = ofRandom(100);
     float nx, ny;

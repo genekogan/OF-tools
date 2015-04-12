@@ -6,13 +6,32 @@
 #include "Sequence.h"
 
 
+template<typename T> class GuiRangeSlider;
+
+struct GuiRangeSliderEventArgsBase { };
+
+template<typename T>
+struct GuiRangeSliderEventArgs : public GuiRangeSliderEventArgsBase
+{
+    GuiRangeSlider<T> *slider;
+    T low, high;
+    
+    GuiRangeSliderEventArgs(GuiRangeSlider<T> *slider, T low, T high)
+    {
+        this->slider = slider;
+        this->low = low;
+        this->high = high;
+    }
+};
+
+
 class GuiRangeSliderBase : public GuiElement
 {
 public:
     enum {LOW, MIDDLE, HIGH};
     
     GuiRangeSliderBase(string name);
-    ~GuiRangeSliderBase();
+    virtual ~GuiRangeSliderBase() { }
     
     bool mouseMoved(int mouseX, int mouseY);
     bool mousePressed(int mouseX, int mouseY);
@@ -23,7 +42,7 @@ public:
     void setValue(float sliderValue);
     virtual void setValueLow(float sliderLow);
     virtual void setValueHigh(float sliderHigh);
-
+    
     float getValueLow() {return sliderLow;}
     float getValueHigh() {return sliderHigh;}
     
@@ -33,21 +52,8 @@ public:
     virtual void update();
     void draw();
     
-    
-    ///////
-    void getXml(ofXml &xml) {
-        xml.addValue("Name", getName());
-        xml.addValue<float>("ValueLow", getValueLow());
-        xml.addValue<float>("ValueHigh", getValueHigh());
-    }
-    void setFromXml(ofXml &xml)
-    {
-        setValueLow(xml.getValue<float>("ValueLow"));
-        setValueHigh(xml.getValue<float>("ValueHigh"));
-    }
-    
-    //////
-
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
     
 protected:
     
@@ -73,6 +79,12 @@ template<typename T>
 class GuiRangeSlider : public GuiRangeSliderBase
 {
 public:
+
+    void getParameters(vector<ParameterBase*> & parameters) {
+        parameters.push_back(pLow);
+        parameters.push_back(pHigh);
+    }
+
     GuiRangeSlider(string name, Parameter<T> *pLow, Parameter<T> *pHigh);
     GuiRangeSlider(string name, T *low, T *high, T min, T max);
     GuiRangeSlider(string name, T min, T max);
@@ -86,6 +98,8 @@ public:
     template <typename L, typename M>
     GuiRangeSlider(string name, T min, T max, L *listener, M method);
     
+    ~GuiRangeSlider();
+    
     void setValueLow(float sliderLow);
     void setValueHigh(float sliderHigh);
     
@@ -97,11 +111,13 @@ public:
     
     void update();
     
+    ofEvent<GuiRangeSliderEventArgs<T> > rangeSliderEvent;
+    
 private:
     
     void decrement();
     void increment();
-
+    
     void updateValueString();
     void adjustSliderValueLow();
     void adjustSliderValueHigh();
@@ -145,7 +161,7 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, Parameter<T> *pLow, Parameter<T> 
     this->pHigh = pHigh;
     setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
     setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(rangeSliderEvent, listener, method);
 }
 
 template<typename T> template <typename L, typename M>
@@ -155,7 +171,7 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, T *low, T *high, T min, T max, L 
     pHigh = new Parameter<T>(name, high, min, max);
     setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
     setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(rangeSliderEvent, listener, method);
 }
 
 template<typename T> template <typename L, typename M>
@@ -165,7 +181,21 @@ GuiRangeSlider<T>::GuiRangeSlider(string name, T min, T max, L *listener, M meth
     pHigh = new Parameter<T>(name, new T(), min, max);
     setValueLow(ofClamp((float) (pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0));
     setValueHigh(ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(rangeSliderEvent, listener, method);
+}
+
+template<typename T>
+GuiRangeSlider<T>::~GuiRangeSlider<T>()
+{
+    delete pLow;
+    delete pHigh;
+    //
+    //
+    // who should delete parameter?
+    //
+    //
+    //
+    //
 }
 
 template<typename T>
@@ -175,8 +205,8 @@ void GuiRangeSlider<T>::setValueLow(float sliderLow)
     pLow->set(sliderLow * pLow->getMax() + (1.0 - sliderLow) * pLow->getMin());
     updateValueString();
     adjustSliderValueLow();
-    GuiElementEventArgs args(name, 0, (float) pLow->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiRangeSliderEventArgs<T> args(this, pLow->get(), pHigh->get());
+    ofNotifyEvent(rangeSliderEvent, args, this);
 }
 
 template<typename T>
@@ -186,8 +216,8 @@ void GuiRangeSlider<T>::setValueHigh(float sliderHigh)
     pHigh->set(sliderHigh * pHigh->getMax() + (1.0 - sliderHigh) * pHigh->getMin());
     updateValueString();
     adjustSliderValueHigh();
-    GuiElementEventArgs args(name, 1, (float) pHigh->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiRangeSliderEventArgs<T> args(this, pLow->get(), pHigh->get());
+    ofNotifyEvent(rangeSliderEvent, args, this);
 }
 
 template<typename T>
@@ -197,8 +227,8 @@ void GuiRangeSlider<T>::setParameterLowValue(T low)
     sliderLow = (float) ofClamp((pLow->get() - pLow->getMin()) / (pLow->getMax() - pLow->getMin()), 0.0, 1.0);
     updateValueString();
     adjustSliderValueLow();
-    GuiElementEventArgs args(name, 0, (float) pLow->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiRangeSliderEventArgs<T> args(this, pLow->get(), pHigh->get());
+    ofNotifyEvent(rangeSliderEvent, args, this);
 }
 
 template<typename T>
@@ -208,8 +238,8 @@ void GuiRangeSlider<T>::setParameterHighValue(T high)
     sliderHigh = (float) ofClamp((pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
     updateValueString();
     adjustSliderValueHigh();
-    GuiElementEventArgs args(name, 1, (float) pHigh->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiRangeSliderEventArgs<T> args(this, pLow->get(), pHigh->get());
+    ofNotifyEvent(rangeSliderEvent, args, this);
 }
 
 template<typename T>
@@ -284,6 +314,7 @@ template<> inline void GuiRangeSlider<int>::increment()
         setParameterHighValue((float) ofClamp(getParameterHighValue() + 1, pHigh->getMin(), pHigh->getMax()));
     }
 }
+
 template<typename T>
 void GuiRangeSlider<T>::increment()
 {

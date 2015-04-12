@@ -35,7 +35,7 @@ public:
 
 private:
     
-    void setupForceField(GuiElementEventArgs &evt);
+    void setupForceField(GuiButtonEventArgs &evt);
     void addNewStreak();
     void setupStreak(Streak &streak);
     

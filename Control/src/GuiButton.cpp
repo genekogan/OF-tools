@@ -3,23 +3,24 @@
 GuiButtonBase::GuiButtonBase(Parameter<bool> *parameter) : GuiElement(parameter->getName())
 {
     this->parameter = parameter;
-    setupButton();
+    initializeButton();
 }
 
 GuiButtonBase::GuiButtonBase(string name, bool *value) : GuiElement(name)
 {
     parameter = new Parameter<bool>(name, value);
-    setupButton();
+    initializeButton();
 }
 
 GuiButtonBase::GuiButtonBase(string name) : GuiElement(name)
 {
     parameter = new Parameter<bool>(name, new bool());
-    setupButton();
+    initializeButton();
 }
 
 GuiButtonBase::~GuiButtonBase()
 {
+    delete parameter;
     //
     //
     // who should delete parameter?
@@ -29,29 +30,23 @@ GuiButtonBase::~GuiButtonBase()
     //
 }
 
-void GuiButtonBase::setupButton()
+void GuiButtonBase::initializeButton()
 {
     setValue(parameter->get());
-    stringWidth = ofBitmapStringGetBoundingBox(name, 0, 0).width;
-    stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
-    setTriggerAll(false);
+    lerpFrame = 0;
+    lerpNumFrames = 0;
+    lerpNextValue = 0.0;
     setLeftJustified(false);
-    menuIndex = -1;
-}
-
-void GuiButtonBase::setTriggerAll(bool triggerAll)
-{
-    this->triggerAll = triggerAll;
 }
 
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
     bool previous = parameter->get();
     parameter->set(value);
-    if (sendChangeNotification && ((value != previous) || triggerAll))
+    if (sendChangeNotification && (value != previous))
     {
-        GuiElementEventArgs args(name, menuIndex, value ? 1.0 : 0.0);
-        ofNotifyEvent(elementEvent, args, this);
+        GuiButtonEventArgs args(this, value);
+        ofNotifyEvent(buttonEvent, args, this);
     }
 }
 
@@ -115,20 +110,34 @@ void GuiButtonBase::draw()
         ofSetLineWidth(1);
 	}
     
-    if (stringWidth < rectangle.width)
-    {
+//    if (stringWidth < rectangle.width)
+  //  {
         ofSetColor(colorText);
-        ofDrawBitmapString(name,
+    
+        ofDrawBitmapString(display,     //name,
+                           //
+                           //
+                           //
                            rectangle.x + (leftJustified ? 4 : 0.5 * (rectangle.width - stringWidth)),
                            rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
-    }
-    
+  //  }
+
+
 	ofPopStyle();
+}
+
+void GuiButtonBase::getXml(ofXml &xml)
+{
+    xml.addValue<bool>("Value", getValue());
+}
+
+void GuiButtonBase::setFromXml(ofXml &xml)
+{
+    setValue(xml.getValue<bool>("Value"), true);
 }
 
 bool GuiButton::mousePressed(int mouseX, int mouseY)
 {
-    GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         setValue(true, true);
@@ -139,36 +148,53 @@ bool GuiButton::mousePressed(int mouseX, int mouseY)
 
 bool GuiButton::mouseReleased(int mouseX, int mouseY)
 {
-    GuiElement::mousePressed(mouseX, mouseY);
-    if (mouseOver)
+    GuiElement::mouseReleased(mouseX, mouseY);
+    if (getValue())
     {
-        GuiElement::mouseReleased(mouseX, mouseY);
         setValue(false, false);
         return true;
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
 bool GuiToggle::mousePressed(int mouseX, int mouseY)
 {
-    GuiElement::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         bool value = !parameter->get();
         setValue(value, true);
         return true;
     }
-    return false;
+    else {
+        return false;
+    }
+}
+
+bool GuiButton::keyPressed(int key)
+{
+    if (mouseOver && key==' ')
+    {
+        setValue(true, true);
+        setValue(false, false);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 bool GuiToggle::keyPressed(int key)
 {
-    GuiElement::keyPressed(key);
     if (mouseOver && key==' ')
     {
         bool value = !parameter->get();
         setValue(value, true);
         return true;
     }
-    return false;
+    else {
+        return false;
+    }
 }
+

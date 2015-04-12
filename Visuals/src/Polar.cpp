@@ -8,6 +8,9 @@ PolarEq::PolarEq(bool *is3d, bool *isRibbon, ofVec3f *speedRotation)
     this->speedRotation = speedRotation;
     //ribbon = new ofxTwistedRibbon();
     refresh();
+    
+    
+    *isRibbon = false;
 }
 
 void PolarEq::refresh()
@@ -55,10 +58,12 @@ void PolarEq::update()
     }
     if (*isRibbon)
     {
+        /*
         ribbon.length = numPoints;
         ribbon.color = color;
         ribbon.thickness = lineWidth;
         ribbon.update(ofVec3f(x, y, z));
+         */
     }
 }
 
@@ -72,7 +77,7 @@ void PolarEq::draw()
     ofRotateZ(rotAngle.z);
 
     if (*isRibbon) {
-        ribbon.draw();
+        //ribbon.draw();
     }
     else
     {
@@ -119,8 +124,8 @@ void Polar::setup(int width, int height, bool clearControls)
     control.addSlider("rateNoise", &rateNoise, 0.0f, 0.0015f);
     control.addSlider("radNoise", &radNoise, 0.0f, 0.0015f);
     control.addToggle("3d", &is3d);
-    control.addToggle("ribbons", &isRibbon);
-    control.addSlider("speedRotation", &speedRotation, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
+    //control.addToggle("ribbons", &isRibbon);
+    control.addMultiSlider("speedRotation", &speedRotation, ofVec3f(0, 0, 0), ofVec3f(1, 1, 1));
     control.addButton("refresh", this, &Polar::refresh);
     
     managePolarCount();
@@ -136,7 +141,7 @@ void Polar::managePolarCount()
     }
 }
 
-void Polar::refresh(GuiElementEventArgs &evt)
+void Polar::refresh(GuiButtonEventArgs &evt)
 {
     for (int i=0; i<polars.size(); i++) {
         polars[i]->refresh();

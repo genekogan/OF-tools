@@ -26,13 +26,13 @@ void Letters::setup(int width, int height, bool clearControls)
     
     control.addSlider("rows", &nrows, 2, 200);
     control.addSlider("cols", &ncols, 2, 200);
-    control.addSlider("letterRange", &letterRange, ofVec2f(0, 0), ofVec2f(1,1));
+    control.addMultiSlider("letterRange", &letterRange, ofVec2f(0, 0), ofVec2f(1,1));
     control.addColor("color", &color);
     control.addSlider("rate", &rate, 1, 10);
     control.addSlider("density", &density, 0.0f, 1.0f);
-    control.addSlider("rateNoise", &rateNoise, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
+    control.addMultiSlider("rateNoise", &rateNoise, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
     control.addSlider("rateNoiseTime", &rateNoiseTime, 0.0f, 1.0f);
-    control.addSlider("letterNoise", &letterNoise, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
+    control.addMultiSlider("letterNoise", &letterNoise, ofVec2f(0, 0), ofVec2f(0.1, 0.1));
     control.addSlider("letterNoiseTime", &letterNoiseTime, 0.0f, 1.0f);
     control.addToggle("noisyLetters", &noisyLetters);
     control.addToggle("chinese", &chinese);

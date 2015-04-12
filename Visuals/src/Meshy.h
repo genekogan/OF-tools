@@ -15,7 +15,7 @@ public:
 
 private:
     
-    void triangulate(GuiElementEventArgs &evt);
+    void triangulate(GuiButtonEventArgs &evt);
     
     CirclePackGenerator circlePacker;
     EvenPointsGenerator pointGenerator;

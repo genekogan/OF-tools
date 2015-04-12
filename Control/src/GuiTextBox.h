@@ -3,12 +3,32 @@
 #include "ofBitmapFont.h"
 #include "Parameter.h"
 #include "GuiElement.h"
-#include "Sequence.h"
+//#include "Sequence.h"
+
+
+class GuiTextBox;
+
+struct GuiTextBoxEventArgs
+{
+    GuiTextBox *textBox;
+    string value;
+    
+    GuiTextBoxEventArgs(GuiTextBox *textBox, string value)
+    {
+        this->textBox = textBox;
+        this->value = value;
+    }
+};
 
 
 class GuiTextBox : public GuiElement
 {
 public:
+    
+    void getParameters(vector<ParameterBase*> & parameters) {
+        parameters.push_back(parameter);
+    }
+
     template <typename L, typename M>
     GuiTextBox(Parameter<string> *parameter, L *listener, M method);
     
@@ -35,17 +55,11 @@ public:
     bool mousePressed(int mouseX, int mouseY);
     bool keyPressed(int key);
     
-    ///////
-    void getXml(ofXml &xml) {
-        xml.addValue("Name", getName());
-        xml.addValue<string>("Value", parameter->get());
-    }
-    void setFromXml(ofXml &xml) {
-        parameter->set(xml.getValue<string>("Value"));
-    }
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
     
-    //////
-
+    ofEvent<GuiTextBoxEventArgs> textBoxEvent;
+    
 protected:
     
     void setupTextBox();
@@ -62,7 +76,7 @@ GuiTextBox::GuiTextBox(Parameter<string> *parameter, L *listener, M method) : Gu
 {
     this->parameter = parameter;
     setupTextBox();
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(textBoxEvent, listener, method);
 }
 
 template <typename L, typename M>
@@ -70,7 +84,7 @@ GuiTextBox::GuiTextBox(string name, string *value, L *listener, M method) : GuiE
 {
     parameter = new Parameter<string>(name, value);
     setupTextBox();
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(textBoxEvent, listener, method);
 }
 
 template <typename L, typename M>
@@ -78,5 +92,5 @@ GuiTextBox::GuiTextBox(string name, L *listener, M method) : GuiElement(name)
 {
     parameter = new Parameter<string>(name, new string(name));
     setupTextBox();
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(textBoxEvent, listener, method);
 }

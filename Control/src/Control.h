@@ -7,12 +7,36 @@
 
 #include "GuiConstants.h"
 
+#include "GuiBase.h"
 #include "GuiElement.h"
+
+
 #include "GuiButton.h"
 #include "GuiTextBox.h"
 #include "GuiSlider.h"
 #include "GuiRangeSlider.h"
+
+#include "GuiMultiElement.h"
+#include "GuiMultiSlider.h"
+#include "GuiMultiRangeSlider.h"
+
+#include "GuiColor.h"
+#include "GuiMenu.h"
 #include "Gui2dPad.h"
+
+#include "GuiWidget.h"
+#include "GuiPanel.h"
+
+#include "Bpm.h"
+#include "Sequence.h"
+#include "Sequencer.h"
+
+#include "OscManager.h"
+
+// midi sequencer?
+
+
+/*#include "Gui2dPad.h"
 
 #include "GuiWidgetBase.h"
 
@@ -29,6 +53,7 @@
 #include "GuiPanel.h"
 
 #include "OscManager.h"
+*/
 
 
 /*

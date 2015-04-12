@@ -175,16 +175,16 @@ void Subdivide::setup(int width, int height, bool clearControls)
     start = new Subdivision(9, 0, 0, width, height, &color, &varColor, &circleResolution, &isLerp);
 }
 
-void Subdivide::setDrawType(GuiElementEventArgs &e)
+void Subdivide::setDrawType(GuiMenuEventArgs &e)
 {
     drawStrategy = RECTS;
-    if (e.name=="Rects") {
+    if (e.index == 0) {
         drawStrategy = RECTS;
     }
-    else if (e.name=="Diamonds") {
+    else if (e.index == 1) {
         drawStrategy = DIAMONDS;
     }
-    else if (e.name=="Circles") {
+    else if (e.index == 2) {
         drawStrategy = CIRCLES;
     }
 }

@@ -5,31 +5,25 @@
 #include "Modifier.h"
 
 
-
 class ShaderModifier : public Modifier
 {
 public:
-    void setup(int width, int height)
-    {
-        Modifier::setup(width, height);
-        
-        shader = new Shader(false);
-        shader->setup(width, height, false);
-        //        shader->getControl().setPosition(ofRandom(200, 1000), ofRandom(0, 500));
-        //shader->getControl().disableControlRow();
-    }
     
-    GuiPanel & getControl()
+    ShaderModifier() : Modifier()
     {
-        return shader->getControl();
+        type = "Shader";
     }
 
-    void render(ofFbo *fbo)
+    void setActive(bool active)
     {
-        shader->setTexture(fbo);
-        shader->update();
-        shader->draw(0, 0);
+        this->active = active;
+        shader->getControl().setActive(active);
     }
+
+    void setup(int width, int height);
+    void render(ofFbo *fbo);
     
+    GuiPanel & getControl();
+
     Shader *shader;
 };

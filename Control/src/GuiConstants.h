@@ -20,9 +20,9 @@ static ofColor  GUI_DEFAULT_COLOR_TEXT          = ofColor(255);
 
 static int      GUI_DEFAULT_HEADER_HEIGHT       = 20;
 static int      GUI_DEFAULT_CONTROLLER_HEIGHT   = 0;
-static int      GUI_DEFAULT_MARGIN_OUTER_X      = 6;
-static int      GUI_DEFAULT_MARGIN_OUTER_Y      = 6;
-static int      GUI_DEFAULT_MARGIN_INNER        = 3;
+static int      GUI_DEFAULT_MARGIN_X            = 6;
+static int      GUI_DEFAULT_MARGIN_Y            = 6;
+static int      GUI_DEFAULT_MARGIN_Y_INNER      = 3;
 
 static ofColor  GUI_DEFAULT_HEADER_COLOR        = ofColor(0, 0, 255);
 
@@ -42,6 +42,7 @@ static int      GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT     = 24;
 // SEQUENCER
 
 static int      GUI_DEFAULT_SEQUENCER_NUMCOLS           = 8;
+static int      GUI_DEFAULT_SEQUENCER_BPM               = 120;
 
 static int      GUI_DEFAULT_SEQUENCER_PANEL_MARGIN      = 4;
 static int      GUI_DEFAULT_SEQUENCER_WIDTH             = 368;

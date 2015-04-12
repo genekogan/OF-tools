@@ -31,7 +31,7 @@ private:
     void threadedFunction();
     
     inline int getCountOfTick() const;
-
+    
     float bpm;
     bool isTick;
     bool isPlaying;

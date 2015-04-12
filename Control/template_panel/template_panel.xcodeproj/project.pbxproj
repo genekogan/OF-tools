@@ -30,7 +30,6 @@
 		B04C13EB1AB2D44D00B4BC9F /* GuiSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C130C1AB2D3EF00B4BC9F /* GuiSlider.cpp */; };
 		B04C13EC1AB2D44D00B4BC9F /* GuiTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C130E1AB2D3EF00B4BC9F /* GuiTextBox.cpp */; };
 		B04C13ED1AB2D44D00B4BC9F /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C13101AB2D3EF00B4BC9F /* GuiWidget.cpp */; };
-		B04C13EE1AB2D44D00B4BC9F /* GuiWidgetBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C13121AB2D3EF00B4BC9F /* GuiWidgetBase.cpp */; };
 		B04C13EF1AB2D44D00B4BC9F /* MidiSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C13141AB2D3EF00B4BC9F /* MidiSequencer.cpp */; };
 		B04C13F01AB2D44D00B4BC9F /* OscManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C13161AB2D3EF00B4BC9F /* OscManager.cpp */; };
 		B04C13F11AB2D44D00B4BC9F /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B04C13191AB2D3EF00B4BC9F /* Sequence.cpp */; };
@@ -111,8 +110,6 @@
 		B04C130F1AB2D3EF00B4BC9F /* GuiTextBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiTextBox.h; sourceTree = "<group>"; };
 		B04C13101AB2D3EF00B4BC9F /* GuiWidget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidget.cpp; sourceTree = "<group>"; };
 		B04C13111AB2D3EF00B4BC9F /* GuiWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidget.h; sourceTree = "<group>"; };
-		B04C13121AB2D3EF00B4BC9F /* GuiWidgetBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GuiWidgetBase.cpp; sourceTree = "<group>"; };
-		B04C13131AB2D3EF00B4BC9F /* GuiWidgetBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuiWidgetBase.h; sourceTree = "<group>"; };
 		B04C13141AB2D3EF00B4BC9F /* MidiSequencer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MidiSequencer.cpp; sourceTree = "<group>"; };
 		B04C13151AB2D3EF00B4BC9F /* MidiSequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MidiSequencer.h; sourceTree = "<group>"; };
 		B04C13161AB2D3EF00B4BC9F /* OscManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscManager.cpp; sourceTree = "<group>"; };
@@ -241,8 +238,6 @@
 				B04C130F1AB2D3EF00B4BC9F /* GuiTextBox.h */,
 				B04C13101AB2D3EF00B4BC9F /* GuiWidget.cpp */,
 				B04C13111AB2D3EF00B4BC9F /* GuiWidget.h */,
-				B04C13121AB2D3EF00B4BC9F /* GuiWidgetBase.cpp */,
-				B04C13131AB2D3EF00B4BC9F /* GuiWidgetBase.h */,
 				B04C13141AB2D3EF00B4BC9F /* MidiSequencer.cpp */,
 				B04C13151AB2D3EF00B4BC9F /* MidiSequencer.h */,
 				B04C13161AB2D3EF00B4BC9F /* OscManager.cpp */,
@@ -539,7 +534,6 @@
 				B04C13EB1AB2D44D00B4BC9F /* GuiSlider.cpp in Sources */,
 				B04C13EC1AB2D44D00B4BC9F /* GuiTextBox.cpp in Sources */,
 				B04C13ED1AB2D44D00B4BC9F /* GuiWidget.cpp in Sources */,
-				B04C13EE1AB2D44D00B4BC9F /* GuiWidgetBase.cpp in Sources */,
 				B04C13EF1AB2D44D00B4BC9F /* MidiSequencer.cpp in Sources */,
 				B04C13F01AB2D44D00B4BC9F /* OscManager.cpp in Sources */,
 				B04C13F11AB2D44D00B4BC9F /* Sequence.cpp in Sources */,

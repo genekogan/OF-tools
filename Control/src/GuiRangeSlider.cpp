@@ -7,23 +7,12 @@ GuiRangeSliderBase::GuiRangeSliderBase(string name) : GuiElement(name)
     lerpNumFrames = 0;
 }
 
-GuiRangeSliderBase::~GuiRangeSliderBase()
-{
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
-}
-
 void GuiRangeSliderBase::selectSlider(float sliderValue)
 {
     float dLow = abs(sliderValue - sliderLow);
     float dHigh = abs(sliderValue - sliderHigh);
     float dMiddle = abs(sliderValue - (0.5 * (sliderLow + sliderHigh)));
-
+    
     if (dMiddle < dLow && dMiddle < dHigh)
     {
         selection = MIDDLE;
@@ -121,7 +110,6 @@ void GuiRangeSliderBase::draw()
            rectangle.y,
            rectangle.width * (sliderHigh - sliderLow),
            rectangle.height);
-
     
     ofNoFill();
     ofSetColor(colorOutline);
@@ -137,8 +125,8 @@ void GuiRangeSliderBase::draw()
     }
     
     ofSetColor(colorText);
-    ofDrawBitmapString(name,
-                       rectangle.x + 1,
+    ofDrawBitmapString(display,
+                       rectangle.x + 3,
                        rectangle.y + 1 + 0.5 * (rectangle.height + 0.5 * stringHeight));
     ofDrawBitmapString(valueString,
                        rectangle.x + rectangle.width - valueStringWidth - 1,
@@ -202,3 +190,16 @@ bool GuiRangeSliderBase::keyPressed(int key)
     }
     return mouseOver;
 }
+
+void GuiRangeSliderBase::getXml(ofXml &xml)
+{
+    xml.addValue<float>("ValueLow", getValueLow());
+    xml.addValue<float>("ValueHigh", getValueHigh());
+}
+
+void GuiRangeSliderBase::setFromXml(ofXml &xml)
+{
+    setValueLow(xml.getValue<float>("ValueLow"));
+    setValueHigh(xml.getValue<float>("ValueHigh"));
+}
+

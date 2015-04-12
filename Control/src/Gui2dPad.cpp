@@ -1,68 +1,128 @@
 #include "Gui2dPad.h"
 
 
-Gui2dPad::Gui2dPad(Parameter<ofPoint> *parameter) : GuiWidgetBase(parameter->getName())
+Gui2dPadPoint::Gui2dPadPoint(Parameter<ofPoint> *parameter)
 {
-    this->min = parameter->getMin();
-    this->max = parameter->getMax();
-    addPoint(parameter);
-    setupPad();
+    this->parameter = parameter;
+    padValue.set(ofClamp((parameter->get().x - parameter->getMin().x) / (parameter->getMax().x - parameter->getMin().x), 0.0, 1.0),
+                 ofClamp((parameter->get().y - parameter->getMin().y) / (parameter->getMax().y - parameter->getMin().y), 0.0, 1.0));
+    previous.set(parameter->get());
+    lerpFrame = 0;
+    lerpNumFrames = 0;
+    lerpPrevValue = padValue;
+    lerpNextValue = padValue;
 }
 
-Gui2dPad::Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max) : GuiWidgetBase(name)
+Gui2dPadPoint::~Gui2dPadPoint()
 {
-    this->min = min;
-    this->max = max;
-    Parameter<ofPoint> *parameter = new Parameter<ofPoint>(name, value, min, max);
-    addPoint(parameter);
-    setupPad();
+    delete parameter;
 }
 
-Gui2dPad::Gui2dPad(string name, ofPoint min, ofPoint max) : GuiWidgetBase(name)
+void Gui2dPadPoint::setValue(ofPoint padValue)
 {
-    this->min = min;
-    this->max = max;
-    setupPad();
+    this->padValue = padValue;
+    parameter->set(parameter->getMax() * padValue + parameter->getMin() * (1.0 - padValue));
 }
 
-void Gui2dPad::addPoint(Parameter<ofPoint> *parameter)
+void Gui2dPadPoint::lerpTo(ofPoint nextValue, int numFrames)
 {
-    parameters.push_back(parameter);
-    padValue.push_back(ofPoint(ofClamp((parameter->get().x - parameter->getMin().x) / (parameter->getMax().x - parameter->getMin().x), 0.0, 1.0),
-                               ofClamp((parameter->get().y - parameter->getMin().y) / (parameter->getMax().y - parameter->getMin().y), 0.0, 1.0)));
-    previous.push_back(parameter->get());
-    
-    for (auto p : parameters)
+    if (numFrames > 1)
     {
-        if (p->getMin().x < min.x)  min.x = p->getMin().x;
-        if (p->getMax().x > max.x)  max.x = p->getMax().x;
-        if (p->getMin().y < min.y)  min.y = p->getMin().y;
-        if (p->getMax().y > max.y)  max.y = p->getMax().y;
+        lerpNextValue = nextValue;
+        lerpPrevValue = padValue;
+        lerpNumFrames = numFrames;
+        lerpFrame = 0;
     }
+    else {
+        setValue(nextValue);
+    }
+}
+
+void Gui2dPadPoint::update()
+{
+    if (lerpFrame < lerpNumFrames)
+    {
+        float r = (float) lerpFrame / (lerpNumFrames-1);
+        setValue(lerpPrevValue * (1.0 - r) + lerpNextValue * r);
+        lerpFrame++;
+    }
+    if (previous != parameter->get())
+    {
+        padValue.set(ofClamp((parameter->get().x - parameter->getMin().x) / (parameter->getMax().x - parameter->getMin().x), 0.0, 1.0),
+                     ofClamp((parameter->get().y - parameter->getMin().y) / (parameter->getMax().y - parameter->getMin().y), 0.0, 1.0));
+        previous.set(parameter->get());
+    }
+}
+
+void Gui2dPadPoint::increment(float x, float y)
+{
+    setValue(ofPoint(ofClamp(padValue.x + x, 0, 1),
+                     ofClamp(padValue.y + y, 0, 1)));
+}
+
+string Gui2dPadPoint::getValueString()
+{
+    return ofToString(parameter->get().x, floor(parameter->get().x) == parameter->get().x ? 0 : 2) + "," + ofToString(parameter->get().y, floor(parameter->get().y) == parameter->get().y ? 0 : 2) + ")";
+}
+
+Gui2dPad::Gui2dPad(Parameter<ofPoint> *parameter) : GuiMultiElement(parameter->getName())
+{
+    setupPad(parameter->getMin(), parameter->getMax());
+    addPoint(parameter);
+}
+
+Gui2dPad::Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max) : GuiMultiElement(name)
+{
+    setupPad(min, max);
+    addPoint(new Parameter<ofPoint>(name, value, min, max));
+}
+
+Gui2dPad::Gui2dPad(string name, ofPoint min, ofPoint max) : GuiMultiElement(name)
+{
+    setupPad(min, max);
+}
+
+void Gui2dPad::setMin(ofPoint min)
+{
+    this->min = min;
+    setupGuiPositions();
+}
+
+void Gui2dPad::setMax(ofPoint max)
+{
+    this->max = max;
+    setupGuiPositions();
+}
+
+Gui2dPadPoint * Gui2dPad::addPoint(Parameter<ofPoint> *parameter)
+{
+    Gui2dPadPoint *newPoint = new Gui2dPadPoint(parameter);
+    points.push_back(newPoint);
+    if (parameter->getMin().x < min.x)  min.x = parameter->getMin().x;
+    if (parameter->getMax().x > max.x)  max.x = parameter->getMax().x;
+    if (parameter->getMin().y < min.y)  min.y = parameter->getMin().y;
+    if (parameter->getMax().y > max.y)  max.y = parameter->getMax().y;
     
-    GuiElementEventArgs args(name, parameters.size()-1, (float) parameter->get().x);
-    ofNotifyEvent(elementEvent, args, this);
+    Gui2dPadEventArgs args(newPoint, newPoint->padValue);
+    ofNotifyEvent(padEvent, args, this);
+    return newPoint;
 }
 
-void Gui2dPad::addPoint(ofPoint *value)
+Gui2dPadPoint * Gui2dPad::addPoint(ofPoint *value)
 {
-    Parameter<ofPoint> *parameter = new Parameter<ofPoint>(name, value, min, max);
-    addPoint(parameter);
+    return addPoint(new Parameter<ofPoint>(name, value, min, max));
 }
 
-void Gui2dPad::addPoint()
+Gui2dPadPoint * Gui2dPad::addPoint()
 {
-    Parameter<ofPoint> *parameter = new Parameter<ofPoint>(name, new ofPoint(0, 0), min, max);
-    addPoint(parameter);
+    return addPoint(new Parameter<ofPoint>(name, new ofPoint(0, 0), min, max));
 }
 
 void Gui2dPad::removePoint(int idx)
 {
-    if (idx < 0 || idx >= parameters.size())  return;
-    delete parameters[idx];
-    parameters.erase(parameters.begin() + idx);
-    previous.erase(previous.begin() + idx);
-    padValue.erase(padValue.begin() + idx);
+    if (idx < 0 || idx >= points.size())  return;
+    delete points[idx];
+    points.erase(points.begin() + idx);
 }
 
 Gui2dPad::~Gui2dPad()
@@ -76,85 +136,78 @@ Gui2dPad::~Gui2dPad()
     //
 }
 
-void Gui2dPad::setupPad()
+void Gui2dPad::setParent(GuiElement *parent)
 {
+    this->parent = parent;
+    hasParent = true;
+    setCollapsible(true);
+}
+
+void Gui2dPad::setupPad(ofPoint min, ofPoint max)
+{
+    setMin(min);
+    setMax(max);
     idxActive = -1;
-    lerpFrame = 0;
-    lerpNumFrames = 0;
-    elementWidth = GUI_DEFAULT_ELEMENT_WIDTH;
-    elementHeight = GUI_DEFAULT_ELEMENT_WIDTH;
-    connectPoints = false;
+    setCollapsible(false);
+    setHeight(width);
+    setDrawConnectedPoints(false);
     stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
-    setRectangle(0, 0, elementWidth, elementHeight);
-    setList(true);
 }
 
 void Gui2dPad::setupGuiPositions()
 {
-    if (list)
+    if (collapsible)
     {
-        headerRectangle = ofRectangle(rectangle.x, rectangle.y, rectangle.width, headerHeight);
-        if (collapsed)
+        headerRectangle.set(x, y, width, headerHeight);
+        if (getCollapsed())
         {
             padRectangle.set(0, 0, 0, 0);
-            rectangle.set(headerRectangle);
+            rectangle.set(x, y, width, headerHeight);
         }
         else
         {
-            rectangle.set(rectangle.x, rectangle.y, rectangle.width, elementHeight + headerHeight);
-            padRectangle.set(rectangle.x, rectangle.y + headerHeight, rectangle.width, rectangle.height - headerHeight);
+            padRectangle.set(x + marginX, y + headerHeight + marginY, getWidth() - 2 * marginX, getHeight() - headerHeight - 2 * marginY);
+            rectangle.set(x, y, width, height);
         }
     }
     else
     {
-        elementHeight = rectangle.height;
-        padRectangle = rectangle;
+        headerRectangle.set(0, 0, 0, 0);
+        padRectangle.set(rectangle);
     }
 }
 
-void Gui2dPad::setValue(int idx, ofPoint padValue_)
+void Gui2dPad::setValue(int idx, ofPoint padValue)
 {
-    this->padValue[idx] = padValue_;
-    parameters[idx]->set(parameters[idx]->getMax() * padValue[idx] + parameters[idx]->getMin() * (1.0 - padValue[idx]));
+    points[idx]->setValue(padValue);
     updateValueString();
-    GuiElementEventArgs args(name, idx, (float) parameters[idx]->get().x);
-    ofNotifyEvent(elementEvent, args, this);
+    Gui2dPadEventArgs args(points[idx], padValue);
+    ofNotifyEvent(padEvent, args, this);
 }
 
 void Gui2dPad::updateValueString()
 {
     if (idxActive == -1)    return;
-    valueStringNext = "(" + ofToString(idxActive) + " : " + ofToString(parameters[idxActive]->get().x, floor(parameters[idxActive]->get().x) == parameters[idxActive]->get().x ? 0 : 2) + "," + ofToString(parameters[idxActive]->get().y, floor(parameters[idxActive]->get().y) == parameters[idxActive]->get().y ? 0 : 2) + ")";
+    valueStringNext = "(" + ofToString(idxActive) + " : " + points[idxActive]->getValueString();
     toUpdateValueString = true;
 }
 
 void Gui2dPad::lerpTo(int idx, ofPoint nextValue, int numFrames)
 {
-    if (numFrames > 1)
-    {
-        this->idxLerp = idx;
-        this->lerpNextValue = nextValue;
-        this->lerpPrevValue = padValue[idx];
-        this->lerpNumFrames = numFrames;
-        this->lerpFrame = 0;
-    }
-    else {
-        setValue(idx, nextValue);
-    }
+    points[idx]->lerpTo(nextValue, numFrames);
 }
 
-void Gui2dPad::choosePoint(float x, float y)
+void Gui2dPad::selectPoint(float x, float y)
 {
     float minDist = 2.0;
     idxActive = -1;
-    for (int idx = 0; idx < padValue.size(); idx++)
+    for (int idx = 0; idx < points.size(); idx++)
     {
-        float padValueDist = ofDist(x, y, padValue[idx].x, padValue[idx].y);
+        float padValueDist = ofDist(x, y, points[idx]->padValue.x, points[idx]->padValue.y);
         if (padValueDist < minDist)
         {
             minDist = padValueDist;
-            if (minDist < 0.1)
-            {
+            if (minDist < 0.1) {
                 idxActive = idx;
             }
         }
@@ -166,21 +219,8 @@ void Gui2dPad::choosePoint(float x, float y)
 
 void Gui2dPad::update()
 {
-    if (lerpFrame < lerpNumFrames)
-    {
-        float r = (float) lerpFrame / (lerpNumFrames-1);
-        setValue(idxLerp, lerpPrevValue * (1.0 - r) + lerpNextValue * r);
-        lerpFrame++;
-    }
-    for (int i = 0; i < parameters.size(); i++)
-    {
-        if (previous[i] != parameters[i]->get())
-        {
-            padValue[i] = ofPoint(ofClamp((parameters[i]->get().x - parameters[i]->getMin().x) / (parameters[i]->getMax().x - parameters[i]->getMin().x), 0.0, 1.0),
-                                  ofClamp((parameters[i]->get().y - parameters[i]->getMin().y) / (parameters[i]->getMax().y - parameters[i]->getMin().y), 0.0, 1.0));
-            updateValueString();
-            previous[i] = parameters[i]->get();
-        }
+    for (auto p : points) {
+        p->update();
     }
 }
 
@@ -193,69 +233,66 @@ void Gui2dPad::draw()
         stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
         toUpdateValueString = false;
     }
- 
-    GuiWidgetBase::draw();
     
-    if (!collapsed)
-    {
-        ofPushStyle();
-        
-        ofFill();
-        ofSetColor(colorBackground);
-        ofSetLineWidth(1);
-        ofRect(padRectangle);
-        
-        ofSetColor(colorForeground);
-        ofNoFill();
-        
-        if (mouseOver && idxActive != -1)
-        {
-            ofLine(padRectangle.x, padRectangle.y + padValue[idxActive].y * padRectangle.height, padRectangle.x + padRectangle.width, padRectangle.y + padValue[idxActive].y * padRectangle.height);
-            ofLine(padRectangle.x + padValue[idxActive].x * padRectangle.width, padRectangle.y, padRectangle.x + padValue[idxActive].x * padRectangle.width, padRectangle.y + padRectangle.height);
-        }
-        for (int i = 0; i < parameters.size(); i++) {
-            ofCircle(padRectangle.x + padValue[i].x * padRectangle.width, padRectangle.y + padValue[i].y * padRectangle.height, 6);
-        }
-        
-        if (connectPoints)
-        {
-            ofBeginShape();
-            for (int i = 0; i < parameters.size(); i++) {
-                ofVertex(padRectangle.x + padValue[i].x * padRectangle.width, padRectangle.y + padValue[i].y * padRectangle.height);
-            }
-            ofEndShape(true);
-        }
-        
-        ofSetColor(colorOutline, 150);
-        ofRect(padRectangle);
-        
-        if (mouseOver)
-        {
-            ofSetLineWidth(2);
-            ofSetColor(colorActive);
-            ofRect(padRectangle);
-            ofSetLineWidth(1);
+    GuiMultiElement::draw();
+    
+    ofPushStyle();
 
-            ofSetColor(colorText);
-            if (!list) {
-                ofDrawBitmapString(name, padRectangle.x + 2, padRectangle.y + 2 + stringHeight);
-            }
-            if (idxActive != -1) {
-                ofDrawBitmapString(valueString, padRectangle.x + padRectangle.width - valueStringWidth - 2, padRectangle.y + padRectangle.height - 2);
-            }
-        }
-        
-        ofPopStyle();
+    ofSetColor(colorBackground);
+    ofFill();
+    ofSetLineWidth(1);
+    ofRect(padRectangle);
+    
+    ofSetColor(colorForeground);
+    ofNoFill();
+    
+    if (mouseOverPad && idxActive != -1)
+    {
+        ofLine(padRectangle.x, padRectangle.y + points[idxActive]->padValue.y * padRectangle.height, padRectangle.x + padRectangle.width, padRectangle.y + points[idxActive]->padValue.y * padRectangle.height);
+        ofLine(padRectangle.x + points[idxActive]->padValue.x * padRectangle.width, padRectangle.y, padRectangle.x + points[idxActive]->padValue.x * padRectangle.width, padRectangle.y + padRectangle.height);
     }
+    for (auto p : points) {
+        ofCircle(padRectangle.x + p->padValue.x * padRectangle.width, padRectangle.y + p->padValue.y * padRectangle.height, 6);
+    }
+    
+    if (connectPoints)
+    {
+        ofBeginShape();
+        for (auto p : points) {
+            ofVertex(padRectangle.x + p->padValue.x * padRectangle.width, padRectangle.y + p->padValue.y * padRectangle.height);
+        }
+        ofEndShape(true);
+    }
+    
+    ofSetColor(colorOutline, 150);
+    ofRect(padRectangle);
+    
+    if (mouseOverPad)
+    {
+        ofSetLineWidth(2);
+        ofSetColor(colorActive);
+        ofRect(padRectangle);
+        ofSetLineWidth(1);
+        
+        ofSetColor(colorText);
+        if (!collapsible) {
+            ofDrawBitmapString(display, padRectangle.x + 2, padRectangle.y + 2 + stringHeight);
+        }
+        if (idxActive != -1) {
+            ofDrawBitmapString(valueString, padRectangle.x + padRectangle.width - valueStringWidth - 2, padRectangle.y + padRectangle.height - 2);
+        }
+    }
+    
+    ofPopStyle();
 }
 
 bool Gui2dPad::mouseMoved(int mouseX, int mouseY)
 {
-    GuiWidgetBase::mouseMoved(mouseX, mouseY);
+    GuiMultiElement::mouseMoved(mouseX, mouseY);
     mouseOverPad = padRectangle.inside(mouseX, mouseY);
     if (mouseOverPad)
     {
-        choosePoint(ofClamp((float)(mouseX - padRectangle.x) / padRectangle.width, 0, 1),
+        selectPoint(ofClamp((float)(mouseX - padRectangle.x) / padRectangle.width, 0, 1),
                     ofClamp((float)(mouseY - padRectangle.y) / padRectangle.height, 0, 1));
     }
     return mouseOverPad;
@@ -263,7 +300,7 @@ bool Gui2dPad::mouseMoved(int mouseX, int mouseY)
 
 bool Gui2dPad::mousePressed(int mouseX, int mouseY)
 {
-    GuiWidgetBase::mousePressed(mouseX, mouseY);
+    GuiMultiElement::mousePressed(mouseX, mouseY);
     if (mouseOverPad && idxActive != -1)
     {
         setValue(idxActive,
@@ -275,12 +312,12 @@ bool Gui2dPad::mousePressed(int mouseX, int mouseY)
 
 bool Gui2dPad::mouseReleased(int mouseX, int mouseY)
 {
-    return GuiWidgetBase::mouseReleased(mouseX, mouseY);
+    return GuiMultiElement::mouseReleased(mouseX, mouseY);
 }
 
 bool Gui2dPad::mouseDragged(int mouseX, int mouseY)
 {
-    GuiWidgetBase::mouseDragged(mouseX, mouseY);
+    GuiMultiElement::mouseDragged(mouseX, mouseY);
     if (mouseDragging && idxActive != -1)
     {
         setValue(idxActive,
@@ -292,40 +329,83 @@ bool Gui2dPad::mouseDragged(int mouseX, int mouseY)
 
 bool Gui2dPad::keyPressed(int key)
 {
-    GuiWidgetBase::keyPressed(key);
-    if (key == 'n')
+    if (mouseOverPad)
     {
-        float x = ofMap(ofClamp((float) (ofGetMouseX() - padRectangle.x) / padRectangle.width,  0, 1), 0, 1, min.x, max.x);
-        float y = ofMap(ofClamp((float) (ofGetMouseY() - padRectangle.y) / padRectangle.height, 0, 1), 0, 1, min.y, max.y);
-        addPoint(new ofPoint(x, y));
-        idxActive = parameters.size() - 1;
-        return true;
-    }
-    else if (key == OF_KEY_BACKSPACE)
-    {
-        removePoint(idxActive);
-        idxActive = -1;
-        return true;
-    }
-    else if (key == OF_KEY_LEFT && idxActive != -1)
-    {
-        setValue(idxActive, ofPoint(ofClamp(padValue[idxActive].x - 0.01, 0, 1), padValue[idxActive].y));
-        return true;
-    }
-    else if (key == OF_KEY_RIGHT && idxActive != -1)
-    {
-        setValue(idxActive, ofPoint(ofClamp(padValue[idxActive].x + 0.01, 0, 1), padValue[idxActive].y));
-        return true;
-    }
-    else if (key == OF_KEY_UP && idxActive != -1)
-    {
-        setValue(idxActive, ofPoint(padValue[idxActive].x, ofClamp(padValue[idxActive].y - 0.01, 0, 1)));
-        return true;
-    }
-    else if (key == OF_KEY_DOWN && idxActive != -1)
-    {
-        setValue(idxActive, ofPoint(padValue[idxActive].x, ofClamp(padValue[idxActive].y + 0.01, 0, 1)));
-        return true;
+        if (key == 'n')
+        {
+            float x = ofMap(ofClamp((float) (ofGetMouseX() - padRectangle.x) / padRectangle.width,  0, 1), 0, 1, min.x, max.x);
+            float y = ofMap(ofClamp((float) (ofGetMouseY() - padRectangle.y) / padRectangle.height, 0, 1), 0, 1, min.y, max.y);
+            addPoint(new ofPoint(x, y));
+            idxActive = points.size() - 1;
+            return true;
+        }
+        else if (idxActive != -1)
+        {
+            if (key == OF_KEY_BACKSPACE)
+            {
+                removePoint(idxActive);
+                idxActive = -1;
+                return true;
+            }
+            else if (key == OF_KEY_LEFT)
+            {
+                points[idxActive]->increment(-0.01, 0.0);
+                return true;
+            }
+            else if (key == OF_KEY_RIGHT)
+            {
+                points[idxActive]->increment(+0.01, 0.0);
+                return true;
+            }
+            else if (key == OF_KEY_UP)
+            {
+                points[idxActive]->increment(0.0, -0.01);
+                return true;
+            }
+            else if (key == OF_KEY_DOWN)
+            {
+                points[idxActive]->increment(0.0, +0.01);
+                return true;
+            }
+        }
     }
     return false;
+}
+
+void Gui2dPad::getXml(ofXml &xml)
+{
+    xml.addValue<ofPoint>("Min", min);
+    xml.addValue<ofPoint>("Max", max);
+    xml.addChild("Points");
+    xml.setTo("Points");
+    for (auto p : points) {
+        xml.addValue<ofPoint>("Point", p->padValue);
+    }
+    xml.setToParent();
+}
+
+void Gui2dPad::setFromXml(ofXml &xml)
+{
+    setMin(xml.getValue<ofPoint>("Min"));
+    setMax(xml.getValue<ofPoint>("Max"));
+
+    xml.setTo("Points");
+    if (xml.exists("Point[0]"))
+    {
+        int idx = 0;
+        do {
+            ofPoint pt = xml.getValue<ofPoint>("Point["+ofToString(idx)+"]");
+            if (idx < points.size()) {
+                points[idx]->setValue(pt);
+            }
+            else
+            {
+                Gui2dPadPoint * newPoint = addPoint();
+                newPoint->setValue(pt);
+            }
+            idx++;
+        }
+        while(idx < xml.getNumChildren());
+    }
+    xml.setToParent();
 }

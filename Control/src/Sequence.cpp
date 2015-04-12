@@ -7,15 +7,15 @@ Sequence::SequenceKeyboardEventArgs::SequenceKeyboardEventArgs(int column, float
     this->value = value;
 }
 
-Sequence::Sequence(string name, int numCells) : GuiElement(name)
+Sequence::Sequence(string name, int numCells) : GuiBase(name)
 {
-    setSize(numCells);
+    setNumberCells(numCells);
     setupSequence();
 }
 
-Sequence::Sequence(string name) : GuiElement(name)
+Sequence::Sequence(string name) : GuiBase(name)
 {
-    setSize(1);
+    setNumberCells(1);
     setupSequence();
 }
 
@@ -51,7 +51,7 @@ void Sequence::setDiscrete(bool discrete)
     this->discrete = discrete;
 }
 
-void Sequence::setSize(int numCells)
+void Sequence::setNumberCells(int numCells)
 {
     this->numCells = numCells;
     values.resize(numCells);
@@ -63,7 +63,7 @@ void Sequence::setCursor(float cursor)
     cursorLerp = cursor - floor(cursor);
 }
 
-void Sequence::setValueAtCell(int idx, float value)
+void Sequence::setValueAtCell(int idx, float value, bool sendNotification)
 {
     if (idx >= numCells)
     {
@@ -71,6 +71,12 @@ void Sequence::setValueAtCell(int idx, float value)
         return;
     }
     values[idx] = value;
+    
+    if (sendNotification)
+    {
+        GuiSequenceEventArgs args(this, idx, value);
+        ofNotifyEvent(sequenceEvent, args, this);
+    }
 }
 
 void Sequence::setFromValues(vector<float> values)
@@ -82,7 +88,7 @@ void Sequence::setFromValues(vector<float> values)
 void Sequence::randomize(float density, float range)
 {
     for (int i = 0; i < numCells; i++) {
-        values[i] = discrete ? ofRandom(1) < density : ofLerp(0.5 - 0.5 * range, 0.5 + 0.5 * range, ofRandom(1));
+        setValueAtCell(i, discrete ? ofRandom(1) < density : ofLerp(0.5 - 0.5 * range, 0.5 + 0.5 * range, ofRandom(1)), false);
     }
 }
 
@@ -111,28 +117,27 @@ float Sequence::getValueAtCurrentCursor()
 
 bool Sequence::mouseMoved(int mouseX, int mouseY)
 {
-    GuiElement::mouseMoved(mouseX, mouseY);
+    GuiBase::mouseMoved(mouseX, mouseY);
     mouseOverActive = activeRectangle.inside(mouseX, mouseY);
     mouseOverSequencer = sequenceRectangle.inside(mouseX, mouseY);
     if (mouseOverSequencer)
     {
-        activeCell = floor((float) (ofGetMouseX() - sequenceRectangle.x) / cellWidth);
+        int activeCellNext = floor((float) (ofGetMouseX() - sequenceRectangle.x) / cellWidth);
+        if (activeCellNext != activeCell) {editing = false;}
+        activeCell = activeCellNext;
     }
     return mouseOver || mouseOverActive || mouseOverSequencer;
 }
 
 bool Sequence::mousePressed(int mouseX, int mouseY)
 {
-    GuiElement::mousePressed(mouseX, mouseY);
+    GuiBase::mousePressed(mouseX, mouseY);
     if (mouseOver)
     {
         if (mouseOverSequencer)
         {
-            if (discrete)
-            {
-                values[activeCell] = (1.0 - values[activeCell]) > 0.5;
-                GuiElementEventArgs args(name, activeCell, values[activeCell]);
-                ofNotifyEvent(elementEvent, args, this);
+            if (discrete) {
+                setValueAtCell(activeCell, (1.0 - values[activeCell]) > 0.5);
             }
             else {
                 mousePos.set(mouseX, mouseY);
@@ -150,13 +155,13 @@ bool Sequence::mousePressed(int mouseX, int mouseY)
 
 bool Sequence::mouseReleased(int mouseX, int mouseY)
 {
-    GuiElement::mouseReleased(mouseX, mouseY);
+    GuiBase::mouseReleased(mouseX, mouseY);
     return mouseOver || mouseOverActive || mouseOverSequencer;
 }
 
 bool Sequence::mouseDragged(int mouseX, int mouseY)
 {
-    GuiElement::mouseDragged(mouseX, mouseY);
+    GuiBase::mouseDragged(mouseX, mouseY);
     if (mouseDragging && !discrete)
     {
         values[activeCell] = ofClamp(values[activeCell] - 0.005 * (mouseY - mousePos.y), 0, 1);
@@ -167,7 +172,7 @@ bool Sequence::mouseDragged(int mouseX, int mouseY)
 
 bool Sequence::keyPressed(int key)
 {
-    GuiElement::keyPressed(key);
+    GuiBase::keyPressed(key);
     if (mouseOverSequencer)
     {
         if (key == 46 || (key >= 48 && key <= 57))
@@ -187,15 +192,13 @@ bool Sequence::keyPressed(int key)
             if (getDiscrete())
             {
                 setValueAtCell(activeCell, 1.0 - values[activeCell]);
-                GuiElementEventArgs args(name, activeCell, values[activeCell]);
-                ofNotifyEvent(elementEvent, args, this);
             }
         }
         else if (key == OF_KEY_RETURN)
         {
             SequenceKeyboardEventArgs args(activeCell, ofToFloat(editingValue));
             ofNotifyEvent(keyboardEvent, args, this);
-            editingValue = "";
+            editing = false;
             return true;
         }
     }
@@ -223,7 +226,7 @@ void Sequence::draw()
         ofCircle(activeRectangle.x + activeRectangle.width / 2, activeRectangle.y + activeRectangle.height / 2, activeRectangle.width / 2);
         ofSetLineWidth(1);
     }
-
+    
     if (active)
     {
         for (int i = 0; i < numCells; i++)
@@ -255,7 +258,6 @@ void Sequence::draw()
             ofSetLineWidth(1);
         }
     }
-    
+
     ofPopStyle();
 }
-

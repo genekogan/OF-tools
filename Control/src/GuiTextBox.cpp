@@ -20,6 +20,7 @@ GuiTextBox::GuiTextBox(string name) : GuiElement(name)
 
 GuiTextBox::~GuiTextBox()
 {
+    delete parameter;
     //
     //
     // who should delete parameter?
@@ -43,8 +44,8 @@ void GuiTextBox::setValue(string value, bool sendChangeNotification)
     stringWidth = ofBitmapStringGetBoundingBox(parameter->get(), 0, 0).width;
     if (sendChangeNotification && (value != previous))
     {
-        GuiElementEventArgs args(parameter->get(), 0, 0);
-        ofNotifyEvent(elementEvent, args, this);
+        GuiTextBoxEventArgs args(this, parameter->get());
+        ofNotifyEvent(textBoxEvent, args, this);
     }
 }
 
@@ -55,7 +56,7 @@ string GuiTextBox::getValue()
 
 void GuiTextBox::update()
 {
-
+    
 }
 
 void GuiTextBox::draw()
@@ -147,4 +148,14 @@ bool GuiTextBox::keyPressed(int key)
         }
     }
     return false;
+}
+
+void GuiTextBox::getXml(ofXml &xml)
+{
+    xml.addValue<string>("Value", parameter->get());
+}
+
+void GuiTextBox::setFromXml(ofXml &xml)
+{
+    parameter->set(xml.getValue<string>("Value"));
 }

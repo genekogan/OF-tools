@@ -1,15 +1,5 @@
 #pragma once
 
-/*
- 
- 
- move warp to just GUI?
- 
- xml / midi / osc
-  - save to
-  - load from
- 
- */
 
 #include "ofMain.h"
 #include "ofxOsc.h"
@@ -19,7 +9,15 @@ class ParameterBase
 {
 public:
     
-    virtual ~ParameterBase() { }
+    virtual ~ParameterBase()
+    {
+        
+        //
+        //
+        //
+        //
+        //cout << "DELETE PARAM " << this << " " << getName() << endl;
+    }
     
     // name
     string getName() {return name; }
@@ -55,8 +53,8 @@ public:
     virtual void receiveOsc(ofxOscMessage &m) {}
     
     // xml
-    virtual void getXml(ofXml &xml) {}
-    virtual void loadFromXml(ofXml &xml) {}
+//    virtual void getXml(ofXml &xml) {}
+//    virtual void loadFromXml(ofXml &xml) {}
     
     // data
     string name;
@@ -112,9 +110,11 @@ public:
     void sendOsc(ofxOscMessage &m);
     void receiveOsc(ofxOscMessage &m);
     
+    /*
     // xml
     void getXml(ofXml &xml);
     void loadFromXml(ofXml &xml) { }
+     */
     
 protected:
     
@@ -243,6 +243,7 @@ template<> inline void Parameter<string>::receiveOsc(ofxOscMessage &m)
 
 // get xml templates
 
+/*
 template<typename T> void Parameter<T>::getXml(ofXml &xml) { }
 
 template<> inline void Parameter<bool>::getXml(ofXml &xml)
@@ -292,7 +293,7 @@ template<> inline void Parameter<string>::getXml(ofXml &xml)
 
 }
 
-
+*/
 
 
 // dynamic casting

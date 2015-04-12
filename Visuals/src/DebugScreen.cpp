@@ -22,22 +22,22 @@ void DebugScreen::setup(int width, int height, bool clearControls)
     gradientModes.push_back("Bar");
 
     control.addMenu("mode", debugModes, this, &DebugScreen::setType);
-    control.addColor("color1", &color1, this, &DebugScreen::refresh);
-    control.addColor("color2", &color2, this, &DebugScreen::refresh);
+    //control.addColor("color1", &color1, this, &DebugScreen::refresh);
+    //control.addColor("color2", &color2, this, &DebugScreen::refresh);
     control.addSlider("numRects", &numRects, 1, 100);
     control.addSlider("speed", &speed, 0, 100);
     control.addMenu("gradient type", gradientModes, this, &DebugScreen::setupGradient);
     
-    GuiElementEventArgs evt("Circular", 0, 0);
+    GuiMenuEventArgs evt(NULL, 0, 0);
     setupGradient(evt);
 }
 
-void DebugScreen::setType(GuiElementEventArgs &e)
+void DebugScreen::setType(GuiMenuEventArgs &e)
 {
-    if      (e.name == "Full")           type = FULL;
-    else if (e.name == "Gradient")       type = GRADIENT;
-    else if (e.name == "Checkerboard")   type = CHECKERBOARD;
-    else if (e.name == "Frames")         type = FRAMES;
+    if      (e.index == 0)           type = FULL;
+    else if (e.index == 1)       type = GRADIENT;
+    else if (e.index == 2)   type = CHECKERBOARD;
+    else if (e.index == 3)         type = FRAMES;
 }
 
 void DebugScreen::update()
@@ -125,24 +125,24 @@ void DebugScreen::drawGradient()
     }
 }
 
-void DebugScreen::refresh(GuiElementEventArgs &e)
+void DebugScreen::refresh(GuiButtonEventArgs &e)
 {
     if (type == GRADIENT)
     {
-        GuiElementEventArgs args(gradientMode, 0, 0);
+        GuiMenuEventArgs args(NULL, 0, true);
         setupGradient(args);
     }
 }
 
-void DebugScreen::setupGradient(GuiElementEventArgs &evt)
+void DebugScreen::setupGradient(GuiMenuEventArgs &evt)
 {
-    this->gradientMode = ofToString(evt.name);
+    this->gradientMode = evt.index;
 
     gradientMesh.clear();
     gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
     gradientMesh.setUsage(GL_STREAM_DRAW);
     
-    if (gradientMode == "Circular")
+    if (gradientMode == 0)  // circuluar
     {
         ofVec2f center(width / 2, height / 2);
         gradientMesh.addVertex(center);
@@ -157,7 +157,7 @@ void DebugScreen::setupGradient(GuiElementEventArgs &evt)
             gradientMesh.addColor(ofColor(color2));
         }
     }
-    else if (gradientMode == "Linear")
+    else if (gradientMode == 1) // linear
     {
         gradientMesh.addVertex(ofVec2f(0, 0));
         gradientMesh.addVertex(ofVec2f(width, 0));
@@ -168,7 +168,7 @@ void DebugScreen::setupGradient(GuiElementEventArgs &evt)
         gradientMesh.addColor(ofColor(color2));
         gradientMesh.addColor(ofColor(color2));
     }
-    else if (gradientMode == "Bar")
+    else if (gradientMode == 2) // bar
     {
         gradientMesh.addVertex(ofVec2f(width / 2, height / 2));
         gradientMesh.addVertex(ofVec2f(0, height / 2));

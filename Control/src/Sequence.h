@@ -2,27 +2,44 @@
 
 #include "ofMain.h"
 #include "Parameter.h"
-#include "GuiElement.h"
+#include "GuiBase.h"
 
 
-class Sequence : public GuiElement
+class Sequence;
+
+struct GuiSequenceEventArgs
+{
+    Sequence *sequence;
+    int cell;
+    float value;
+    
+    GuiSequenceEventArgs(Sequence *sequence, int cell, float value)
+    {
+        this->sequence = sequence;
+        this->cell = cell;
+        this->value = value;
+    }
+};
+
+
+class Sequence : public GuiBase
 {
 public:
-
+    
     struct SequenceKeyboardEventArgs
     {
         int column;
         float value;
         SequenceKeyboardEventArgs(int column, float value);
     };
-
+    
     Sequence(string name, int numCells);
     Sequence(string name);
     ~Sequence();
     
     void setActive(bool active);
     void setDiscrete(bool discrete);
-    void setSize(int numCells);
+    void setNumberCells(int numCells);
     void setCursor(float cursor);
     
     bool getActive() {return active;}
@@ -30,7 +47,7 @@ public:
     int getSize() {return numCells;}
     float getCursor() {return cursor;}
     
-    void setValueAtCell(int idx, float value);
+    void setValueAtCell(int idx, float value, bool sendNotification=true);
     void setFromValues(vector<float> values);
     void randomize(float density, float range);
     
@@ -54,13 +71,14 @@ public:
     void update();
     void draw();
     
+    ofEvent<GuiSequenceEventArgs> sequenceEvent;
     ofEvent<SequenceKeyboardEventArgs> keyboardEvent;
-        
+    
 protected:
     
     void setupSequence();
     void setupGuiPositions();
-
+    
     bool active;
     bool discrete;
     vector<float> values;

@@ -20,18 +20,18 @@ void Agents::setup(int width, int height, bool clearControls)
     drawLines = false;
     drawTriangles = true;
 
-    control.addSlider("numAgents", &numAgents, 1, 360);
+    control.addSlider("numAgents and some other stuff", &numAgents, 1, 360);
     control.addSlider("speed", &speed, -5.0f, 5.0f);
-    control.addSlider("size", &size, 30, 800);
+    control.addSlider("size and some other stuff", &size, 30, 800);
     control.addColor("colorLines", &color1);
     control.addColor("colorTri", &color2);
-    control.addSlider("fillAlpha", &fillAlpha, 0, 255);
-    control.addSlider("strokeAlpha", &strokeAlpha, 0, 255);
-    control.addSlider("lineWidth", &lineWidth, 0.0f, 5.0f);
-    control.addSlider("cycle", &cycle, 4, 1000);
+    control.addSlider("fillAlpha and some other stuff", &fillAlpha, 0, 255);
+    control.addSlider("strokeAlpha and some other stuff", &strokeAlpha, 0, 255);
+    control.addSlider("lineWidth and some other stuff", &lineWidth, 0.0f, 5.0f);
+    control.addSlider("cycle and some other stuff", &cycle, 4, 1000);
     control.addSlider("density", &density, 0.0f, 1.0f);
     control.addToggle("wrap", &wrapping);
-    control.addToggle("debug", &debug);
+    control.addToggle("debug and some other stuff", &debug);
     control.addToggle("lines", &drawLines);
     control.addToggle("triangles", &drawTriangles);
     
@@ -47,7 +47,7 @@ void Agents::update()
         agents.pop_back();
     }
     
-    for (int i=0; i<numAgents; i++)
+    for (int i=0; i<agents.size(); i++)
     {
         agents[i].setSpeed(speed);
         agents[i].setSize(size);
@@ -56,9 +56,9 @@ void Agents::update()
             agents[i].wrap();
         }
     }
-    for (int i=0; i<numAgents; i++)
+    for (int i=0; i<agents.size(); i++)
     {
-        for (int j=i+1; j<numAgents; j++)
+        for (int j=i+1; j<agents.size(); j++)
         {
             bool intersecting = agents[i].isIntersecting(agents[j]);
             if (intersecting)
@@ -85,7 +85,7 @@ void Agents::addNewAgent()
 void Agents::drawDebug()
 {
     ofBackground(0);
-    for (int i=0; i<numAgents; i++) {
+    for (int i=0; i<agents.size(); i++) {
         agents[i].draw();
     }
 }

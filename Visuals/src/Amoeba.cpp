@@ -24,9 +24,9 @@ void Amoeba::setup(int width, int height, bool clearControls)
     densityStroke = 1;
     densityFill = 1;
     
-    control.addSlider("center", &center, ofVec2f(0, 0), ofVec2f(width, height));
+    control.addMultiSlider("center", &center, ofVec2f(0, 0), ofVec2f(width, height));
     control.addSlider("numVertices", &numVertices, 3, 1000);
-    control.addSlider("radRange", &radRange, ofVec2f(-width, -width), ofVec2f(width, width));
+    control.addMultiSlider("radRange", &radRange, ofVec2f(-width, -width), ofVec2f(width, width));
     control.addSlider("speed", &speed, 0.0f, 0.1f);
     control.addSlider("noiseFactor", &noiseFactor, 0.0f, 0.1f);
     control.addSlider("noiseRegion", &noiseRegion, -5.0f, 5.0f);

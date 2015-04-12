@@ -17,12 +17,12 @@ void GridFly::setup(int width, int height, bool clearControls)
 
     control.addSlider("nx", &nx, 10, 400);
     control.addSlider("ny", &ny, 10, 400);
-    control.addSlider("length", &length, ofVec2f(100,100), ofVec2f(4000,4000));
+    control.addMultiSlider("length", &length, ofVec2f(100,100), ofVec2f(4000,4000));
     control.addSlider("margin", &margin, 0.0f, 1000.0f);
-    control.addSlider("noiseFactor", &noiseFactor, ofVec2f(0, 0), ofVec2f(0.01, 0.01));
+    control.addMultiSlider("noiseFactor", &noiseFactor, ofVec2f(0, 0), ofVec2f(0.01, 0.01));
     control.addSlider("speed", &speed, 0.0f, 100.0f);
     control.addSlider("angle", &angle, 0.0f, 360.0f);
-    control.addSlider("axis", &axis, ofVec3f(0, -1, -1), ofVec3f(1, 1, 1));
+    control.addMultiSlider("axis", &axis, ofVec3f(0, -1, -1), ofVec3f(1, 1, 1));
     control.addColor("color", &color);
     
     vertices = &mesh.getVertices();

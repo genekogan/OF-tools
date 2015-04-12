@@ -1,130 +1,79 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofBitmapFont.h"
 #include "GuiConstants.h"
+#include "GuiBase.h"
+#include "Sequence.h"
 
 
 class Sequence;
 
 
-struct GuiElementEventArgs
-{
-    string name;
-    float value;
-    int cell;
-    
-    GuiElementEventArgs(string name, int cell, float value)
-    {
-        this->name = name;
-        this->cell = cell;
-        this->value = value;
-    }
-};
-
-
-class GuiElement
+class GuiElement : public GuiBase
 {
 public:
+    
+    
+    virtual void getParameters(vector<ParameterBase*> & parameters) { }
+    
+    
     GuiElement(string name);
     GuiElement();
-    virtual ~GuiElement();
 
     void setParent(GuiElement *parent);
     GuiElement * getParent() {return parent;}
     bool getHasParent() {return hasParent;}
-    
-    bool getActive() {return active;}
-    
-    virtual void setActive(bool active);
-    virtual void setAutoUpdate(bool autoUpdate);
-    virtual void setAutoDraw(bool autoDraw);
-    
-    virtual void setName(string name) {this->name = name;}
-    virtual string getName() {return name;}
-    
-    virtual bool getMouseOver() {return mouseOver;}
-    virtual void setMouseOver(bool mouseOver);
-    
-    virtual bool mouseMoved(int mouseX, int mouseY);
-    virtual bool mousePressed(int mouseX, int mouseY);
-    virtual bool mouseDragged(int mouseX, int mouseY);
-    virtual bool mouseReleased(int mouseX, int mouseY);
-
-    virtual bool keyPressed(int key);
-    
-    virtual void update() { }
-    virtual void draw();
-    
-    virtual bool isWidget() {return false;}
+    virtual bool isMultiElement() {return false;}
+    virtual bool getCollapsed();
     virtual bool isDiscrete() {return false;}
+
+    void setMouseOver(bool mouseOver);
     
     virtual void lerpTo(float nextSliderValue, int lerpNumFrames) { }
+    
     virtual void setValueFromSequence(Sequence &sequence) { }
     virtual void setSequenceFromValue(Sequence &sequence, int column) { }
     virtual void setSequenceFromExplicitValue(Sequence &sequence, int column, float value) { }
     
-    virtual void setRectangle(ofRectangle rectangle);
-    virtual void setRectangle(int x, int y, int width, int height);
-    virtual void setPosition(ofPoint p);
-    virtual void setPosition(int x, int y);
-    virtual void setSize(ofPoint s);
-    virtual void setSize(int width, int height);
+    virtual void getXml(ofXml &xml);
+    virtual void setFromXml(ofXml &xml);
+    
+    virtual void setupGuiPositions();
+    void resetGuiPositions();
+    
+    
+    string display;
+    
+    void setupDisplayString()
+    {
+        display = name;
+        int displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+        while (displayWidth > getWidth())
+        {
+            display = display.substr(0, display.length()-1);
+            displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+        }
+    }
+    
 
-    virtual void setElementWidth(int elementWidth) {this->elementWidth = elementWidth;}
-    virtual void setElementHeight(int elementHeight) {this->elementHeight = elementHeight;}
-    virtual void setColorBackground(ofColor colorBackground) {this->colorBackground = colorBackground;}
-    virtual void setColorForeground(ofColor colorForeground) {this->colorForeground = colorForeground;}
-    virtual void setColorOutline(ofColor colorOutline) {this->colorOutline = colorOutline;}
-    virtual void setColorText(ofColor colorText) {this->colorText = colorText;}
-    virtual void setColorActive(ofColor colorOutline) {this->colorOutline = colorOutline;}
     
-    ofRectangle getRectangle() {return rectangle;}
-    int getElementWidth() {return elementWidth;}
-    int getElementHeight() {return elementHeight;}
-    ofColor getColorBackground() {return colorBackground;}
-    ofColor getColorForeground() {return colorForeground;}
-    ofColor getColorOutline() {return colorOutline;}
-    ofColor getColorText() {return colorText;}
-    ofColor getColorActive() {return colorActive;}
+    string getAddress() {
+        return hasParent ? parent->getAddress() + "/" + getName() : getName();
+    }
     
+    bool getActive() {
+        return hasParent ? parent->getActive() && active : active;
+    }
     
-    ////////
-    
-    virtual void getXml(ofXml &xml) { }
-    virtual void setFromXml(ofXml &xml) { }
-    ////////
-    
-    
-    ofEvent<GuiElementEventArgs> elementEvent;
+    void setActive(bool active)
+    {
+        GuiBase::setActive(active);
+        resetGuiPositions();
+    }
     
 protected:
     
-    virtual void initialize();
-    virtual void setupGuiPositions() { }
-    
-    void mouseMoved(ofMouseEventArgs &evt);
-    void mousePressed(ofMouseEventArgs &evt);
-    void mouseDragged(ofMouseEventArgs &evt);
-    void mouseReleased(ofMouseEventArgs &evt);
-    
-    void keyPressed(ofKeyEventArgs &evt);
-    
-    void update(ofEventArgs &data);
-    void draw(ofEventArgs &data);
-    
-    string name;
-    bool active, autoUpdate, autoDraw;
-    bool mouseOver, mouseDragging;
-    
     GuiElement *parent;
     bool hasParent;
-    
-    ofRectangle rectangle;
-    int elementWidth;
-    int elementHeight;
-    ofColor colorForeground;
-    ofColor colorBackground;
-    ofColor colorOutline;
-    ofColor colorText;
-    ofColor colorActive;
 };

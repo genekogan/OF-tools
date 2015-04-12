@@ -41,7 +41,7 @@ private:
         int width, height;
     };
 
-    void fboParametersChanged(GuiElementEventArgs &e);
+    void fboParametersChanged(GuiSliderEventArgs<int> &e);
     void setupBubblesFbo();
     
     ofxBlurShader blur;

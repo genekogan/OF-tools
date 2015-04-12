@@ -1,41 +1,33 @@
-//
-//  PostGlitch.cpp
-//  template_simple
-//
-//  Created by Eugene Kogan on 3/23/15.
-//
-//
-
 #include "PostGlitch.h"
-
 
 void PostGlitch::setup(int width, int height)
 {
     Modifier::setup(width, height);
     
-    
     panel.setName("PostGlitch");
     
-    panel.addToggle("convergence", &convergence);
-    panel.addToggle("glow", &glow);
-    panel.addToggle("shaker", &shaker);
-    panel.addToggle("cutslider", &cutslider);
-    panel.addToggle("twist", &twist);
-    panel.addToggle("outline", &outline);
-    panel.addToggle("noise", &noise);
-    panel.addToggle("slitscan", &slitscan);
-    panel.addToggle("swell", &swell);
-    panel.addToggle("invert", &invert);
-    panel.addToggle("crHighContrast", &crHighContrast);
-    panel.addToggle("crBlueRaise", &crBlueRaise);
-    panel.addToggle("crRedRaise", &crRedRaise);
-    panel.addToggle("crGreenRaise", &crGreenRaise);
-    panel.addToggle("crBlueInvert", &crBlueInvert);
-    panel.addToggle("crRedInvert", &crRedInvert);
-    panel.addToggle("crGreenInvert", &crGreenInvert);
+    GuiMenu *menu = panel.addMenu("effects", this, &PostGlitch::toggleEffects);
+    menu->setMultipleChoice(true);
+    menu->addToggle("convergence", &convergence);
+    menu->addToggle("glow", &glow);
+    menu->addToggle("shaker", &shaker);
+    menu->addToggle("cutslider", &cutslider);
+    menu->addToggle("twist", &twist);
+    menu->addToggle("outline", &outline);
+    menu->addToggle("noise", &noise);
+    menu->addToggle("slitscan", &slitscan);
+    menu->addToggle("swell", &swell);
+    menu->addToggle("invert", &invert);
+    menu->addToggle("crHighContrast", &crHighContrast);
+    menu->addToggle("crBlueRaise", &crBlueRaise);
+    menu->addToggle("crRedRaise", &crRedRaise);
+    menu->addToggle("crGreenRaise", &crGreenRaise);
+    menu->addToggle("crBlueInvert", &crBlueInvert);
+    menu->addToggle("crRedInvert", &crRedInvert);
+    menu->addToggle("crGreenInvert", &crGreenInvert);
     
     panel.addToggle("customParameters", &customParameters);
-    panel.addSlider("delTime", &delTime, 0.0f, 2.0f);
+    panel.addSlider("delTime", &delTime, 0.0f, 2.0f, this, &PostGlitch::setDelayTime);
     panel.addSlider("stepMin", &stepMin, 2.0f, 100.0f);
     panel.addSlider("stepMax", &stepMax, 10.0f, 160.0f);
     
@@ -72,9 +64,30 @@ void PostGlitch::setup(int width, int height)
     b0.setFunctionNoise(-0.5, 3.5, 0.1);
     b1.setFunctionNoise(-0.5, 3.5, 0.1);
     
+    GuiMenuEventArgs args(NULL, 0, false);
+    toggleEffects(args);
 }
 
-void PostGlitch::updateEffects()
+void PostGlitch::render(ofFbo *fbo)
+{
+    post.setFbo(fbo);
+    
+    /*
+     if (customParameters) {
+     
+     post.setShaderParameters((int) ofRandom(stepMin, stepMax),
+     sv0.get(), sv1.get(), sv2.get(), sv3.get(),
+     rand.get(), m0.get(), m1.get(), b0.get(), b1.get());
+     } else {
+     post.setShaderParameters();
+     }*/
+    
+    post.generateFx();
+    fbo->draw(0, 0);
+    //fbo = *texLayer->getFbo();
+}
+
+void PostGlitch::toggleEffects(GuiMenuEventArgs &evt)
 {
     post.setFx(OFXPOSTGLITCH_CONVERGENCE, convergence);
     post.setFx(OFXPOSTGLITCH_GLOW, glow);
@@ -95,7 +108,8 @@ void PostGlitch::updateEffects()
     post.setFx(OFXPOSTGLITCH_CR_GREENINVERT, crGreenInvert);
 }
 
-void PostGlitch::noiseChange() {
+void PostGlitch::setDelayTime(GuiSliderEventArgs<float> &evt)
+{
     sv0.setDelTime(delTime);
     sv1.setDelTime(delTime);
     sv2.setDelTime(delTime);
@@ -105,6 +119,5 @@ void PostGlitch::noiseChange() {
     m1.setDelTime(delTime);
     b0.setDelTime(delTime);
     b1.setDelTime(delTime);
-    pDelTime = delTime;
 }
 

@@ -6,11 +6,30 @@
 #include "Sequence.h"
 
 
+template <typename T> class GuiSlider;
+
+struct GuiSliderEventArgsBase { };
+
+template<typename T>
+struct GuiSliderEventArgs : public GuiSliderEventArgsBase
+{
+    GuiSlider<T> *slider;
+    T value;
+    
+    GuiSliderEventArgs(GuiSlider<T> *slider, T value)
+    {
+        this->slider = slider;
+        this->value = value;
+    }
+};
+
+
 class GuiSliderBase : public GuiElement
 {
 public:
+    
     GuiSliderBase(string name);
-    virtual ~GuiSliderBase();
+    virtual ~GuiSliderBase() { }
     
     virtual bool mouseMoved(int mouseX, int mouseY);
     virtual bool mousePressed(int mouseX, int mouseY);
@@ -23,25 +42,15 @@ public:
     float getValue() {return sliderValue;}
     
     void lerpTo(float nextValue, int numFrames);
+    
     void setValueFromSequence(Sequence &sequence);
     void setSequenceFromValue(Sequence &sequence, int column);
-
+    
     virtual void update();
     virtual void draw();
     
-    
-    ///////
-    void getXml(ofXml &xml)
-    {
-        xml.addValue("Name", getName());
-        xml.addValue<float>("Value", getValue());
-    }
-    void setFromXml(ofXml &xml)
-    {
-        setValue(xml.getValue<float>("Value"));
-    }
-    
-    //////
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
     
 protected:
     
@@ -55,7 +64,7 @@ protected:
     virtual void setParameterValueFromString(string valueString) { }
     virtual string getParameterValueString() { }
     virtual void updateValueString() { }
-
+    
     float sliderValue;
     string valueString, valueStringNext;
     float lerpPrevValue, lerpNextValue;;
@@ -71,10 +80,15 @@ template<typename T>
 class GuiSlider : public GuiSliderBase
 {
 public:
+
+    void getParameters(vector<ParameterBase*> & parameters) {
+        parameters.push_back(parameter);
+    }
+
     GuiSlider(Parameter<T> *parameter);
     GuiSlider(string name, T *value, T min, T max);
     GuiSlider(string name, T min, T max);
-
+    
     template <typename L, typename M>
     GuiSlider(Parameter<T> *parameter, L *listener, M method);
     
@@ -83,13 +97,17 @@ public:
     
     template <typename L, typename M>
     GuiSlider(string name, T min, T max, L *listener, M method);
-
+    
+    ~GuiSlider();
+    
     void update();
     
     void setValue(float sliderValue);
     void setParameterValue(T value);
     
     T getParameterValue() {return parameter->get();}
+    
+    ofEvent<GuiSliderEventArgs<T> > sliderEvent;
     
 private:
     
@@ -104,6 +122,9 @@ private:
     
     Parameter<T> *parameter;
     T previous;
+    
+    
+    Sequence *sequence;
 };
 
 
@@ -133,7 +154,7 @@ GuiSlider<T>::GuiSlider(Parameter<T> *parameter, L *listener, M method) : GuiSli
 {
     this->parameter = parameter;
     setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(sliderEvent, listener, method);
 }
 
 template<typename T> template<typename L, typename M>
@@ -141,7 +162,7 @@ GuiSlider<T>::GuiSlider(string name, T *value, T min, T max, L *listener, M meth
 {
     parameter = new Parameter<T>(name, value, min, max);
     setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(sliderEvent, listener, method);
 }
 
 template<typename T> template<typename L, typename M>
@@ -149,7 +170,20 @@ GuiSlider<T>::GuiSlider(string name, T min, T max, L *listener, M method) : GuiS
 {
     parameter = new Parameter<T>(name, new T(), min, max);
     setValue(ofClamp((float) (parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
-    ofAddListener(elementEvent, listener, method);
+    ofAddListener(sliderEvent, listener, method);
+}
+
+template<typename T>
+GuiSlider<T>::~GuiSlider<T>()
+{
+    delete parameter;
+    //
+    //
+    // who should delete parameter?
+    //
+    //
+    //
+    //
 }
 
 template<typename T>
@@ -159,8 +193,8 @@ void GuiSlider<T>::setValue(float sliderValue)
     parameter->set(sliderValue * parameter->getMax() + (1.0 - sliderValue) * parameter->getMin());
     updateValueString();
     adjustSliderValue();
-    GuiElementEventArgs args(name, 0, (float) parameter->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiSliderEventArgs<T> args(this, parameter->get());
+    ofNotifyEvent(sliderEvent, args, this);
 }
 
 template<typename T>
@@ -170,8 +204,8 @@ void GuiSlider<T>::setParameterValue(T value)
     sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
     updateValueString();
     adjustSliderValue();    // this can just be an inline int for setValue<int> instead
-    GuiElementEventArgs args(name, 0, (float) parameter->get());
-    ofNotifyEvent(elementEvent, args, this);
+    GuiSliderEventArgs<T> args(this, parameter->get());
+    ofNotifyEvent(sliderEvent, args, this);
 }
 
 template<typename T>

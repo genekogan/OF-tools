@@ -21,13 +21,13 @@ private:
     void drawFrames();
     void drawGradient();
 
-    void setType(GuiElementEventArgs &e);
-    void setupGradient(GuiElementEventArgs &e);
-    void refresh(GuiElementEventArgs &e);
+    void setType(GuiMenuEventArgs &e);
+    void setupGradient(GuiMenuEventArgs &e);
+    void refresh(GuiButtonEventArgs &e);
     
     ofVboMesh gradientMesh;
     DebugType type = GRADIENT;
-    string gradientMode;
+    int gradientMode;
     
     ofFloatColor color1;
     ofFloatColor color2;

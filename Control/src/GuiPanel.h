@@ -12,44 +12,58 @@ public:
     
     void setPosition(int x, int y);
     
-    GuiWidget * addWidget(string name);
-    void addWidget(GuiWidget *widget);
-    
     bool mouseMoved(int mouseX, int mouseY);
     bool mousePressed(int mouseX, int mouseY);
     bool mouseDragged(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
     bool keyPressed(int key);
-
+    
     void update();
     void draw();
     
     void enableControlRow();
     void disableControlRow();
     
+    
+    bool getHasSequencer() {return sequencerMade;}
     Sequencer * getSequencer() {return sequencer;}
+    
+    /////
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
+    
+    void createSequencer()
+    {
+        sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
+        sequencer->setParent(this);
+        sequencer->setAutoUpdate(false);
+        sequencer->setAutoDraw(false);
+        sequencerMade = true;
+    }
+    
+
     
     
     
     ///////////////
     
-    void savePresetPrompt(GuiElementEventArgs &e)
+    void savePresetPrompt(GuiButtonEventArgs &e)
     {
         savePreset("/Users/Gene/Desktop/testXml.xml");
     }
-
-    void loadPresetPrompt(GuiElementEventArgs &e)
+    
+    void loadPresetPrompt(GuiButtonEventArgs &e)
     {
         loadPreset("/Users/Gene/Desktop/testXml.xml");
     }
-
+    
     void savePreset(string path)
     {
         ofXml xml;
         xml.addChild("Preset");
         xml.setTo("Preset");
         getXml(xml);
-        saveSequencerToXml(xml);
+        //saveSequencerToXml(xml);
         xml.save(path);
     }
     
@@ -59,12 +73,12 @@ public:
         xml.load(path);
         xml.setTo("Preset");
         setFromXml(xml);
-        loadSequencerFromXml(xml);
+        //loadSequencerFromXml(xml);
     }
     
     void saveSequencerToXml(ofXml &xml)
     {
-        if (controlRow)
+        if (sequencerMade)
         {
             ofXml xmlSequencer;
             xmlSequencer.addChild("Sequencer");
@@ -79,6 +93,9 @@ public:
         if (xml.exists("Sequencer"))
         {
             xml.setTo("Sequencer");
+            if (!sequencerMade) {
+                createSequencer();
+            }
             sequencer->setFromXml(xml);
             xml.setToParent();
         }
@@ -87,12 +104,11 @@ public:
         }
     }
     
+    void setupGuiPositions();
     
 protected:
     
-    void eventToggleSequencer(GuiElementEventArgs &e);
-    void setupGuiPositions();
-    void eventWidgetChanged(string & s);
+    void eventToggleSequencer(GuiButtonEventArgs &e);
     
     GuiToggle *tOsc, *tSeq, *tXml;
     bool bOsc, bSeq, bXml;
