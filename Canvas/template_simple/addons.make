@@ -1,0 +1,10 @@
+ofxOsc
+ofxBlurShader
+ofxDelaunay
+ofxFilterLibrary
+ofxFX
+ofxPostGlitch
+ofxPostProcessing
+ofxScreenGrab
+ofxTwistedRibbon
+ofxVideoMapping
