@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 #include "ofMain.h"
 #include "GuiSlider.h"
 #include "GuiRangeSlider.h"
@@ -135,3 +135,4 @@ private:
     int timeScrollHeight;
 };
 
+*/

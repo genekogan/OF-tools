@@ -87,6 +87,13 @@ void GuiMultiElement::clearElements()
     elements.clear();
 }
 
+void GuiMultiElement::getParameters(vector<ParameterBase*> & parameters_)
+{
+    for (auto e : elements) {
+        e->getParameters(parameters_);
+    }
+}
+
 void GuiMultiElement::setHeader(string header)
 {
     this->header = header;

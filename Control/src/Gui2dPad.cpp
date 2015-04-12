@@ -192,6 +192,13 @@ void Gui2dPad::updateValueString()
     toUpdateValueString = true;
 }
 
+void Gui2dPad::getParameters(vector<ParameterBase*> & parameters)
+{
+    for (auto p : points) {
+        parameters.push_back(p->parameter);
+    }
+}
+
 void Gui2dPad::lerpTo(int idx, ofPoint nextValue, int numFrames)
 {
     points[idx]->lerpTo(nextValue, numFrames);

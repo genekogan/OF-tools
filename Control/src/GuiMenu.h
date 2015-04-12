@@ -5,7 +5,6 @@
 #include "GuiElement.h"
 #include "GuiButton.h"
 #include "GuiMultiElement.h"
-//#include "Sequence.h"
 
 
 
@@ -29,12 +28,6 @@ struct GuiMenuEventArgs
 class GuiMenu : public GuiMultiElement
 {
 public:
-
-    void getParameters(vector<ParameterBase*> & parameters_) {
-        for (auto p : parameters) {
-            parameters_.push_back(p);
-        }
-    }
 
     struct MenuElement
     {
@@ -81,6 +74,8 @@ public:
     
     bool getAutoClose() {return autoClose;}
     bool getMultipleChoice() {return multipleChoice;}
+    
+    void getParameters(vector<ParameterBase*> & parameters_);
     
     ofEvent<GuiMenuEventArgs> menuEvent;
     

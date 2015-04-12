@@ -51,6 +51,7 @@ void Canvas::setup(string name, int width, int height)
     menuAddMod->addToggle("PostProcessing");
     menuAddMod->addToggle("PostFx");
     menuAddMod->addToggle("PostGlitch");
+    menuAddMod->addToggle("FilterLib");
     
     menuRemove = metaPanel.addMenu("Remove modifier", this, &Canvas::eventRemoveModifier);
     
@@ -194,6 +195,7 @@ Modifier * Canvas::addModifier(string type)
     else if (type == "PostProcessing")  return initializeModifier(new PostProcessingMod(), true);
     else if (type == "PostFX")          return initializeModifier(new PostFX(), true);
     else if (type == "PostGlitch")      return initializeModifier(new PostGlitch(), true);
+    else if (type == "FilterLib")       return initializeModifier(new FilterLibrary(), true);
 }
 
 Modifier * Canvas::initializeModifier(Modifier *modifier, bool toSetup)
@@ -266,6 +268,7 @@ void Canvas::eventCreateModifier(GuiMenuEventArgs &evt)
     else if (evt.index == 1) addPostProcessing();
     else if (evt.index == 2) addPostFX();
     else if (evt.index == 3) addPostGlitch();
+    else if (evt.index == 4) addFilterLibrary();
     evt.toggle->setValue(false, false);
 }
 
@@ -438,6 +441,7 @@ void Canvas::setFromXml(ofXml &xml)
             else if (type == "PostProcessing")  modifier = addPostProcessing();
             else if (type == "PostFX")          modifier = addPostFX();
             else if (type == "PostGlitch")      modifier = addPostGlitch();
+            else if (type == "FilterLib")       modifier = addFilterLibrary();
             modifier->getControl().setFromXml(xml);
         }
         while(xml.setToSibling());

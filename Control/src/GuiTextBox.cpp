@@ -49,6 +49,11 @@ void GuiTextBox::setValue(string value, bool sendChangeNotification)
     }
 }
 
+void GuiTextBox::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameter);
+}
+
 string GuiTextBox::getValue()
 {
     return parameter->get();

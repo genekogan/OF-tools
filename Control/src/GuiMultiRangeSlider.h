@@ -45,11 +45,6 @@ class GuiMultiRangeSlider : public GuiMultiRangeSliderBase
 {
 public:
     
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameterLow);
-        parameters.push_back(parameterHigh);
-    }
-
     GuiMultiRangeSlider(Parameter<T> *parameterLow, Parameter<T> *parameterHigh);
     GuiMultiRangeSlider(string name, T *low, T *high, T min, T max);
     GuiMultiRangeSlider(string name, T min, T max);
@@ -69,6 +64,8 @@ public:
     void setParameterValueHigh(T value) {parameterHigh->set(value);}
     T getParameterValueLow() {return parameterLow->get();}
     T getParameterValueHigh() {return parameterHigh->get();}
+    
+    void getParameters(vector<ParameterBase*> & parameters);
     
     ofEvent<GuiMultiRangeSliderEventArgs<T> > rangeSliderEvent;
     
@@ -183,4 +180,11 @@ void GuiMultiRangeSlider<T>::rangeSliderChanged(GuiRangeSliderEventArgs<float> &
 {
     GuiMultiRangeSliderEventArgs<T> args(this, parameterLow->get(), parameterHigh->get());
     ofNotifyEvent(rangeSliderEvent, args, this);
+}
+
+template<typename T>
+void GuiMultiRangeSlider<T>::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameterLow);
+    parameters.push_back(parameterHigh);
 }

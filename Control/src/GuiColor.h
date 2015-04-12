@@ -25,10 +25,7 @@ struct GuiColorEventArgs
 class GuiColor : public GuiMultiElement
 {
 public:
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameter);
-    }
-
+    
     GuiColor(Parameter<ofFloatColor> *parameter);
     GuiColor(string name, ofFloatColor *color);
     GuiColor(string name);
@@ -46,6 +43,7 @@ public:
     
     void setParameterValue(ofFloatColor color) {parameter->set(color);}
     ofFloatColor getParameterValue() {return parameter->get();}
+    void getParameters(vector<ParameterBase*> & parameters);
     
     void update();
     

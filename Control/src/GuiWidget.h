@@ -21,26 +21,6 @@ public:
     GuiWidget(string name);
     GuiWidget();
     
-    
-    void getParameters(vector<ParameterBase*> & parameters)
-    {
-        for (auto e : elementGroups) {
-            cout << "GET -> " << e->getAddress() << endl;
-            e->getParameters(parameters);
-            cout << "params now size " << parameters.size() << endl;
-        }
-        
-        cout << "======== " << endl;
-        for (auto p : parameters) {
-            cout << "param :: " << p->getName() << endl;
-        }
-    }
-    
-    //vector<ParameterBase*> & getParameters() { return parameters;}
-    
-    //vector<ParameterBase*> parameters;
-    
-    
     vector<GuiElement*> & getElementGroups() {return elementGroups;}
 
     GuiWidget * addWidget(GuiWidget *newWidget);
@@ -143,6 +123,7 @@ public:
     virtual void getXml(ofXml &xml);
     virtual void setFromXml(ofXml &xml);
     
+    void getParameters(vector<ParameterBase*> & parameters);
     void setupGuiPositions();
 
 private:

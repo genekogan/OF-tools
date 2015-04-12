@@ -25,10 +25,6 @@ class GuiTextBox : public GuiElement
 {
 public:
     
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameter);
-    }
-
     template <typename L, typename M>
     GuiTextBox(Parameter<string> *parameter, L *listener, M method);
     
@@ -46,6 +42,7 @@ public:
     
     void setLeftJustified(bool leftJustified) {this->leftJustified = leftJustified;}
     
+    void getParameters(vector<ParameterBase*> & parameters);
     string getValue();
     void setValue(string value, bool sendChangeNotification=false);
     

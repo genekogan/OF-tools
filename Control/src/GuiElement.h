@@ -14,10 +14,6 @@ class GuiElement : public GuiBase
 {
 public:
     
-    
-    virtual void getParameters(vector<ParameterBase*> & parameters) { }
-    
-    
     GuiElement(string name);
     GuiElement();
 
@@ -32,6 +28,8 @@ public:
     
     virtual void lerpTo(float nextSliderValue, int lerpNumFrames) { }
     
+    virtual void getParameters(vector<ParameterBase*> & parameters) { }
+    
     virtual void setValueFromSequence(Sequence &sequence) { }
     virtual void setSequenceFromValue(Sequence &sequence, int column) { }
     virtual void setSequenceFromExplicitValue(Sequence &sequence, int column, float value) { }
@@ -41,39 +39,15 @@ public:
     
     virtual void setupGuiPositions();
     void resetGuiPositions();
-    
-    
-    string display;
-    
-    void setupDisplayString()
-    {
-        display = name;
-        int displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
-        while (displayWidth > getWidth())
-        {
-            display = display.substr(0, display.length()-1);
-            displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
-        }
-    }
-    
+    void setupDisplayString();
 
-    
-    string getAddress() {
-        return hasParent ? parent->getAddress() + "/" + getName() : getName();
-    }
-    
-    bool getActive() {
-        return hasParent ? parent->getActive() && active : active;
-    }
-    
-    void setActive(bool active)
-    {
-        GuiBase::setActive(active);
-        resetGuiPositions();
-    }
+    string getAddress();
+    bool getActive();
+    void setActive(bool active);
     
 protected:
     
     GuiElement *parent;
     bool hasParent;
+    string display;
 };

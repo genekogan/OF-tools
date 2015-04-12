@@ -10,6 +10,8 @@
 #include "PostGlitch.h"
 #include "PostProcessing.h"
 #include "PostFX.h"
+#include "FilterLibrary.h"
+
 #include "ProjectionMapping.h"
 
 
@@ -17,11 +19,6 @@
 class Canvas
 {
 public:
-    
-    GuiPanel & getControl() {return metaPanel;}
-    GuiPanel & getCreatorPanel() {return creatorPanel;}
-    
-    
     enum CanvasView { CONDENSED, EXPANDED_ATTACHED, EXPANDED_DETACHED };
     
     ~Canvas();
@@ -36,12 +33,16 @@ public:
     Modifier * addPostProcessing() {return addModifier("PostProcessing");}
     Modifier * addPostFX() {return addModifier("PostFX");}
     Modifier * addPostGlitch() {return addModifier("PostGlitch");}
+    Modifier * addFilterLibrary() {return addModifier("FilterLib");}
 
     void loadPreset(string path);
     void savePreset(string name);
     
     void setGuiDisplayMode(CanvasView canvasView);
     void toggleGuiVisible();
+    
+    GuiPanel & getControl() {return metaPanel;}
+    GuiPanel & getCreatorPanel() {return creatorPanel;}
     
 private:
     

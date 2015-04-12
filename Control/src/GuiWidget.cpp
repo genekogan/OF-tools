@@ -139,6 +139,13 @@ void GuiWidget::widgetNewElementAdded(GuiElement* & newElement)
     ofNotifyEvent(newElementEvent, newElement, this);
 }
 
+void GuiWidget::getParameters(vector<ParameterBase*> & parameters)
+{
+    for (auto e : elementGroups) {
+        e->getParameters(parameters);
+    }
+}
+
 void GuiWidget::setupGuiPositions()
 {
     GuiMultiElement::setupGuiPositions();

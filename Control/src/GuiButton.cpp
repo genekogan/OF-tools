@@ -57,6 +57,11 @@ void GuiButtonBase::lerpTo(float nextValue, int numFrames)
     lerpFrame = 0;
 }
 
+void GuiButtonBase::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameter);
+}
+
 void GuiButtonBase::setValueFromSequence(Sequence &sequence)
 {
     setValue(sequence.getValueAtCurrentIndex() > 0.5, true);
@@ -110,20 +115,19 @@ void GuiButtonBase::draw()
         ofSetLineWidth(1);
 	}
     
-//    if (stringWidth < rectangle.width)
-  //  {
-        ofSetColor(colorText);
-    
-        ofDrawBitmapString(display,     //name,
-                           //
-                           //
-                           //
-                           rectangle.x + (leftJustified ? 4 : 0.5 * (rectangle.width - stringWidth)),
-                           rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
-  //  }
-
+    ofSetColor(colorText);
+    ofDrawBitmapString(display,
+                       rectangle.x + (leftJustified ? 4 : 0.5 * (rectangle.width - stringWidth)),
+                       rectangle.y + 0.5 * (rectangle.height + 0.5 * stringHeight) + 1);
 
 	ofPopStyle();
+}
+
+void GuiButtonBase::setupGuiPositions()
+{
+    GuiElement::setupGuiPositions();
+    stringWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+    stringHeight = ofBitmapStringGetBoundingBox(display, 0, 0).height;
 }
 
 void GuiButtonBase::getXml(ofXml &xml)

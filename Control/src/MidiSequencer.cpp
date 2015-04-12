@@ -1,6 +1,6 @@
 #include "MidiSequencer.h"
 
-
+/*
 MidiEventArgs::MidiEventArgs(int type, int note, int velocity)
 {
     this->type = type;
@@ -915,3 +915,4 @@ void MidiSequencer::setupGuiPositions()
     setMidiEventRectangle(newEvent);
 }
 
+*/

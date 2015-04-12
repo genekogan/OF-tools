@@ -58,3 +58,8 @@ void GuiColor::update()
     elements[2]->setColorText(textColor);
     elements[3]->setColorText(textColor);
 }
+
+void GuiColor::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameter);
+}

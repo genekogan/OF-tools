@@ -45,6 +45,13 @@ void GuiMenu::setupMenu(string name, vector<string> & choices, bool multipleChoi
 
 GuiToggle * GuiMenu::addToggle(Parameter<bool> *parameter)
 {
+    int idx = 2;
+    string newToggleName = parameter->getName();
+    while (menuElements.count(newToggleName) != 0) {
+        newToggleName = parameter->getName()+"("+ofToString(idx++)+")";
+    }
+    parameter->setName(newToggleName);
+    
     if (menuElements.count(parameter->getName()) == 0)
     {
         parameters.push_back(parameter);
@@ -195,5 +202,12 @@ void GuiMenu::setAutoClose(bool autoClose)
     this->autoClose = autoClose;
     if (!autoClose && !multipleChoice) {
         setHeader(getName());
+    }
+}
+
+void GuiMenu::getParameters(vector<ParameterBase*> & parameters_)
+{
+    for (auto p : parameters) {
+        parameters_.push_back(p);
     }
 }

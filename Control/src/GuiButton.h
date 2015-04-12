@@ -25,10 +25,6 @@ class GuiButtonBase : public GuiElement
 {
 public:
     
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameter);
-    }
-    
     template <typename L, typename M>
     GuiButtonBase(Parameter<bool> *parameter, L *listener, M method);
     
@@ -52,28 +48,17 @@ public:
 
     void lerpTo(float nextValue, int numFrames);
     
+    void getParameters(vector<ParameterBase*> & parameters);
+
     virtual void update();
     virtual void draw();
-    
+
+    void setupGuiPositions();
+
     void getXml(ofXml &xml);
     void setFromXml(ofXml &xml);
     
     ofEvent<GuiButtonEventArgs> buttonEvent;
-    
-    
-
-    //string display;
-    
-    
-    void setupGuiPositions()
-    {
-        GuiElement::setupGuiPositions();
-        stringWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
-        stringHeight = ofBitmapStringGetBoundingBox(display, 0, 0).height;
-    }
-    
-    
-    
     
 protected:
     

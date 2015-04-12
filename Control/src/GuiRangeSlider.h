@@ -80,11 +80,6 @@ class GuiRangeSlider : public GuiRangeSliderBase
 {
 public:
 
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(pLow);
-        parameters.push_back(pHigh);
-    }
-
     GuiRangeSlider(string name, Parameter<T> *pLow, Parameter<T> *pHigh);
     GuiRangeSlider(string name, T *low, T *high, T min, T max);
     GuiRangeSlider(string name, T min, T max);
@@ -109,6 +104,8 @@ public:
     T getParameterLowValue() {return pLow->get();}
     T getParameterHighValue() {return pHigh->get();}
     
+    void getParameters(vector<ParameterBase*> & parameters);
+
     void update();
     
     ofEvent<GuiRangeSliderEventArgs<T> > rangeSliderEvent;
@@ -240,6 +237,13 @@ void GuiRangeSlider<T>::setParameterHighValue(T high)
     adjustSliderValueHigh();
     GuiRangeSliderEventArgs<T> args(this, pLow->get(), pHigh->get());
     ofNotifyEvent(rangeSliderEvent, args, this);
+}
+
+template<typename T>
+void GuiRangeSlider<T>::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(pLow);
+    parameters.push_back(pHigh);
 }
 
 template<typename T>

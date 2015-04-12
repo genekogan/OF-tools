@@ -10,12 +10,6 @@ class GuiMultiElement : public GuiElement
 {
 public:
     
-    virtual void getParameters(vector<ParameterBase*> & parameters_) {
-        for (auto e : elements) {
-            e->getParameters(parameters_);
-        }
-    }
-
     GuiMultiElement(string name);
     virtual ~GuiMultiElement();
     
@@ -25,6 +19,8 @@ public:
     vector<GuiElement*> & getElements() {return elements;}
     GuiElement * getElement(string name);
     
+    virtual void getParameters(vector<ParameterBase*> & parameters_);
+
     bool removeElement(string name);
     void clearElements();
     

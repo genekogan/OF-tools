@@ -43,12 +43,6 @@ class Gui2dPad : public GuiMultiElement
 {
 public:
     
-    void getParameters(vector<ParameterBase*> & parameters) {
-        for (auto p : points) {
-            parameters.push_back(p->parameter);
-        }
-    }
-
     Gui2dPad(Parameter<ofPoint> *parameter);
     Gui2dPad(string name, ofPoint *value, ofPoint min, ofPoint max);
     Gui2dPad(string name, ofPoint min, ofPoint max);
@@ -90,6 +84,7 @@ public:
     
     ofPoint getParameterValue(int idx) {return points[idx]->parameter->get();}
     int getNumberOfPoints() {return points.size();}
+    void getParameters(vector<ParameterBase*> & parameters);
     
     void lerpTo(int idx, ofPoint nextValue, int numFrames);
     

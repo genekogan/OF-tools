@@ -45,10 +45,6 @@ class GuiMultiSlider : public GuiMultiSliderBase
 {
 public:
 
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameter);
-    }
-
     GuiMultiSlider(Parameter<T> *parameter);
     GuiMultiSlider(string name, T *value, T min, T max);
     GuiMultiSlider(string name, T min, T max);
@@ -66,6 +62,7 @@ public:
     
     void setParameterValue(T value) {parameter->set(value);}
     T getParameterValue() {return parameter->get();}
+    void getParameters(vector<ParameterBase*> & parameters);
     
     ofEvent<GuiMultiSliderEventArgs<T> > sliderEvent;
     
@@ -173,4 +170,10 @@ void GuiMultiSlider<T>::sliderChanged(GuiSliderEventArgs<float> &e)
 {
     GuiMultiSliderEventArgs<T> args(this, parameter->get());
     ofNotifyEvent(sliderEvent, args, this);
+}
+
+template<typename T>
+void GuiMultiSlider<T>::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameter);
 }

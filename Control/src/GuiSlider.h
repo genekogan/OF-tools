@@ -81,10 +81,6 @@ class GuiSlider : public GuiSliderBase
 {
 public:
 
-    void getParameters(vector<ParameterBase*> & parameters) {
-        parameters.push_back(parameter);
-    }
-
     GuiSlider(Parameter<T> *parameter);
     GuiSlider(string name, T *value, T min, T max);
     GuiSlider(string name, T min, T max);
@@ -106,7 +102,8 @@ public:
     void setParameterValue(T value);
     
     T getParameterValue() {return parameter->get();}
-    
+    void getParameters(vector<ParameterBase*> & parameters);
+
     ofEvent<GuiSliderEventArgs<T> > sliderEvent;
     
 private:
@@ -206,6 +203,12 @@ void GuiSlider<T>::setParameterValue(T value)
     adjustSliderValue();    // this can just be an inline int for setValue<int> instead
     GuiSliderEventArgs<T> args(this, parameter->get());
     ofNotifyEvent(sliderEvent, args, this);
+}
+
+template<typename T>
+void GuiSlider<T>::getParameters(vector<ParameterBase*> & parameters)
+{
+    parameters.push_back(parameter);
 }
 
 template<typename T>

@@ -63,3 +63,29 @@ void GuiElement::setFromXml(ofXml &xml)
     
 }
 
+void GuiElement::setupDisplayString()
+{
+    display = name;
+    int displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+    while (displayWidth > getWidth())
+    {
+        display = display.substr(0, display.length()-1);
+        displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
+    }
+}
+
+string GuiElement::getAddress()
+{
+    return hasParent ? parent->getAddress() + "/" + getName() : getName();
+}
+
+bool GuiElement::getActive()
+{
+    return hasParent ? parent->getActive() && active : active;
+}
+
+void GuiElement::setActive(bool active)
+{
+    GuiBase::setActive(active);
+    resetGuiPositions();
+}
