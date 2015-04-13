@@ -28,10 +28,6 @@ GuiWidget * GuiWidget::addWidget(GuiWidget *newWidget)
     for (auto e : newWidget->getElementGroups()) {
         widgetNewElementAdded(e);
     }
-    
-    // add new widgets parameters
-    
-    
     ofAddListener(newWidget->newElementEvent, this, &GuiWidget::widgetNewElementAdded);
     return newWidget;
 }
@@ -43,9 +39,6 @@ GuiWidget * GuiWidget::addWidget(string widgetName)
 
 GuiButton * GuiWidget::addButton(Parameter<bool> *parameter)
 {
-    
-//    parameters.push_back(parameter);
-    
     GuiButton *button = new GuiButton(parameter);
     initializeElement(button);
     return button;
@@ -58,9 +51,6 @@ GuiButton * GuiWidget::addButton(string name, bool *value)
 
 GuiToggle * GuiWidget::addToggle(Parameter<bool> *parameter)
 {
-//    parameters.push_back(parameter);
-
-    
     GuiToggle *toggle = new GuiToggle(parameter);
     initializeElement(toggle);
     return toggle;
@@ -73,8 +63,6 @@ GuiToggle * GuiWidget::addToggle(string name, bool *value)
 
 GuiTextBox * GuiWidget::addTextBox(Parameter<string> *parameter)
 {
-//    parameters.push_back(parameter);
-
     GuiTextBox *textBox = new GuiTextBox(parameter);
     initializeElement(textBox);
     return textBox;
@@ -87,8 +75,6 @@ GuiTextBox * GuiWidget::addTextBox(string name, string *value)
 
 Gui2dPad * GuiWidget::add2dPad(Parameter<ofPoint> *parameter)
 {
-//    parameters.push_back(parameter);
-
     Gui2dPad *pad = new Gui2dPad(parameter);
     initializeElement(pad);
     return pad;
@@ -108,8 +94,6 @@ Gui2dPad * GuiWidget::add2dPad(string name, ofPoint min, ofPoint max)
 
 GuiColor * GuiWidget::addColor(Parameter<ofFloatColor> *parameter)
 {
- //   parameters.push_back(parameter);
-    
     GuiColor *color = new GuiColor(parameter);
     initializeElement(color);
     return color;

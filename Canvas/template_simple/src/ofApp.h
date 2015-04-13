@@ -18,6 +18,7 @@
 #include "ScreenGrabber.h"
 #include "Subdivide.h"
 #include "Shader.h"
+#include "Syphon.h"
 
 #include "Canvas.h"
 

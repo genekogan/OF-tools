@@ -1,4 +1,47 @@
 #pragma once
+
+#include "ofMain.h"
+#include "GuiWidget.h"
+#include "GuiPanel.h"
+
+class OscManager : public GuiWidget
+{
+public:
+    OscManager() : GuiWidget("oscManager") {
+        menuOut = panel.addMenu("select");
+        menuOut->setPosition(800, 200);
+    }
+    
+    void setup() {
+        
+        
+    }
+    
+    void draw() {
+        panel.draw();
+    }
+    
+    void addParameters(string groupName, vector<ParameterBase*> parameters_)
+    {
+        for (auto p : parameters_) {
+            addParameter(p);
+        }
+    }
+    
+    void addParameter(ParameterBase *parameter)
+    {
+        menuOut->addToggle(parameter->getName(), new bool());
+    }
+
+    
+    GuiMenu *menuOut;
+    vector<ParameterBase*> parameters;
+    
+    
+    GuiPanel panel;
+};
+
+
 /*
 #include "ofMain.h"
 #include "ofxOsc.h"

@@ -3,48 +3,92 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
+    // a widget is a collection of gui elements
+    
     widget.setName("a widget");
-    widget.setPosition(10, 10);
+    widget.setPosition(810, 10);
+    
+    // can add buttons and toggles with or without event notifiers
     widget.addButton("button", &button);
     widget.addButton("event", this, &ofApp::buttonEvent);
     widget.addToggle("toggle", &toggle);
+    
+    // text box
+    widget.addTextBox("hello", this, &ofApp::textBoxEvent);
+    
+    // sliders
     widget.addSlider("float slider", &floatSlider, 0.0f, 10.0f);
-    widget.addSlider("vec4f slider", &vec4slider, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    widget.addMultiSlider("vec4f slider", &vec4slider, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
+    
+    // range sliders
     widget.addRangeSlider("range", &rangeLow, &rangeHigh, 0.0f, 10.0f);
-    widget.addRangeSlider("vec2range", &vec2RangeLow, &vec2RangeHigh, ofVec2f(0,0), ofVec2f(10, 20));
+    widget.addMultiRangeSlider("vec2range", &vec2RangeLow, &vec2RangeHigh, ofVec2f(0,0), ofVec2f(10, 20));
+    
+    // color widget
+    // note that color must be an ofFloatColor, not ofColor
     widget.addColor("color", &color);
+    
+    // menu (single choice by default). toggle autoClose after a selection (default false)
     GuiMenu *menu = widget.addMenu("menu", this, &ofApp::menuSelect);
-    menu->setAutoClose(false);
+    menu->setAutoClose(true);
     menu->addToggle("new york");
     menu->addToggle("los angeles");
     menu->addToggle("chicago");
-    widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
-
-
     
-    panel.setPosition(230, 10);
+    // 2d pad
+    //    Gui2dPad *pad = widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
+    //    pad->setDrawConnectedPoints(true);
+    
+    // a panel is a super-widget with some extra functionality, including
+    // ability to embed widgets, a sequencer, presets, and osc functionality
+    
+    panel.setPosition(10, 10);
     panel.setName("a panel");
-    panel.addSlider("slider w/ notifier", &vec2slider, ofVec2f(0, 0), ofVec2f(10, 10), this, &ofApp::sliderEvent);
+    
+    // you can add gui elements to a panel just as you can to a widget.
+    // these sliders also has an event notifier
+    panel.addMultiSlider("slider w/ notifier", &vec2slider, ofVec2f(0, 0), ofVec2f(10, 10), this, &ofApp::sliderEvent);
     panel.addColor("color w/ notifier", &color2, this, &ofApp::colorEvent);
-    GuiWidget *innerWidget = panel.addWidget("inner widget");
+    
+    // you can embed a widget inside a panel
+    
+    
+    //GuiWidget *innerWidget = panel.addWidget("widget inside panel");
+    GuiWidget *innerWidget = new GuiWidget("widget inside panel");
     innerWidget->addButton("button", &button);
     innerWidget->addToggle("another toggle", this, &ofApp::panelToggleEvent);
-    GuiMenu *menu2 = innerWidget->addMenu("mc menu", this, &ofApp::multiChoiceMenuSelect, true);
+    
+    // menus can allow multiple choice
+    GuiMenu *menu2 = innerWidget->addMenu("multi choice menu", this, &ofApp::multiChoiceMenuSelect, true);
+    menu2->setMultipleChoice(true);
     menu2->addToggle("kamusta mundo");
     menu2->addToggle("xin chao the gioi");
     menu2->addToggle("namaste varlda");
     menu2->addToggle("suesday piphoplok");
     menu2->addToggle("suwati lok");
+    
+    GuiMenu *menu3 = innerWidget->addMenu("menu", this, &ofApp::menuSelect);
+    menu3->setAutoClose(false);
+    menu3->addToggle("new york");
+    menu3->addToggle("los angeles");
+    menu3->addToggle("chicago");
+    
+    // sliders can have different types
     panel.addSlider("float slider", &floatSlider, 0.0f, 10.0f);
     panel.addSlider("int slider", &intSlider, 5, 12);
     panel.addSlider("double slider", &doubleSlider, 5.0, 23.0);
-    panel.addTextBox("my text", &textValue);
     
+    
+    panel.addWidget(innerWidget);
+    
+    Gui2dPad *pad = panel.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
+    pad->setDrawConnectedPoints(true);
     
     
     // initialize variables.
-    textValue = "hello world";
+    // gui is linked to actual values and is auto-updating
     color2.set(0.5, 0.2, 0.9);
+    padValue.set(5, 8);
     intSlider = 8;
     floatSlider = 8.5;
     rangeLow = 2.0;
@@ -52,18 +96,37 @@ void ofApp::setup(){
     
     
     
-    v = new Parameter<ofVec4f>("vec4", &vec4slider, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-    v2 = new Parameter<ofVec4f>("vec4a", &vec4slider, ofVec4f(0, 0, 0, 0), ofVec4f(1, 1, 1, 1));
-
+    // misc notes -- uncomment to try
     
-    osc.setupSender("localhost", 12346);
-    osc.setupReceiver(12345);
+    // you can embed an existing widget into a panel:
+    //panel.addWidget(&widget);
+    
+    // setAutoUpdate toggles automatic updating and mouse/keyboard interaction
+    // if it is set to off, you are responsible for the update, mouseMoved,
+    // mousePressed, mouseDragged, mouseReleased, keyPressed functions yourself.
+    // setAutoDraw toggles automatic drawing -- if false, you are responsible for drawing widget
+    //panel.setAutoUpdate(false);
+    //panel.setAutoDraw(false);
+    
+    
+    //panel.savePreset("/Users/Gene/Desktop/testXml.xml");
+    
+    
+    //ofExit();
+    
+    
+    //osc.setupSender("localhost", 12346);
+    //osc.setupReceiver(12345);
     
     //osc.addParameterToSender(v);
     //osc.addParameterToReceiver(v2);
     
     //osc.addParametersToSender(panel.getParameters());
+    vector<ParameterBase*> params;
+    panel.getParameters(params);
+    osc.addParameters("yo", params);
 
+    /*
     vector<ParameterBase*> pm = panel.getParameters();
     for (auto p : pm) {
         cout << p->getName() << " ---- " << p->getOscAddress() << endl;
@@ -75,55 +138,60 @@ void ofApp::setup(){
     
     osc.addParameter(v);
     osc.addParameter(v2);
+    */
     
     osc.setPosition(450, 10);
-
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
-    osc.update();
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){
+    
+    ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
 }
 
 //--------------------------------------------------------------
-void ofApp::buttonEvent(GuiElementEventArgs & e)
-{
-    ofLog(OF_LOG_NOTICE, "button event: " + e.name + " = " + ofToString(e.value));
+void ofApp::draw(){
+    osc.draw(); // why not auto
+    
+    ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 60);
+    ofCircle(600, 500, 100);
 }
 
 //--------------------------------------------------------------
-void ofApp::menuSelect(GuiElementEventArgs & e)
+void ofApp::buttonEvent(GuiButtonEventArgs & e)
 {
-    ofLog(OF_LOG_NOTICE, "menu selection event: " + e.name + " = " + ofToString(e.value));
+    ofLog(OF_LOG_NOTICE, "button event: " + e.button->getName() + " = " + ofToString(e.value));
 }
 
 //--------------------------------------------------------------
-void ofApp::sliderEvent(GuiElementEventArgs & e)
+void ofApp::menuSelect(GuiMenuEventArgs & e)
 {
-    ofLog(OF_LOG_NOTICE, "slider event: " + e.name + " = " + ofToString(e.value));
+    //    ofLog(OF_LOG_NOTICE, "menu selection event: " + e.slider + " = " + ofToString(e.value));
 }
 
 //--------------------------------------------------------------
-void ofApp::colorEvent(GuiElementEventArgs & e)
+void ofApp::sliderEvent(GuiMultiSliderEventArgs<ofVec2f> & e)
 {
-    ofLog(OF_LOG_NOTICE, "color event: " + e.name + " = " + ofToString(e.value));
+    ofLog(OF_LOG_NOTICE, "slider event: " + e.slider->getName() + " = " + ofToString(e.value));
 }
 
 //--------------------------------------------------------------
-void ofApp::panelToggleEvent(GuiElementEventArgs & e)
+void ofApp::colorEvent(GuiColorEventArgs & e)
 {
-    ofLog(OF_LOG_NOTICE, "toggle event: " + e.name + " = " + ofToString(e.value));
+    ofLog(OF_LOG_NOTICE, "color event: " + e.slider->getName() + " = " + ofToString(e.color));
 }
 
 //--------------------------------------------------------------
-void ofApp::multiChoiceMenuSelect(GuiElementEventArgs & e)
+void ofApp::panelToggleEvent(GuiButtonEventArgs & e)
 {
-    ofLog(OF_LOG_NOTICE, "panel menu event: " + e.name + " = " + ofToString(e.value));
+    ofLog(OF_LOG_NOTICE, "toggle event: " + e.button->getName() + " = " + ofToString(e.value));
+}
+
+//--------------------------------------------------------------
+void ofApp::multiChoiceMenuSelect(GuiMenuEventArgs & e)
+{
+    //    ofLog(OF_LOG_NOTICE, "panel menu event: " + e. + " = " + ofToString(e.value));
 }
 

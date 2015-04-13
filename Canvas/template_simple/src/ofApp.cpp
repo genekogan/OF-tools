@@ -23,6 +23,7 @@ void ofApp::setup()
     canvas.addCreator(new ScreenGrabber());
     canvas.addCreator(new Shader(true));
     canvas.addCreator(new Subdivide());
+    canvas.addCreator(new Syphon());
     
     
     //    canvas.addShaderModifier();

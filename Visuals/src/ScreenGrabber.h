@@ -14,9 +14,15 @@ public:
     void update();
     void draw(int x, int y);
     
+    void eventSetWidth(GuiSliderEventArgs<int> &evt);
+    void eventSetHeight(GuiSliderEventArgs<int> &evt);
+    void eventSetRetina(GuiButtonEventArgs &evt);
+    
 private:
     
     ofxScreenGrab grabber;
+    int gx, gy, gwidth, gheight;
+    bool retina;
 };
 
 
