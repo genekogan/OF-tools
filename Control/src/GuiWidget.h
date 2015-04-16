@@ -13,6 +13,10 @@
 #include "Gui2dPad.h"
 #include "GuiColor.h"
 #include "GuiMenu.h"
+#include "TouchOsc.h"
+
+
+class OscManager;
 
 
 class GuiWidget : public GuiMultiElement
@@ -119,16 +123,21 @@ public:
 
     void attachWidget(GuiWidget *other);
     void detachWidget(GuiWidget *other);
+
+    virtual void createOscManager(OscManager *osc) {}
+    void makeTouchOscLayout(string filename);
+
+    void getParameters(vector<ParameterBase*> & parameters);
+    void setupGuiPositions();
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
     virtual void getXml(ofXml &xml);
     virtual void setFromXml(ofXml &xml);
     
-    void getParameters(vector<ParameterBase*> & parameters);
-    void setupGuiPositions();
-
 private:
     
     void initializeElement(GuiElement *element, bool sendNotification=true);
+    void updateParameterOscAddress();
     void widgetNewElementAdded(GuiElement* & newElement);
     
     vector<GuiElement*> elementGroups;

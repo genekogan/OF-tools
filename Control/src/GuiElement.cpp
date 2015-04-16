@@ -17,6 +17,7 @@ void GuiElement::setParent(GuiElement *parent)
 {
     this->parent = parent;
     hasParent = true;
+    updateParameterOscAddress();
 }
 
 bool GuiElement::getCollapsed()
@@ -51,6 +52,15 @@ void GuiElement::setupGuiPositions()
         rectangle.set(x, y, width, height);
     }
     setupDisplayString();
+}
+
+void GuiElement::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+}
+
+void GuiElement::updateParameterOscAddress()
+{
+    
 }
 
 void GuiElement::getXml(ofXml &xml)
@@ -89,3 +99,11 @@ void GuiElement::setActive(bool active)
     GuiBase::setActive(active);
     resetGuiPositions();
 }
+/*
+void GuiElement::updateAddress2()
+{
+    
+    
+}
+
+*/

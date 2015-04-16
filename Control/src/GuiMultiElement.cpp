@@ -100,6 +100,13 @@ void GuiMultiElement::setHeader(string header)
     headerStringHeight = ofBitmapStringGetBoundingBox(header, 0, 0).height;
 }
 
+void GuiMultiElement::updateParameterOscAddress()
+{
+    for (auto e : elements) {
+        e->updateParameterOscAddress();
+    }
+}
+
 void GuiMultiElement::setupGuiPositions()
 {
     ofPoint topLeft = ofPoint(rectangle.x, rectangle.y);
@@ -132,6 +139,10 @@ void GuiMultiElement::setupGuiPositions()
         }
     }
     rectangle.height = topLeft.y - rectangle.y;
+}
+
+void GuiMultiElement::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
 }
 
 void GuiMultiElement::initializeElement(GuiElement *element, bool sendNotification)

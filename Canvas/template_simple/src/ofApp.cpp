@@ -74,7 +74,7 @@ void ofApp::update()
 
 void ofApp::draw()
 {
-    canvas.draw(630, 290);
+    canvas.draw(ofGetWidth() - 810, ofGetHeight() - 610);
     //  osc.draw();
 }
 

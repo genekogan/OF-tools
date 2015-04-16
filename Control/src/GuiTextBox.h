@@ -60,6 +60,7 @@ public:
 protected:
     
     void setupTextBox();
+    void updateParameterOscAddress();
     
     Parameter<string> *parameter;
     int cursorPosition;

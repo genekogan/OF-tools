@@ -118,11 +118,11 @@ private:
     void updateValueString();
     void adjustSliderValueLow();
     void adjustSliderValueHigh();
+    void updateParameterOscAddress();
     
     Parameter<T> *pLow, *pHigh;
     T previousLow, previousHigh;
 };
-
 
 template<typename T>
 GuiRangeSlider<T>::GuiRangeSlider(string name, Parameter<T> *pLow, Parameter<T> *pHigh) : GuiRangeSliderBase(name)
@@ -345,4 +345,11 @@ template<> inline void GuiRangeSlider<int>::adjustSliderValueLow()
 template<> inline void GuiRangeSlider<int>::adjustSliderValueHigh()
 {
     sliderHigh = ofClamp((float) (pHigh->get() - pHigh->getMin()) / (pHigh->getMax() - pHigh->getMin()), 0.0, 1.0);
+}
+
+template<typename T>
+void GuiRangeSlider<T>::updateParameterOscAddress()
+{
+    pLow->setOscAddress(getAddress()+"/low");
+    pHigh->setOscAddress(getAddress()+"/high");
 }

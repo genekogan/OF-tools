@@ -4,6 +4,7 @@
 #include "Parameter.h"
 #include "GuiElement.h"
 #include "Sequence.h"
+#include "TouchOsc.h"
 
 
 template <typename T> class GuiSlider;
@@ -27,6 +28,8 @@ struct GuiSliderEventArgs : public GuiSliderEventArgsBase
 class GuiSliderBase : public GuiElement
 {
 public:
+    
+    //void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
     GuiSliderBase(string name);
     virtual ~GuiSliderBase() { }
@@ -107,7 +110,7 @@ public:
     ofEvent<GuiSliderEventArgs<T> > sliderEvent;
     
 private:
-    
+
     void decrement();
     void increment();
     
@@ -116,10 +119,12 @@ private:
     string getParameterValueString() {return ofToString(parameter->get(), 2);}
     void updateValueString();
     void adjustSliderValue();
+    void updateParameterOscAddress();
     
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+
     Parameter<T> *parameter;
     T previous;
-    
     
     Sequence *sequence;
 };
@@ -251,6 +256,26 @@ void GuiSlider<T>::updateValueString()
 {
     valueStringNext = ofToString(parameter->get(), floor(parameter->get()) == parameter->get() ? 0 : 2);
     toUpdateValueString = true;
+}
+
+template<typename T>
+void GuiSlider<T>::updateParameterOscAddress()
+{
+    parameter->setOscAddress(getAddress());
+}
+
+template<typename T>
+void GuiSlider<T>::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+    TouchOscFader *fader = page->addFader(getName(), 0.01, *y, 0.9, 1);
+    fader->setOscAddress(parameter->getOscAddress());
+    fader->setCentered(false);
+    fader->setInverted(false);
+    fader->setMin(parameter->getMin());
+    fader->setMax(parameter->getMax());
+    fader->setResponseRelative(false);
+    fader->setType(0);
+    *y += 1.05;
 }
 
 template<typename T>

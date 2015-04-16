@@ -2,6 +2,7 @@
 
 #include "GuiWidget.h"
 #include "Sequencer.h"
+#include "OscManagerPanel.h"
 
 
 class GuiPanel : public GuiWidget
@@ -24,97 +25,44 @@ public:
     void enableControlRow();
     void disableControlRow();
     
-    
+    void createSequencer();
+    void createOscManager(OscManager *osc);
+
     bool getHasSequencer() {return sequencerMade;}
     Sequencer * getSequencer() {return sequencer;}
+
+    bool getHasOscManagerPanel() {return oscManagerMade;}
+    OscManagerPanel * getOscManagerPanel() {return oscManager;}
     
-    /////
     void getXml(ofXml &xml);
     void setFromXml(ofXml &xml);
     
-    void createSequencer()
-    {
-        sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
-        sequencer->setParent(this);
-        sequencer->setAutoUpdate(false);
-        sequencer->setAutoDraw(false);
-        sequencerMade = true;
-    }
-    
+    void savePreset(string path);
+    void loadPreset(string path);
 
-    
-    
-    
-    ///////////////
-    
-    void savePresetPrompt(GuiButtonEventArgs &e)
-    {
-        savePreset("/Users/Gene/Desktop/testXml.xml");
-    }
-    
-    void loadPresetPrompt(GuiButtonEventArgs &e)
-    {
-        loadPreset("/Users/Gene/Desktop/testXml.xml");
-    }
-    
-    void savePreset(string path)
-    {
-        ofXml xml;
-        xml.addChild("Preset");
-        xml.setTo("Preset");
-        getXml(xml);
-        //saveSequencerToXml(xml);
-        xml.save(path);
-    }
-    
-    void loadPreset(string path)
-    {
-        ofXml xml;
-        xml.load(path);
-        xml.setTo("Preset");
-        setFromXml(xml);
-        //loadSequencerFromXml(xml);
-    }
-    
-    void saveSequencerToXml(ofXml &xml)
-    {
-        if (sequencerMade)
-        {
-            ofXml xmlSequencer;
-            xmlSequencer.addChild("Sequencer");
-            xmlSequencer.setTo("Sequencer");
-            sequencer->getXml(xmlSequencer);
-            xml.addXml(xmlSequencer);
-        }
-    }
-    
-    void loadSequencerFromXml(ofXml &xml)
-    {
-        if (xml.exists("Sequencer"))
-        {
-            xml.setTo("Sequencer");
-            if (!sequencerMade) {
-                createSequencer();
-            }
-            sequencer->setFromXml(xml);
-            xml.setToParent();
-        }
-        else {
-            ofLog(OF_LOG_ERROR, "No sequencer found in preset");
-        }
-    }
-    
     void setupGuiPositions();
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
 protected:
     
     void eventToggleSequencer(GuiButtonEventArgs &e);
+    void eventToggleOscManager(GuiButtonEventArgs &e);
+
+    void savePresetPrompt(GuiButtonEventArgs &e);
+    void loadPresetPrompt(GuiButtonEventArgs &e);
     
+    void saveSequencerToXml(ofXml &xml);
+    void loadSequencerFromXml(ofXml &xml);
+
     GuiToggle *tOsc, *tSeq, *tXml;
     bool bOsc, bSeq, bXml;
     bool controlRow;
     
     GuiWidget *meta;
+
     Sequencer *sequencer;
     bool sequencerMade;
+    
+    OscManagerPanel *oscManager;
+    bool oscManagerMade;
 };

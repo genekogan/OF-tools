@@ -4,7 +4,6 @@
 #include "GuiConstants.h"
 
 
-
 class GuiBase
 {
 public:

@@ -9,14 +9,15 @@
 
 class Sequence;
 
+class TouchOscPage;
 
 class GuiElement : public GuiBase
 {
 public:
-    
     GuiElement(string name);
     GuiElement();
-
+    virtual ~GuiElement() { }
+    
     void setParent(GuiElement *parent);
     GuiElement * getParent() {return parent;}
     bool getHasParent() {return hasParent;}
@@ -38,6 +39,9 @@ public:
     virtual void setFromXml(ofXml &xml);
     
     virtual void setupGuiPositions();
+    virtual void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    virtual void updateParameterOscAddress();
+    
     void resetGuiPositions();
     void setupDisplayString();
 

@@ -99,8 +99,9 @@ public:
 protected:
     
     void setupPad(ofPoint min, ofPoint max);
+    void updateParameterOscAddress();
     void setupGuiPositions();
-    
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     void selectPoint(float x, float y);
     void updateValueString();
     

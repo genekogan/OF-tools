@@ -6,3 +6,4 @@ GuiMultiRangeSliderBase::GuiMultiRangeSliderBase(string name) : GuiMultiElement(
     marginY = GUI_DEFAULT_MARGIN_Y_INNER;
     setHeader(getName());
 }
+

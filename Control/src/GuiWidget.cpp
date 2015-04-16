@@ -130,12 +130,23 @@ void GuiWidget::getParameters(vector<ParameterBase*> & parameters)
     }
 }
 
+void GuiWidget::updateParameterOscAddress()
+{
+    for (auto e : elementGroups) {
+        e->updateParameterOscAddress();
+    }
+}
+
 void GuiWidget::setupGuiPositions()
 {
     GuiMultiElement::setupGuiPositions();
     for (auto w : attachedWidgets) {
         w->setPosition(rectangle.x + rectangle.width + marginX, rectangle.y);
     }
+}
+
+void GuiWidget::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
 }
 
 void GuiWidget::attachWidget(GuiWidget *other)
@@ -155,6 +166,44 @@ void GuiWidget::detachWidget(GuiWidget *other)
             ++it;
         }
     }
+}
+
+void GuiWidget::makeTouchOscLayout(string filename)
+{
+    
+//    for (auto e : elementGroups) {
+  //      e->updateParameterOscAddress();
+    //}
+    
+    TouchOsc touchOsc;
+    
+    touchOsc.setScale(320, 480);
+    touchOsc.setDefaultColor(GREEN);
+    
+    TouchOscPage *page1 = touchOsc.addPage("myPage");
+    
+    
+    float y = 0;
+    
+    for (auto e : elementGroups) {
+        
+        e->addElementToTouchOscLayout(page1, &y);
+        cout << y << endl;
+    }
+    
+    for (auto w : page1->getWidgets()) {
+        w->y = ofMap(w->y, 0, y, 0, 0.9);
+        w->h = 0.9 * w->h / y;
+    }
+
+    
+    
+    
+    
+    
+    touchOsc.save("myTouchOscLayout");
+    
+    
 }
 
 void GuiWidget::getXml(ofXml &xml)

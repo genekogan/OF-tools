@@ -10,7 +10,6 @@
 #include "GuiBase.h"
 #include "GuiElement.h"
 
-
 #include "GuiButton.h"
 #include "GuiTextBox.h"
 #include "GuiSlider.h"
@@ -31,7 +30,10 @@
 #include "Sequence.h"
 #include "Sequencer.h"
 
+#include "Base64.h"
+#include "TouchOSC.h"
 #include "OscManager.h"
+#include "OscManagerPanel.h"
 
 // midi sequencer?
 

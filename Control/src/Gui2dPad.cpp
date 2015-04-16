@@ -154,6 +154,14 @@ void Gui2dPad::setupPad(ofPoint min, ofPoint max)
     stringHeight = ofBitmapStringGetBoundingBox(name, 0, 0).height;
 }
 
+void Gui2dPad::updateParameterOscAddress()
+{
+    int idx = 0;
+    for (auto p : points) {
+        p->parameter->setOscAddress(getAddress()+"/"+ofToString(idx++));
+    }
+}
+
 void Gui2dPad::setupGuiPositions()
 {
     if (collapsible)
@@ -175,6 +183,11 @@ void Gui2dPad::setupGuiPositions()
         headerRectangle.set(0, 0, 0, 0);
         padRectangle.set(rectangle);
     }
+}
+
+void Gui2dPad::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+
 }
 
 void Gui2dPad::setValue(int idx, ofPoint padValue)

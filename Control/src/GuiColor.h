@@ -52,6 +52,7 @@ public:
 private:
     
     void setupColor();
+    void updateParameterOscAddress();
     void sliderChanged(GuiSliderEventArgs<float> &e);
     
     Parameter<ofFloatColor> *parameter;

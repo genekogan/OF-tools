@@ -5,7 +5,7 @@
 #include "GuiElement.h"
 #include "GuiSlider.h"
 #include "GuiMultiElement.h"
-//#include "Sequence.h"
+#include "TouchOSC.h"
 
 
 
@@ -66,14 +66,41 @@ public:
     
     ofEvent<GuiMultiSliderEventArgs<T> > sliderEvent;
     
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    
+
+    
 private:
     
     void createSliders();
     void initializeSliders();
+    void updateParameterOscAddress();
     void sliderChanged(GuiSliderEventArgs<float> &e);
     
     Parameter<T> *parameter;
 };
+
+
+
+template<typename T>
+void GuiMultiSlider<T>::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+    TouchOscMultiFader *fader = page->addMultiFader(getName(), 0.01, *y, 0.9, elements.size());
+    
+    fader->setOscAddress(parameter->getOscAddress());
+    
+    fader->setNumber(elements.size());
+    
+    fader->setCentered(false);
+    fader->setInverted(false);
+    
+    fader->setType(0);
+
+    //fader->setResponseRelative(false);
+
+    *y += (elements.size() + 0.05);
+}
+
 
 
 template<typename T>
@@ -163,6 +190,12 @@ void GuiMultiSlider<T>::initializeSliders()
     for (auto e : elements) {
         ofAddListener(((GuiSlider<float> *) e)->sliderEvent, this, &GuiMultiSlider<T>::sliderChanged);
     }
+}
+
+template<typename T>
+void GuiMultiSlider<T>::updateParameterOscAddress()
+{
+    parameter->setOscAddress(getAddress());
 }
 
 template<typename T>

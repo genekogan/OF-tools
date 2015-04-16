@@ -4,6 +4,7 @@
 #include "Parameter.h"
 #include "GuiElement.h"
 #include "Sequence.h"
+#include "TouchOsc.h"
 
 
 class GuiButtonBase;
@@ -54,6 +55,7 @@ public:
     virtual void draw();
 
     void setupGuiPositions();
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
 
     void getXml(ofXml &xml);
     void setFromXml(ofXml &xml);
@@ -63,6 +65,7 @@ public:
 protected:
     
     void initializeButton();
+    void updateParameterOscAddress();
 
     void setValueFromSequence(Sequence &sequence);
     void setSequenceFromValue(Sequence &sequence, int column);

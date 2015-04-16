@@ -27,6 +27,7 @@ GuiColor::~GuiColor()
 void GuiColor::setupColor()
 {
     marginY = GUI_DEFAULT_MARGIN_Y_INNER;
+    
     initializeElement(new GuiSlider<float>(name+".r", &parameter->getReference()->r, parameter->getMin().r, parameter->getMax().r));
     initializeElement(new GuiSlider<float>(name+".g", &parameter->getReference()->g, parameter->getMin().g, parameter->getMax().g));
     initializeElement(new GuiSlider<float>(name+".b", &parameter->getReference()->b, parameter->getMin().b, parameter->getMax().b));
@@ -34,8 +35,11 @@ void GuiColor::setupColor()
     for (auto e : elements) {
         ofAddListener(((GuiSlider<float> *) e)->sliderEvent, this, &GuiColor::sliderChanged);
     }
+    
     setCollapsible(true);
     setHeader(getName());
+
+    parameter->setOscAddress(getAddress());
 }
 
 void GuiColor::sliderChanged(GuiSliderEventArgs<float> &e)
@@ -63,3 +67,9 @@ void GuiColor::getParameters(vector<ParameterBase*> & parameters)
 {
     parameters.push_back(parameter);
 }
+
+void GuiColor::updateParameterOscAddress()
+{
+    parameter->setOscAddress(getAddress());
+}
+

@@ -115,6 +115,7 @@ void ofApp::setup(){
     //ofExit();
     
     
+    
     //osc.setupSender("localhost", 12346);
     //osc.setupReceiver(12345);
     
@@ -122,30 +123,42 @@ void ofApp::setup(){
     //osc.addParameterToReceiver(v2);
     
     //osc.addParametersToSender(panel.getParameters());
-    vector<ParameterBase*> params;
-    panel.getParameters(params);
-    osc.addParameters("yo", params);
-
+    
+    
+    //osc.setup();
+    
     /*
-    vector<ParameterBase*> pm = panel.getParameters();
-    for (auto p : pm) {
-        cout << p->getName() << " ---- " << p->getOscAddress() << endl;
-    }
+     vector<ParameterBase*> pm = panel.getParameters();
+     for (auto p : pm) {
+     cout << p->getName() << " ---- " << p->getOscAddress() << endl;
+     }
+     
+     
+     osc.addParameters(panel.getName(), panel.getParameters());
+     osc.addParameters(widget.getName(), widget.getParameters());
+     
+     osc.addParameter(v);
+     osc.addParameter(v2);
+     */
+    
+    //  osc.setPosition(450, 10);
     
     
-    osc.addParameters(panel.getName(), panel.getParameters());
-    osc.addParameters(widget.getName(), widget.getParameters());
     
-    osc.addParameter(v);
-    osc.addParameter(v2);
-    */
+    oscManager.addWidget(panel);
     
-    osc.setPosition(450, 10);
+    oscManager.setupReceiver(12346);
+    oscManager.setupSender("localhost", 12345);
+    
+
     
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+    oscManager.update();
+    
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
@@ -153,7 +166,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    osc.draw(); // why not auto
+    //osc.draw(); // why not auto
+
     
     ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 60);
     ofCircle(600, 500, 100);

@@ -78,10 +78,11 @@ public:
     void getParameters(vector<ParameterBase*> & parameters_);
     
     ofEvent<GuiMenuEventArgs> menuEvent;
-    
+
 private:
 
     void setupMenu(string name, vector<string> & choices, bool multipleChoice, bool autoClose);
+    void updateParameterOscAddress();
     void resetIndices();
     void buttonChanged(GuiButtonEventArgs &e);
     

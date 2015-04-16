@@ -6,17 +6,13 @@ GuiPanel::GuiPanel() : GuiWidget()
     marginX = GUI_DEFAULT_PANEL_MARGIN_OUTER_X;
     controlRow = false;
     sequencerMade = false;
+    oscManagerMade = false;
     hasParent = false;
     bOsc = false;
     bSeq = false;
     bXml = false;
     setCollapsible(true);
     enableControlRow();
-    
-    
-    
-    /////
-    //createSequencer();
 }
 
 GuiPanel::~GuiPanel()
@@ -41,7 +37,7 @@ void GuiPanel::enableControlRow()
         controlRow = true;
         controllerHeight = GUI_DEFAULT_PANEL_CONTROLLER_HEIGHT;
         
-        tOsc = new GuiToggle("osc", &bOsc);
+        tOsc = new GuiToggle("osc", &bOsc, this, &GuiPanel::eventToggleOscManager);
         tSeq = new GuiToggle("seq", &bSeq, this, &GuiPanel::eventToggleSequencer);
         tXml = new GuiToggle("xml", &bXml);
         tOsc->setParent(this);
@@ -53,17 +49,6 @@ void GuiPanel::enableControlRow()
         tOsc->setAutoDraw(false);
         tSeq->setAutoDraw(false);
         tXml->setAutoDraw(false);
-        
-        
-        
-        
-        
-        
-        ///////
-        //
-        //
-        //
-        //addBoundWidget(sequencer);
         
         meta = new GuiWidget("Meta");
         meta->setParent(this);
@@ -83,12 +68,6 @@ void GuiPanel::disableControlRow()
         controlRow = false;
         controllerHeight = 0;
         
-        ///////
-        //
-        //
-        //
-        //removeBoundWidget(sequencer);
-        
         bOsc = false;
         bSeq = false;
         bXml = false;
@@ -102,7 +81,29 @@ void GuiPanel::disableControlRow()
         if (sequencerMade) {
             delete sequencer;
         }
+        if (oscManagerMade) {
+            delete oscManager;
+        }
     }
+}
+
+void GuiPanel::createSequencer()
+{
+    sequencer = new Sequencer(getName()+" sequencer", this, GUI_DEFAULT_SEQUENCER_NUMCOLS);
+    sequencer->setParent(this);
+    sequencer->setAutoUpdate(false);
+    sequencer->setAutoDraw(false);
+    sequencerMade = true;
+}
+
+void GuiPanel::createOscManager(OscManager *osc)
+{
+    oscManager = new OscManagerPanel(getName()+" oscManager", this, osc);
+    oscManager->setParent(this);
+    oscManager->setAutoUpdate(false);
+    oscManager->setAutoDraw(false);
+    oscManagerMade = true;
+    setupGuiPositions();
 }
 
 void GuiPanel::setupGuiPositions()
@@ -112,13 +113,24 @@ void GuiPanel::setupGuiPositions()
     {
         if (active)
         {
-            int width = rectangle.width / 3.0;
-            tOsc->setPosition(rectangle.x + 4, rectangle.y + headerHeight + 5);
-            tSeq->setPosition(rectangle.x + 4 + width, rectangle.y + headerHeight + 5);
-            tXml->setPosition(rectangle.x + 4 + 2 * width, rectangle.y + headerHeight + 5);
-            tOsc->setSize(width - 8, 15);
-            tSeq->setSize(width - 8, 15);
-            tXml->setSize(width - 8, 15);
+            if (oscManagerMade)
+            {
+                int width = rectangle.width / 3.0;
+                tOsc->setPosition(rectangle.x + 4, rectangle.y + headerHeight + 5);
+                tSeq->setPosition(rectangle.x + 4 + width, rectangle.y + headerHeight + 5);
+                tXml->setPosition(rectangle.x + 4 + 2 * width, rectangle.y + headerHeight + 5);
+                tOsc->setSize(width - 8, 15);
+                tSeq->setSize(width - 8, 15);
+                tXml->setSize(width - 8, 15);
+            }
+            else {
+                int width = rectangle.width / 2.0;
+                tOsc->setRectangle(0, 0, 0, 0);
+                tSeq->setPosition(rectangle.x + 4, rectangle.y + headerHeight + 5);
+                tXml->setPosition(rectangle.x + 4 + width, rectangle.y + headerHeight + 5);
+                tSeq->setSize(width - 8, 15);
+                tXml->setSize(width - 8, 15);
+            }
         }
         else
         {
@@ -131,6 +143,13 @@ void GuiPanel::setupGuiPositions()
     if (sequencerMade) {
         sequencer->setupGuiPositions();
     }
+    if (oscManagerMade) {
+        oscManager->setupGuiPositions();
+    }
+}
+
+void GuiPanel::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
 }
 
 void GuiPanel::update()
@@ -142,12 +161,15 @@ void GuiPanel::update()
     GuiWidget::update();
     if (controlRow)
     {
-        tOsc->update();
+        if (oscManagerMade) tOsc->update();
         tSeq->update();
         tXml->update();
     }
     if (sequencerMade) {
         sequencer->update();
+    }
+    if (oscManagerMade) {
+        oscManager->update();
     }
     if (bXml) {
         meta->update();
@@ -175,11 +197,15 @@ void GuiPanel::draw()
         
         if (controlRow)
         {
-            tOsc->draw();
+            if (oscManagerMade) tOsc->draw();
             tSeq->draw();
             tXml->draw();
         }
         
+        if (bOsc && oscManagerMade) {
+            oscManager->draw();
+        }
+
         if (bSeq && sequencerMade) {
             sequencer->draw();
         }
@@ -203,6 +229,9 @@ bool GuiPanel::mouseMoved(int mouseX, int mouseY)
     if (bSeq) {
         if (sequencer->mouseMoved(mouseX, mouseY)) return true;
     }
+    if (bOsc) {
+        if (oscManager->mouseMoved(mouseX, mouseY)) return true;
+    }
     if (bXml) {
         if (meta->mouseMoved(mouseX, mouseY)) return true;
     }
@@ -219,6 +248,9 @@ bool GuiPanel::mousePressed(int mouseX, int mouseY)
     }
     if (bSeq) {
         if (sequencer->mousePressed(mouseX, mouseY)) return true;
+    }
+    if (bOsc) {
+        if (oscManager->mousePressed(mouseX, mouseY)) return true;
     }
     if (bXml) {
         if (meta->mousePressed(mouseX, mouseY)) return true;
@@ -237,6 +269,9 @@ bool GuiPanel::mouseDragged(int mouseX, int mouseY)
     if (bSeq) {
         if (sequencer->mouseDragged(mouseX, mouseY)) return true;
     }
+    if (bOsc) {
+        if (oscManager->mouseDragged(mouseX, mouseY)) return true;
+    }
     if (bXml) {
         if (meta->mouseDragged(mouseX, mouseY)) return true;
     }
@@ -253,6 +288,9 @@ bool GuiPanel::mouseReleased(int mouseX, int mouseY)
     }
     if (bSeq) {
         if (sequencer->mouseReleased(mouseX, mouseY)) return true;
+    }
+    if (bOsc) {
+        if (oscManager->mouseReleased(mouseX, mouseY)) return true;
     }
     if (bXml) {
         if (meta->mouseReleased(mouseX, mouseY)) return true;
@@ -271,6 +309,9 @@ bool GuiPanel::keyPressed(int key)
     if (bSeq) {
         if (sequencer->keyPressed(key)) return true;
     }
+    if (bOsc) {
+        if (oscManager->keyPressed(key)) return true;
+    }
     if (bXml) {
         if (meta->keyPressed(key)) return true;
     }
@@ -281,6 +322,66 @@ void GuiPanel::eventToggleSequencer(GuiButtonEventArgs &e)
 {
     if (!sequencerMade) {
         createSequencer();
+    }
+}
+
+void GuiPanel::eventToggleOscManager(GuiButtonEventArgs &e)
+{
+
+}
+
+void GuiPanel::savePresetPrompt(GuiButtonEventArgs &e)
+{
+    savePreset("/Users/Gene/Desktop/testXml.xml");
+}
+
+void GuiPanel::loadPresetPrompt(GuiButtonEventArgs &e)
+{
+    loadPreset("/Users/Gene/Desktop/testXml.xml");
+}
+
+void GuiPanel::savePreset(string path)
+{
+    ofXml xml;
+    xml.addChild("Preset");
+    xml.setTo("Preset");
+    getXml(xml);
+    xml.save(path);
+}
+
+void GuiPanel::loadPreset(string path)
+{
+    ofXml xml;
+    xml.load(path);
+    xml.setTo("Preset");
+    setFromXml(xml);
+}
+
+void GuiPanel::saveSequencerToXml(ofXml &xml)
+{
+    if (sequencerMade)
+    {
+        ofXml xmlSequencer;
+        xmlSequencer.addChild("Sequencer");
+        xmlSequencer.setTo("Sequencer");
+        sequencer->getXml(xmlSequencer);
+        xml.addXml(xmlSequencer);
+    }
+}
+
+void GuiPanel::loadSequencerFromXml(ofXml &xml)
+{
+    if (xml.exists("Sequencer"))
+    {
+        xml.setTo("Sequencer");
+        if (!sequencerMade) {
+            createSequencer();
+        }
+        sequencer->setFromXml(xml);
+        xml.setToParent();
+    }
+    else {
+        ofLog(OF_LOG_ERROR, "No sequencer found in preset");
     }
 }
 
@@ -295,33 +396,15 @@ void GuiPanel::getXml(ofXml &xml)
 void GuiPanel::setFromXml(ofXml &xml)
 {
     GuiWidget::setFromXml(xml);
-    
-    
     if (xml.exists("Sequencer"))
     {
         if (!sequencerMade) {
             createSequencer();
         }
         sequencer->setFromXml(xml);
-    }
-    
-
-    
-    //////
-    /*
-    if (xml.exists("Sequencer"))
-    {
-        xml.setTo("Sequencer");
-        if (!sequencerMade) {
-            createSequencer();
-        }
-        sequencer->setFromXml(xml);
-        xml.setToParent();
     }
     else {
         ofLog(OF_LOG_ERROR, "No sequencer found in preset");
     }
-     */
-
 }
 

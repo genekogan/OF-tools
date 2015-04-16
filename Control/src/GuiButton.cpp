@@ -39,6 +39,11 @@ void GuiButtonBase::initializeButton()
     setLeftJustified(false);
 }
 
+void GuiButtonBase::updateParameterOscAddress()
+{
+    parameter->setOscAddress(getAddress());
+}
+
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
     bool previous = parameter->get();
@@ -128,6 +133,14 @@ void GuiButtonBase::setupGuiPositions()
     GuiElement::setupGuiPositions();
     stringWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
     stringHeight = ofBitmapStringGetBoundingBox(display, 0, 0).height;
+}
+
+void GuiButtonBase::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+    TouchOscToggle *toggle = page->addToggle(getName(), 0.05, *y, 0.9, 1);
+    toggle->setLocalOff(false);
+    toggle->setOscAddress(parameter->getOscAddress());
+    *y += 1.05;
 }
 
 void GuiButtonBase::getXml(ofXml &xml)

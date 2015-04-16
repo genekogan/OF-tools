@@ -49,6 +49,8 @@ public:
 protected:
     
     void setupGuiPositions();
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    void updateParameterOscAddress();
     virtual void initializeElement(GuiElement *element, bool sendNotification=true);
     
     vector<GuiElement*> elements;

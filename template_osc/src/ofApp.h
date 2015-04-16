@@ -8,7 +8,6 @@ class ofApp : public ofBaseApp
 {
     
 public:
-    
     void setup();
     void update();
     void draw();
@@ -41,6 +40,13 @@ public:
             panel.removeElement("widget inside panel");
             cout << "==== KEY 2 ===== " <<endl;
         }
+        
+        else if (key=='3') {
+//            vector<ParameterBase*> params;
+//            panel.getParameters(params);
+            oscManager.addWidget(panel);
+            
+        }
     }
     
     
@@ -59,6 +65,7 @@ public:
     ofVec2f vec2slider;
     
     
-    OscManager osc;
-
+    OscManager oscManager;
+    
+    
 };

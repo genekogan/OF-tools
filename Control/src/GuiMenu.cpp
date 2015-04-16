@@ -211,3 +211,12 @@ void GuiMenu::getParameters(vector<ParameterBase*> & parameters_)
         parameters_.push_back(p);
     }
 }
+
+void GuiMenu::updateParameterOscAddress()
+{
+    int idx = 0;
+    for (auto p : parameters) {
+        p->setOscAddress(getAddress()+"/"+ofToString(idx++));
+    }
+}
+

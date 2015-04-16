@@ -37,6 +37,11 @@ void GuiTextBox::setupTextBox()
     setLeftJustified(true);
 }
 
+void GuiTextBox::updateParameterOscAddress()
+{
+    parameter->setOscAddress(getAddress());
+}
+
 void GuiTextBox::setValue(string value, bool sendChangeNotification)
 {
     string previous = parameter->get();

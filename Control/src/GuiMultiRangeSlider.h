@@ -73,6 +73,7 @@ private:
     
     void createRangeSliders();
     void initializeRangeSliders();
+    void updateParameterOscAddress();
     void rangeSliderChanged(GuiRangeSliderEventArgs<float> &e);
     
     Parameter<T> *parameterLow, *parameterHigh;
@@ -141,6 +142,13 @@ GuiMultiRangeSlider<T>::~GuiMultiRangeSlider<T>()
 {
     delete parameterLow;
     delete parameterHigh;
+}
+
+template<typename T>
+void GuiMultiRangeSlider<T>::updateParameterOscAddress()
+{
+    parameterLow->setOscAddress(getAddress());
+    parameterHigh->setOscAddress(getAddress());
 }
 
 template<typename T>
