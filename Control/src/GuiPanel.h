@@ -12,6 +12,7 @@ public:
     ~GuiPanel();
     
     void setPosition(int x, int y);
+    void setName(string name);
     
     bool mouseMoved(int mouseX, int mouseY);
     bool mousePressed(int mouseX, int mouseY);
@@ -37,19 +38,20 @@ public:
     void getXml(ofXml &xml);
     void setFromXml(ofXml &xml);
     
-    void savePreset(string path);
-    void loadPreset(string path);
+    void savePreset(string name);
+    void loadPreset(string name);
 
     void setupGuiPositions();
-    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
 protected:
     
     void eventToggleSequencer(GuiButtonEventArgs &e);
     void eventToggleOscManager(GuiButtonEventArgs &e);
+    void eventTogglePresets(GuiButtonEventArgs &e);
 
     void savePresetPrompt(GuiButtonEventArgs &e);
-    void loadPresetPrompt(GuiButtonEventArgs &e);
+    void loadPresetPrompt(GuiMenuEventArgs &e);
+    void refreshPresetMenu();
     
     void saveSequencerToXml(ofXml &xml);
     void loadSequencerFromXml(ofXml &xml);
@@ -59,6 +61,7 @@ protected:
     bool controlRow;
     
     GuiWidget *meta;
+    GuiMenu *menuPresets;
 
     Sequencer *sequencer;
     bool sequencerMade;

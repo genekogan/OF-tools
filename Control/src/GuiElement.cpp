@@ -5,24 +5,68 @@ GuiElement::GuiElement(string name) : GuiBase(name)
 {
     hasParent = false;
     parent = NULL;
+    display = "";
 }
 
 GuiElement::GuiElement() : GuiBase()
 {
     hasParent = false;
     parent = NULL;
+    display = "";
+}
+
+GuiElement::~GuiElement()
+{
+
 }
 
 void GuiElement::setParent(GuiElement *parent)
 {
     this->parent = parent;
     hasParent = true;
-    updateParameterOscAddress();
+    display = "";
+}
+
+string GuiElement::getAddress()
+{
+    return hasParent ? parent->getAddress() + "/" + getName() : getName();
+}
+
+bool GuiElement::getActive()
+{
+    return hasParent ? parent->getActive() && active : active;
+}
+
+void GuiElement::setActive(bool active)
+{
+    GuiBase::setActive(active);
+    resetGuiPositions();
 }
 
 bool GuiElement::getCollapsed()
 {
     return hasParent ? parent->getCollapsed() : false;
+}
+
+void GuiElement::setMouseOver(bool mouseOver)
+{
+    GuiBase::setMouseOver(mouseOver);
+    if (mouseOver && hasParent) {
+        parent->setMouseOver(mouseOver);
+    }
+}
+
+void GuiElement::setupGuiPositions()
+{
+    if (getCollapsed())
+    {
+        rectangle.set(0, 0, 0, 0);
+    }
+    else
+    {
+        rectangle.set(x, y, width, height);
+        setupDisplayString();
+    }
 }
 
 void GuiElement::resetGuiPositions()
@@ -35,27 +79,9 @@ void GuiElement::resetGuiPositions()
     }
 }
 
-void GuiElement::setMouseOver(bool mouseOver)
-{
-    GuiElement::setMouseOver(mouseOver);
-    if (mouseOver && hasParent) {
-        parent->setMouseOver(mouseOver);
-    }
-}
-
-void GuiElement::setupGuiPositions()
-{
-    if (getCollapsed()) {
-        rectangle.set(0, 0, 0, 0);
-    }
-    else {
-        rectangle.set(x, y, width, height);
-    }
-    setupDisplayString();
-}
-
 void GuiElement::addElementToTouchOscLayout(TouchOscPage *page, float *y)
 {
+
 }
 
 void GuiElement::updateParameterOscAddress()
@@ -83,27 +109,3 @@ void GuiElement::setupDisplayString()
         displayWidth = ofBitmapStringGetBoundingBox(display, 0, 0).width;
     }
 }
-
-string GuiElement::getAddress()
-{
-    return hasParent ? parent->getAddress() + "/" + getName() : getName();
-}
-
-bool GuiElement::getActive()
-{
-    return hasParent ? parent->getActive() && active : active;
-}
-
-void GuiElement::setActive(bool active)
-{
-    GuiBase::setActive(active);
-    resetGuiPositions();
-}
-/*
-void GuiElement::updateAddress2()
-{
-    
-    
-}
-
-*/

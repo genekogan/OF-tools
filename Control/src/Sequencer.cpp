@@ -4,21 +4,7 @@
 Sequencer::SequenceElementPair::SequenceElementPair(GuiElement *element, int numCols)
 {
     this->element = element;
-    
-    
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //sequence = new Sequence(element->getName(), numCols);
     sequence = new Sequence(element->getAddress(), numCols);
-    
-    
-    
     sequence->setAutoUpdate(false);
     sequence->setAutoDraw(false);
     sequence->setDiscrete(element->isDiscrete());
@@ -94,8 +80,13 @@ void Sequencer::SequencerSavedSet::addSequence(string sequenceGroupName, string 
     if (sequenceGroups.count(sequenceGroupName) == 0) {
         sequenceGroups[sequenceGroupName] = SequencerSavedSetGroup();
     }
-    cout << "ADD SEQ " << sequenceGroupName << " ||||| " << sequenceName << endl;
     sequenceGroups[sequenceGroupName].addSequence(sequenceName, sequence, active);
+}
+
+void Sequencer::SequencerSavedSet::SequencerSavedSetGroup::addSequence(string sequenceName, vector<float> sequence, bool active)
+{
+    sequences[sequenceName] = sequence;
+    sequencesActive[sequenceName] = active;
 }
 
 Sequencer::Sequencer(string name, GuiWidget * panel, int numCols) : GuiElement(name)
@@ -112,7 +103,7 @@ Sequencer::Sequencer(string name, GuiWidget * panel, int numCols) : GuiElement(n
     ofAddListener(panel->newElementEvent, this, &Sequencer::addElement);
     ofAddListener(panel->removeElementEvent, this, &Sequencer::removeElement);
 
-    setupSequencer();    
+    setupSequencer();
     setActive(false);
     setSmooth(false);
     setAllSequencersActive(true);
@@ -136,11 +127,13 @@ Sequencer::~Sequencer()
     }
     buttons.clear();
 
-    //
-    //
-    //
-    //
-    // clear entries
+    map<GuiElement*,ElementSequenceGroup*>::iterator it = groups.begin();
+    while (it != groups.end())
+    {
+        delete it->second;
+        ++it;
+    }
+    groups.clear();
 }
 
 void Sequencer::setActive(bool active)
@@ -195,25 +188,11 @@ void Sequencer::saveSequencerSet(string sequencerName)
     map<GuiElement*,ElementSequenceGroup*>::iterator it = groups.begin();
     for (; it != groups.end(); ++it)
     {
-        //
-        //
-        //
-        //
-        //
-        //
-        //string sequenceGroupName = it->second->element->getName();
         string sequenceGroupName = it->second->element->getAddress();
         
         for (auto &p : it->second->pairs)
         {
-            //
-            //
-            //
-            //
-            //
-            //string sequenceName = p->element->getName();
             string sequenceName = p->element->getAddress();
-            
             newSet.addSequence(sequenceGroupName, sequenceName, p->sequence->getAllValues(), p->sequence->getActive());
         }
     }
@@ -229,8 +208,6 @@ void Sequencer::loadSequencerSet(string sequencerName)
         return;
     }
     
-    cout << "GO " << sequencerName << endl;
-    
     setNumberColumns(sequencerSets[sequencerName].numCols);
     setSmooth(sequencerSets[sequencerName].smooth);
     setBpm(sequencerSets[sequencerName].bpm);
@@ -239,27 +216,13 @@ void Sequencer::loadSequencerSet(string sequencerName)
     map<GuiElement*,ElementSequenceGroup*>::iterator it = groups.begin();
     for (; it != groups.end(); ++it)
     {
-        //
-        //
-        //
-        //
-        //
-        //string sequenceGroupName = it->second->element->getName();
         string sequenceGroupName = it->second->element->getAddress();
         for (auto &p : it->second->pairs)
         {
-            //
-            //
-            //
-            //
-            //
-            //
-            //string sequenceName = p->element->getName();
             string sequenceName = p->element->getAddress();
             if (sequencerSets[sequencerName].sequenceGroups.count(sequenceGroupName) != 0 &&
                 sequencerSets[sequencerName].sequenceGroups[sequenceGroupName].sequences.count(sequenceName) != 0)
             {
-                cout << "SET SEQ " << p->sequence->getName() << " :: " << ofToString(sequencerSets[sequencerName].sequenceGroups[sequenceGroupName].sequences[sequenceName]) << endl;
                 p->sequence->setFromValues(sequencerSets[sequencerName].sequenceGroups[sequenceGroupName].sequences[sequenceName]);
                 p->sequence->setActive(sequencerSets[sequencerName].sequenceGroups[sequenceGroupName].sequencesActive[sequenceName]);
             }
@@ -270,8 +233,11 @@ void Sequencer::loadSequencerSet(string sequencerName)
 void Sequencer::setupSequencer()
 {
     mChoose = new GuiMenu("choose", this, &Sequencer::eventSequencerMenuSelection, false, true);
-    mChoose->addToggle("save new");
+    mChoose->setCollapsible(true);
     mChoose->setCollapsed(true);
+    mChoose->setAutoUpdate(false);
+    mChoose->setAutoDraw(false);
+    mChoose->addToggle("save new");
  
     buttons.push_back(new GuiToggle("on", &active, this, &Sequencer::eventActive));
     buttons.push_back(new GuiToggle("~", &smooth));
@@ -279,14 +245,14 @@ void Sequencer::setupSequencer()
     buttons.push_back(new GuiSlider<int>("bpm", &bpm, 1, 360));
     buttons.push_back(new GuiSlider<int>("cols", &numCols, 1, 64));
     buttons.push_back(new GuiSlider<int>("lerp", &lerpNumFrames, 1, 120));
-    buttons.push_back(mChoose);
- 
+    
     for (auto b : buttons)
     {
         b->setParent(this);
         b->setAutoUpdate(false);
         b->setAutoDraw(false);
     }
+    buttons.push_back(mChoose);
     
     ofAddListener(clock.beatEvent, this, &Sequencer::eventBeat);
     ofAddListener(((GuiSlider<int> *) buttons[3])->sliderEvent, this, &Sequencer::eventBpm);
@@ -537,8 +503,12 @@ void Sequencer::draw()
     ofCircle(bToggleAllSequencers.x + bToggleAllSequencers.width / 2, bToggleAllSequencers.y + bToggleAllSequencers.width / 3, bToggleAllSequencers.width / 3);
 
     for (auto b : buttons) {
+        if (b->getName() == "choose") {
+            cout << b->getCollapsed() << " " << endl;
+        }
         b->draw();
     }
+    mChoose->draw();
 }
 
 bool Sequencer::mouseMoved(int mouseX, int mouseY)
@@ -721,4 +691,199 @@ void Sequencer::eventSequencerMenuSelection(GuiMenuEventArgs & evt)
 void Sequencer::eventBeat()
 {
     next();
+}
+
+void Sequencer::getXml(ofXml &xml)
+{
+    ofXml xmlSequencer;
+    xmlSequencer.addChild("Sequencer");
+    xmlSequencer.setTo("Sequencer");
+    
+    ofXml xmlSequencerSets;
+    xmlSequencerSets.addChild("SequencerSets");
+    xmlSequencerSets.setTo("SequencerSets");
+    
+    map<string, SequencerSavedSet>::iterator it = sequencerSets.begin();
+    for (; it != sequencerSets.end(); ++it)
+    {
+        ofXml xmlSequencerSet;
+        xmlSequencerSet.addChild("SequencerSet");
+        xmlSequencerSet.setTo("SequencerSet");
+        
+        xmlSequencerSet.addValue<string>("Name", it->second.name);
+        xmlSequencerSet.addValue<int>("Bpm", it->second.bpm);
+        xmlSequencerSet.addValue<bool>("Smooth", it->second.smooth);
+        xmlSequencerSet.addValue<int>("Lerp", it->second.lerpNumFrames);
+        xmlSequencerSet.addValue<int>("NumCols", it->second.numCols);
+        
+        map<string, SequencerSavedSet::SequencerSavedSetGroup>::iterator itg = it->second.sequenceGroups.begin();
+        for (; itg != it->second.sequenceGroups.end(); ++itg)
+        {
+            ofXml xmlSequenceGroup;
+            xmlSequenceGroup.addChild("SequenceGroup");
+            xmlSequenceGroup.setTo("SequenceGroup");
+            xmlSequenceGroup.addValue("Name", itg->first);
+            
+            map<string, vector<float> >::iterator its = itg->second.sequences.begin();
+            for (; its != itg->second.sequences.end(); ++its)
+            {
+                ofXml xmlSequence;
+                xmlSequence.addChild("Sequence");
+                xmlSequence.setTo("Sequence");
+                xmlSequence.addValue("Name", its->first);
+                xmlSequence.addValue<vector<float> >("Values", its->second);
+                xmlSequence.addValue<bool>("Active", itg->second.sequencesActive.count(its->first) > 0 ? itg->second.sequencesActive[its->first] : true);
+                xmlSequenceGroup.addXml(xmlSequence);
+            }
+            
+            xmlSequencerSet.addXml(xmlSequenceGroup);
+        }
+        xmlSequencerSets.addXml(xmlSequencerSet);
+    }
+    
+    ofXml xmlCurrent;
+    xmlCurrent.addChild("Current");
+    xmlCurrent.setTo("Current");
+    xmlCurrent.addValue<string>("Name", getName());
+    xmlCurrent.addValue<bool>("Active", getActive());
+    xmlCurrent.addValue<int>("Bpm", getBpm());
+    xmlCurrent.addValue<bool>("Smooth", getSmooth());
+    xmlCurrent.addValue<int>("Lerp", getLerpNumFrames());
+    xmlCurrent.addValue<int>("NumCols", getNumberColumns());
+    
+    map<GuiElement*,ElementSequenceGroup*>::iterator itg = groups.begin();
+    for (; itg != groups.end(); ++itg)
+    {
+        ofXml xmlSequenceGroup;
+        xmlSequenceGroup.addChild("SequenceGroup");
+        xmlSequenceGroup.setTo("SequenceGroup");
+        xmlSequenceGroup.addValue<string>("Name", itg->second->element->getAddress());
+        for (auto &p : itg->second->pairs)
+        {
+            ofXml xmlSequence;
+            xmlSequence.addChild("Sequence");
+            xmlSequence.setTo("Sequence");
+            xmlSequence.addValue<string>("Name", p->element->getAddress());
+            xmlSequence.addValue<vector<float> >("Values", p->sequence->getAllValues());
+            xmlSequence.addValue<bool>("Active", p->sequence->getActive());
+            xmlSequenceGroup.addXml(xmlSequence);
+        }
+        xmlCurrent.addXml(xmlSequenceGroup);
+    }
+    
+    xmlSequencer.addXml(xmlSequencerSets);
+    xmlSequencer.addXml(xmlCurrent);
+    
+    xml.addXml(xmlSequencer);
+}
+
+void Sequencer::setFromXml(ofXml &xml)
+{
+    sequencerSets.clear();
+    mChoose->clearToggles();
+    
+    if (xml.exists("Sequencer"))
+    {
+        xml.setTo("Sequencer");
+        if (xml.exists("SequencerSets"))
+        {
+            xml.setTo("SequencerSets");
+            if (xml.exists("SequencerSet[0]"))
+            {
+                xml.setTo("SequencerSet[0]");
+                do {
+                    string sequencerName = xml.getValue<string>("Name");
+                    SequencerSavedSet newSet(sequencerName,
+                                             xml.getValue<bool>("Smooth"),
+                                             xml.getValue<int>("Bpm"),
+                                             xml.getValue<int>("Lerp"),
+                                             xml.getValue<int>("NumCols"));
+                    
+                    if (xml.exists("SequenceGroup[0]"))
+                    {
+                        xml.setTo("SequenceGroup[0]");
+                        do {
+                            string sequenceGroupName = xml.getValue<string>("Name");
+                            if (xml.exists("Sequence[0]"))
+                            {
+                                xml.setTo("Sequence[0]");
+                                do {
+                                    string sequenceName = xml.getValue<string>("Name");
+                                    bool sequenceActive = xml.getValue<bool>("Active");
+                                    string valueStringXml = xml.getValue<string>("Values");
+                                    vector<string> valueString = ofSplitString(valueStringXml.substr(1, valueStringXml.size()-2), ",");
+                                    vector<float> sequenceValues;
+                                    for (auto vs : valueString) sequenceValues.push_back(ofToFloat(vs));
+                                    newSet.addSequence(sequenceGroupName, sequenceName, sequenceValues, sequenceActive);
+                                }
+                                while(xml.setToSibling());
+                                xml.setToParent();
+                            }
+                        }
+                        while(xml.setToSibling());
+                        xml.setToParent();
+                    }
+                    sequencerSets[sequencerName] = newSet;
+                    mChoose->addToggle(sequencerName);
+                }
+                while(xml.setToSibling());
+                xml.setToParent();
+            }
+            xml.setToParent();
+        }
+        
+        if (xml.exists("Current"))
+        {
+            xml.setTo("Current");
+            
+            setName(xml.getValue<string>("Name"));
+            setActive(xml.getValue<bool>("Active"));
+            setBpm(xml.getValue<int>("Bpm"));
+            setSmooth(xml.getValue<bool>("Smooth"));
+            setNumberColumns(xml.getValue<int>("NumCols"));
+            lerpNumFrames = xml.getValue<int>("Lerp");
+            
+            if (xml.exists("SequenceGroup[0]"))
+            {
+                xml.setTo("SequenceGroup[0]");
+                do {
+                    string sequenceGroupName = xml.getValue<string>("Name");
+                    if (xml.exists("Sequence[0]"))
+                    {
+                        xml.setTo("Sequence[0]");
+                        do {
+                            string sequenceName = xml.getValue<string>("Name");
+                            bool sequenceActive = xml.getValue<bool>("Active");
+                            
+                            string valueStringXml = xml.getValue<string>("Values");
+                            vector<string> valueString = ofSplitString(valueStringXml.substr(1, valueStringXml.size()-2), ",");
+                            vector<float> sequenceValues;
+                            for (auto vs : valueString) sequenceValues.push_back(ofToFloat(vs));
+                            
+                            map<GuiElement*,ElementSequenceGroup*>::iterator itg = groups.begin();
+                            for (; itg != groups.end(); ++itg)
+                            {
+                                string currentSequenceGroupName = itg->second->element->getAddress();
+                                for (auto &p : itg->second->pairs)
+                                {
+                                    string currentSequenceName = p->element->getAddress();
+                                    if (currentSequenceGroupName == sequenceGroupName && currentSequenceName == sequenceName)
+                                    {
+                                        p->sequence->setFromValues(sequenceValues);
+                                        p->sequence->setActive(sequenceActive);
+                                    }
+                                }
+                            }
+                        }
+                        while(xml.setToSibling());
+                        xml.setToParent();
+                    }
+                }
+                while(xml.setToSibling());
+                xml.setToParent();
+            }
+            xml.setToParent();
+        }
+        xml.setToParent();
+    }
 }

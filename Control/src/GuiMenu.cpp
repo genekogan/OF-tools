@@ -22,12 +22,6 @@ GuiMenu::GuiMenu(string name, bool multipleChoice, bool autoClose) : GuiMultiEle
 GuiMenu::~GuiMenu()
 {
     clearToggles();
-    ///
-    //
-    //
-    //
-    //
-    //
 }
 
 void GuiMenu::setupMenu(string name, vector<string> & choices, bool multipleChoice, bool autoClose)
@@ -45,10 +39,10 @@ void GuiMenu::setupMenu(string name, vector<string> & choices, bool multipleChoi
 
 GuiToggle * GuiMenu::addToggle(Parameter<bool> *parameter)
 {
-    int idx = 2;
+    int idx = 1;
     string newToggleName = parameter->getName();
     while (menuElements.count(newToggleName) != 0) {
-        newToggleName = parameter->getName()+"("+ofToString(idx++)+")";
+        newToggleName = parameter->getName()+"("+ofToString(++idx)+")";
     }
     parameter->setName(newToggleName);
     
@@ -145,42 +139,26 @@ void GuiMenu::clearToggles()
 {
     vector<Parameter<bool>*>::iterator itp = parameters.begin();
     map<string, MenuElement*>::iterator itm = menuElements.begin();
-    while (itm != menuElements.end())
-    {
-        
-        
-        //
-        //
-        // delete leads to runtime error....
-        //
-        //
-        
-        
-        //delete itm->second;
-        
-        
-        menuElements.erase(itm++);
-    }
+    vector<GuiElement*>::iterator it = elements.begin();
+
     while (itp != parameters.end())
     {
-        delete *itp;
         parameters.erase(itp);
     }
-    
-    
-    vector<GuiElement*>::iterator ite = elements.begin();
-    while (ite != elements.end())
+    while (itm != menuElements.end())
     {
-        //delete *ite;
-        elements.erase(ite);
+        delete itm->second;
+        menuElements.erase(itm++);
     }
-    elements.clear();
-    
-    
-    
+    while (it != elements.end())
+    {
+        ofNotifyEvent(removeElementEvent, *it, this);
+        delete *it;
+        elements.erase(it);
+    }
     parameters.clear();
     menuElements.clear();
-    
+    elements.clear();
     resetGuiPositions();
 }
 

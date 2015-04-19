@@ -28,35 +28,31 @@ struct GuiSliderEventArgs : public GuiSliderEventArgsBase
 class GuiSliderBase : public GuiElement
 {
 public:
-    
-    //void addElementToTouchOscLayout(TouchOscPage *page, float *y);
-    
     GuiSliderBase(string name);
-    virtual ~GuiSliderBase() { }
-    
-    virtual bool mouseMoved(int mouseX, int mouseY);
-    virtual bool mousePressed(int mouseX, int mouseY);
-    virtual bool mouseReleased(int mouseX, int mouseY);
-    virtual bool mouseDragged(int mouseX, int mouseY);
-    
-    virtual bool keyPressed(int key);
+    virtual ~GuiSliderBase();
     
     virtual void setValue(float sliderValue);
     float getValue() {return sliderValue;}
     
     void lerpTo(float nextValue, int numFrames);
     
-    void setValueFromSequence(Sequence &sequence);
-    void setSequenceFromValue(Sequence &sequence, int column);
-    
     virtual void update();
     virtual void draw();
     
+    virtual bool mouseMoved(int mouseX, int mouseY);
+    virtual bool mousePressed(int mouseX, int mouseY);
+    virtual bool mouseReleased(int mouseX, int mouseY);
+    virtual bool mouseDragged(int mouseX, int mouseY);
+    virtual bool keyPressed(int key);
+
     void getXml(ofXml &xml);
     void setFromXml(ofXml &xml);
     
 protected:
     
+    void setValueFromSequence(Sequence &sequence);
+    void setSequenceFromValue(Sequence &sequence, int column);
+
     void setEditing(bool editing);
     void keyboardEdit(int key);
     
@@ -65,10 +61,11 @@ protected:
     
     virtual void setSequenceFromExplicitValue(Sequence &sequence, int column, float value) { }
     virtual void setParameterValueFromString(string valueString) { }
-    virtual string getParameterValueString() { }
     virtual void updateValueString() { }
+    virtual string getParameterValueString() { }
     
     float sliderValue;
+    bool changed;
     string valueString, valueStringNext;
     float lerpPrevValue, lerpNextValue;;
     int lerpFrame, lerpNumFrames;
@@ -83,7 +80,6 @@ template<typename T>
 class GuiSlider : public GuiSliderBase
 {
 public:
-
     GuiSlider(Parameter<T> *parameter);
     GuiSlider(string name, T *value, T min, T max);
     GuiSlider(string name, T min, T max);
@@ -99,14 +95,14 @@ public:
     
     ~GuiSlider();
     
-    void update();
-    
     void setValue(float sliderValue);
     void setParameterValue(T value);
     
     T getParameterValue() {return parameter->get();}
     void getParameters(vector<ParameterBase*> & parameters);
 
+    void update();
+    
     ofEvent<GuiSliderEventArgs<T> > sliderEvent;
     
 private:
@@ -116,16 +112,19 @@ private:
     
     void setSequenceFromExplicitValue(Sequence &sequence, int column, float value);
     void setParameterValueFromString(string valueString);
-    string getParameterValueString() {return ofToString(parameter->get(), 2);}
-    void updateValueString();
     void adjustSliderValue();
-    void updateParameterOscAddress();
+    void updateValueString();
+    string getParameterValueString() {return ofToString(parameter->get(), 2);}
     
+    void updateParameterOscAddress();
+    string getOscAddress() {return parameter->getOscAddress(); }
+    void sendOsc(ofxOscMessage &msg);
+    void receiveOsc(ofxOscMessage &msg) {setValue(msg.getArgAsFloat(0));}
+    bool valueChanged();
     void addElementToTouchOscLayout(TouchOscPage *page, float *y);
 
     Parameter<T> *parameter;
     T previous;
-    
     Sequence *sequence;
 };
 
@@ -179,19 +178,12 @@ template<typename T>
 GuiSlider<T>::~GuiSlider<T>()
 {
     delete parameter;
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
 }
 
 template<typename T>
 void GuiSlider<T>::setValue(float sliderValue)
 {
-    this->sliderValue = sliderValue;
+    GuiSliderBase::setValue(sliderValue);
     parameter->set(sliderValue * parameter->getMax() + (1.0 - sliderValue) * parameter->getMin());
     updateValueString();
     adjustSliderValue();
@@ -265,17 +257,40 @@ void GuiSlider<T>::updateParameterOscAddress()
 }
 
 template<typename T>
+void GuiSlider<T>::sendOsc(ofxOscMessage &msg)
+{
+    msg.addFloatArg(parameter->get());
+}
+
+template<>
+inline void GuiSlider<int>::sendOsc(ofxOscMessage &msg)
+{
+    msg.addIntArg(parameter->get());
+}
+
+template<typename T>
+bool GuiSlider<T>::valueChanged()
+{
+    if (changed)
+    {
+        changed = false;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+template<typename T>
 void GuiSlider<T>::addElementToTouchOscLayout(TouchOscPage *page, float *y)
 {
-    TouchOscFader *fader = page->addFader(getName(), 0.01, *y, 0.9, 1);
+    TouchOscFader *fader = page->addFader(getName(), 0.01, *y, 0.98, 1);
+    TouchOscLabel *label = page->addLabel(getName(), 0.01, *y, 0.98, 1);
     fader->setOscAddress(parameter->getOscAddress());
-    fader->setCentered(false);
-    fader->setInverted(false);
-    fader->setMin(parameter->getMin());
-    fader->setMax(parameter->getMax());
-    fader->setResponseRelative(false);
     fader->setType(0);
-    *y += 1.05;
+    label->setType(0);
+    label->setColor(RED);
+    *y += 1.04;
 }
 
 template<typename T>

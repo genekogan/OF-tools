@@ -186,13 +186,6 @@ GuiRangeSlider<T>::~GuiRangeSlider<T>()
 {
     delete pLow;
     delete pHigh;
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
 }
 
 template<typename T>

@@ -1,20 +1,22 @@
 #include "OscManagerPanel.h"
 
-OscManagerPanel::ElementOscGroup::ElementOscGroup(GuiElement *element, OscManager *osc)
+
+
+OscManagerPanel::ElementOsc::ElementOsc(GuiElement *element, OscManager *osc)
 {
     this->element = element;
     this->osc = osc;
     address = element->getAddress();
     ofStringReplace(address, " ", "_");
-    tAddress = new GuiTextBox("address", new string(address), this, &ElementOscGroup::eventSetAddress);
+    tAddress = new GuiTextBox("address", new string(address), this, &ElementOsc::eventSetAddress);
     tAddress->setAutoUpdate(false);
     tAddress->setAutoDraw(false);
-    tSend = new GuiToggle("s", &sending, this, &ElementOscGroup::eventSetSending);
+    tSend = new GuiToggle("s", &sending, this, &ElementOsc::eventSetSending);
     tSend->setAutoUpdate(false);
     tSend->setAutoDraw(false);
 }
 
-void OscManagerPanel::ElementOscGroup::updateAddress()
+void OscManagerPanel::ElementOsc::updateAddress()
 {
     vector<ParameterBase*> parameters;
     element->getParameters(parameters);
@@ -23,7 +25,7 @@ void OscManagerPanel::ElementOscGroup::updateAddress()
     }
 }
 
-void OscManagerPanel::ElementOscGroup::eventSetAddress(GuiTextBoxEventArgs &evt)
+void OscManagerPanel::ElementOsc::eventSetAddress(GuiTextBoxEventArgs &evt)
 {
     address = evt.textBox->getValue();
     ofStringReplace(address, " ", "_");
@@ -33,19 +35,31 @@ void OscManagerPanel::ElementOscGroup::eventSetAddress(GuiTextBoxEventArgs &evt)
     }
 }
 
-void OscManagerPanel::ElementOscGroup::eventSetSending(GuiButtonEventArgs &evt)
+void OscManagerPanel::ElementOsc::eventSetSending(GuiButtonEventArgs &evt)
 {
     updateAddress();
-    vector<ParameterBase*> parameters;
-    element->getParameters(parameters);
-    for (auto p : parameters)
+    if (sending) {
+        osc->addElementToSender(element);
+    }
+    else {
+        osc->removeElementFromSender(element);
+    }
+    
+}
+
+OscManagerPanel::ElementOscGroup::ElementOscGroup(GuiElement *element, OscManager *osc)
+{
+    this->element = element;
+    this->osc = osc;
+    
+    if (element->isMultiElement())
     {
-        if (sending) {
-            osc->addParameterToSender(p);
+        for (auto e : ((GuiMultiElement *) element)->getElements()) {
+            elements.push_back(new ElementOsc(e, osc));
         }
-        else {
-            osc->removeParameterFromSender(p);
-        }
+    }
+    else {
+        elements.push_back(new ElementOsc(element, osc));
     }
 }
 
@@ -102,6 +116,24 @@ void OscManagerPanel::removeElement(GuiElement* & element)
             groups.erase(it++);
             setupGuiPositions();
         }
+        else
+        {
+            vector<ElementOsc*>::iterator ite = it->second->elements.begin();
+            while (ite != it->second->elements.end())
+            {
+                if ((*ite)->element == element)
+                {
+                    delete *ite;
+                    it->second->elements.erase(ite);
+                    setupGuiPositions();
+                }
+                else
+                {
+                    ++ite;
+                }
+            }
+            ++it;
+        }
     }
 }
 
@@ -118,26 +150,28 @@ void OscManagerPanel::setupGuiPositions()
     {
         if (it->second->element->getCollapsed() || getCollapsed())
         {
-            it->second->tAddress->setRectangle(0, 0, 0, 0);
-            it->second->tSend->setRectangle(0, 0, 0, 0);
+            for (auto e : it->second->elements)
+            {
+                e->tAddress->setRectangle(ofRectangle(0, 0, 0, 0));
+                e->tSend->setRectangle(ofRectangle(0, 0, 0, 0));
+            }
         }
         else
         {
-            ofRectangle e;
-            if (it->second->element->isMultiElement() &&
-                ((GuiMultiElement *) it->second->element)->getElements().size() > 0) {
-                
-                e = ((GuiMultiElement *) it->second->element)->getElements()[0]->getRectangle();
+            for (auto e : it->second->elements)
+            {
+                e->tAddress->setPosition(rectangle.x, e->element->getRectangle().y);
+                e->tAddress->setSize(oscManagerWidth - 20, e->element->getRectangle().height);
+                e->tSend->setPosition(rectangle.x + oscManagerWidth - 16, e->element->getRectangle().y);
+                e->tSend->setSize(12, e->element->getRectangle().height);
             }
-            else {
-                e = it->second->element->getRectangle();
-            }
-            it->second->tAddress->setPosition(rectangle.x, e.y);
-            it->second->tAddress->setSize(oscManagerWidth - 20, e.height);
-            it->second->tSend->setPosition(rectangle.x + oscManagerWidth - 16, e.y);
-            it->second->tSend->setSize(12, e.height);
         }
     }
+}
+
+void OscManagerPanel::eventMakeTouchOscLayout(GuiButtonEventArgs &evt)
+{
+    panel->makeTouchOscLayout("OSC "+panel->getName());
 }
 
 void OscManagerPanel::update()
@@ -146,8 +180,11 @@ void OscManagerPanel::update()
     map<GuiElement*,ElementOscGroup*>::iterator it = groups.begin();
     for (; it != groups.end(); ++it)
     {
-        it->second->tAddress->update();
-        it->second->tSend->update();
+        for (auto e : it->second->elements)
+        {
+            e->tAddress->update();
+            e->tSend->update();
+        }
     }
 }
 
@@ -164,8 +201,11 @@ void OscManagerPanel::draw()
     {
         if (it->second->element->getActive())
         {
-            it->second->tAddress->draw();
-            it->second->tSend->draw();
+            for (auto e : it->second->elements)
+            {
+                e->tAddress->draw();
+                e->tSend->draw();
+            }
         }
     }
 }
@@ -181,8 +221,11 @@ bool OscManagerPanel::mouseMoved(int mouseX, int mouseY)
     {
         if (it->second->element->getActive())
         {
-            it->second->tAddress->mouseMoved(mouseX, mouseY);
-            it->second->tSend->mouseMoved(mouseX, mouseY);
+            for (auto e : it->second->elements)
+            {
+                e->tAddress->mouseMoved(mouseX, mouseY);
+                e->tSend->mouseMoved(mouseX, mouseY);
+            }
         }
     }
     return mouseOver;
@@ -197,8 +240,11 @@ bool OscManagerPanel::mousePressed(int mouseX, int mouseY)
     {
         if (it->second->element->getActive())
         {
-            if      (it->second->tAddress->mousePressed(mouseX, mouseY)) return true;
-            else if (it->second->tSend->mousePressed(mouseX, mouseY)) return true;
+            for (auto e : it->second->elements)
+            {
+                if      (e->tAddress->mousePressed(mouseX, mouseY)) return true;
+                else if (e->tSend->mousePressed(mouseX, mouseY)) return true;
+            }
         }
     }
     
@@ -214,8 +260,11 @@ bool OscManagerPanel::mouseDragged(int mouseX, int mouseY)
     {
         if (it->second->element->getActive())
         {
-            if      (it->second->tAddress->mouseDragged(mouseX, mouseY)) return true;
-            else if (it->second->tSend->mouseDragged(mouseX, mouseY)) return true;
+            for (auto e : it->second->elements)
+            {
+                if      (e->tAddress->mouseDragged(mouseX, mouseY)) return true;
+                else if (e->tSend->mouseDragged(mouseX, mouseY)) return true;
+            }
         }
     }
     return false;
@@ -230,8 +279,11 @@ bool OscManagerPanel::mouseReleased(int mouseX, int mouseY)
     {
         if (it->second->element->getActive())
         {
-            if      (it->second->tAddress->mouseReleased(mouseX, mouseY)) return true;
-            else if (it->second->tSend->mouseReleased(mouseX, mouseY)) return true;
+            for (auto e : it->second->elements)
+            {
+                if      (e->tAddress->mouseReleased(mouseX, mouseY)) return true;
+                else if (e->tSend->mouseReleased(mouseX, mouseY)) return true;
+            }
         }
     }
     return false;
@@ -248,8 +300,11 @@ bool OscManagerPanel::keyPressed(int key)
         {
             if (it->second->element->getActive())
             {
-                if      (it->second->tAddress->keyPressed(key)) return true;
-                else if (it->second->tSend->keyPressed(key)) return true;
+                for (auto e : it->second->elements)
+                {
+                    if      (e->tAddress->keyPressed(key)) return true;
+                    else if (e->tSend->keyPressed(key)) return true;
+                }
             }
         }
     }

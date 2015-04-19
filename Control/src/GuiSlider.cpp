@@ -3,15 +3,22 @@
 
 GuiSliderBase::GuiSliderBase(string name) : GuiElement(name)
 {
+    sliderValue = 0.5;
     lerpFrame = 0;
     lerpNumFrames = 0;
+    changed = false;
+    toUpdateValueString = false;
+}
+
+GuiSliderBase::~GuiSliderBase()
+{
     
-    // initialize other vars?
 }
 
 void GuiSliderBase::setValue(float sliderValue)
 {
     this->sliderValue = sliderValue;
+    changed = true;
 }
 
 void GuiSliderBase::lerpTo(float nextValue, int numFrames)

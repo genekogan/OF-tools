@@ -21,13 +21,6 @@ GuiTextBox::GuiTextBox(string name) : GuiElement(name)
 GuiTextBox::~GuiTextBox()
 {
     delete parameter;
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
 }
 
 void GuiTextBox::setupTextBox()
@@ -116,7 +109,11 @@ bool GuiTextBox::mousePressed(int mouseX, int mouseY)
         cursorPosition = ofClamp(round((float) (mouseX - (rectangle.x + (leftJustified ? 4 : 0.5 * (rectangle.width - stringWidth)))) / GUI_DEFAULT_CHAR_WIDTH), 0, parameter->get().length());
         return true;
     }
-    return false;
+    else
+    {
+        editing = false;
+        return false;
+    }
 }
 
 bool GuiTextBox::keyPressed(int key)

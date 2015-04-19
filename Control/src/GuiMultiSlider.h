@@ -66,7 +66,7 @@ public:
     
     ofEvent<GuiMultiSliderEventArgs<T> > sliderEvent;
     
-    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    //void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
 
     
@@ -77,11 +77,19 @@ private:
     void updateParameterOscAddress();
     void sliderChanged(GuiSliderEventArgs<float> &e);
     
+    
+//    string getOscAddress() { }
+//    void sendOsc(ofxOscMessage &msg) { }
+//    void receiveOsc(ofxOscMessage &msg) { }
+//    bool valueChanged() {}
+//
+    
+    
     Parameter<T> *parameter;
 };
 
 
-
+/*
 template<typename T>
 void GuiMultiSlider<T>::addElementToTouchOscLayout(TouchOscPage *page, float *y)
 {
@@ -100,6 +108,7 @@ void GuiMultiSlider<T>::addElementToTouchOscLayout(TouchOscPage *page, float *y)
 
     *y += (elements.size() + 0.05);
 }
+ */
 
 
 

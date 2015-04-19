@@ -1,0 +1,244 @@
+<Preset>
+	<Elements>
+		<Element>
+			<Address>myPanel/slider w/ notifier</Address>
+			<Element>
+				<Address>myPanel/slider w/ notifier/slider w/ notifier.x</Address>
+				<Value>0.0765306</Value>
+			</Element>
+			<Element>
+				<Address>myPanel/slider w/ notifier/slider w/ notifier.y</Address>
+				<Value>0.831633</Value>
+			</Element>
+		</Element>
+		<Element>
+			<Address>myPanel/color w/ notifier</Address>
+			<Element>
+				<Address>myPanel/color w/ notifier/color w/ notifier.r</Address>
+				<Value>0.108696</Value>
+			</Element>
+			<Element>
+				<Address>myPanel/color w/ notifier/color w/ notifier.g</Address>
+				<Value>0.967391</Value>
+			</Element>
+			<Element>
+				<Address>myPanel/color w/ notifier/color w/ notifier.b</Address>
+				<Value>0.157609</Value>
+			</Element>
+			<Element>
+				<Address>myPanel/color w/ notifier/color w/ notifier.a</Address>
+				<Value>0.108696</Value>
+			</Element>
+		</Element>
+		<Element>
+			<Address>myPanel/float slider</Address>
+			<Value>0.438775</Value>
+		</Element>
+		<Element>
+			<Address>myPanel/int slider</Address>
+			<Value>0.571429</Value>
+		</Element>
+		<Element>
+			<Address>myPanel/double slider</Address>
+			<Value>0.831633</Value>
+		</Element>
+		<Element>
+			<Address>myPanel/widget inside panel</Address>
+			<Elements>
+				<Element>
+					<Address>myPanel/widget inside panel/button</Address>
+					<Value>0</Value>
+				</Element>
+				<Element>
+					<Address>myPanel/widget inside panel/another toggle</Address>
+					<Value>1</Value>
+				</Element>
+				<Element>
+					<Address>myPanel/widget inside panel/multi choice menu</Address>
+					<Element>
+						<Address>myPanel/widget inside panel/multi choice menu/kamusta mundo</Address>
+						<Value>0</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/multi choice menu/xin chao the gioi</Address>
+						<Value>1</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/multi choice menu/namaste varlda</Address>
+						<Value>1</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/multi choice menu/suesday piphoplok</Address>
+						<Value>1</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/multi choice menu/suwati lok</Address>
+						<Value>0</Value>
+					</Element>
+				</Element>
+				<Element>
+					<Address>myPanel/widget inside panel/menu</Address>
+					<Element>
+						<Address>myPanel/widget inside panel/menu/new york</Address>
+						<Value>0</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/menu/los angeles</Address>
+						<Value>1</Value>
+					</Element>
+					<Element>
+						<Address>myPanel/widget inside panel/menu/chicago</Address>
+						<Value>0</Value>
+					</Element>
+				</Element>
+			</Elements>
+		</Element>
+		<Element>
+			<Address>myPanel/pad</Address>
+			<Min>0, 0, 0</Min>
+			<Max>20, 12, 0</Max>
+			<Points>
+				<Point>0.25, 0.666667, 0</Point>
+				<Point>0.346939, 0.35, 0</Point>
+				<Point>0.831633, 0.585, 0</Point>
+				<Point>0.627551, 0.965, 0</Point>
+			</Points>
+		</Element>
+	</Elements>
+	<Sequencer>
+		<SequencerSets/>
+		<Current>
+			<Name>myPanel sequencer</Name>
+			<Active>0</Active>
+			<Bpm>120</Bpm>
+			<Smooth>0</Smooth>
+			<Lerp>1</Lerp>
+			<NumCols>8</NumCols>
+			<SequenceGroup>
+				<Name>myPanel/slider w/ notifier</Name>
+				<Sequence>
+					<Name>myPanel/slider w/ notifier/slider w/ notifier.x</Name>
+					<Values>{0.922456, 0.725599, 0.136141, 0.129455, 0.756646, 0.940795, 0.935494, 0.851807}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/slider w/ notifier/slider w/ notifier.y</Name>
+					<Values>{0.320578, 0.962667, 0.542798, 0.799117, 0.765942, 0.186658, 0.15258, 0.416663}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/color w/ notifier</Name>
+				<Sequence>
+					<Name>myPanel/color w/ notifier/color w/ notifier.r</Name>
+					<Values>{0.855152, 0.540613, 0.088468, 0.881517, 0.660578, 0.332375, 0.233237, 0.0132308}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/color w/ notifier/color w/ notifier.g</Name>
+					<Values>{0.370191, 0.808396, 0.705629, 0.513934, 0.681627, 0.0994256, 0.0460037, 0.183955}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/color w/ notifier/color w/ notifier.b</Name>
+					<Values>{0.738437, 0.909565, 0.051603, 0.29225, 0.845031, 0.440379, 0.442669, 0.930021}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/color w/ notifier/color w/ notifier.a</Name>
+					<Values>{0.865421, 0.133719, 0.413622, 0.75145, 0.613055, 0.617027, 0.370799, 0.0202579}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/widget inside panel/button</Name>
+				<Sequence>
+					<Name>myPanel/widget inside panel/button</Name>
+					<Values>{1, 0, 1, 0, 1, 1, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/widget inside panel/another toggle</Name>
+				<Sequence>
+					<Name>myPanel/widget inside panel/another toggle</Name>
+					<Values>{1, 0, 1, 0, 1, 0, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/widget inside panel/multi choice menu</Name>
+				<Sequence>
+					<Name>myPanel/widget inside panel/multi choice menu/kamusta mundo</Name>
+					<Values>{1, 1, 1, 1, 0, 0, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/multi choice menu/xin chao the gioi</Name>
+					<Values>{1, 0, 1, 0, 0, 0, 0, 0}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/multi choice menu/namaste varlda</Name>
+					<Values>{1, 0, 0, 0, 0, 0, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/multi choice menu/suesday piphoplok</Name>
+					<Values>{1, 0, 0, 0, 0, 1, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/multi choice menu/suwati lok</Name>
+					<Values>{0, 0, 1, 1, 0, 1, 1, 0}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/widget inside panel/menu</Name>
+				<Sequence>
+					<Name>myPanel/widget inside panel/menu/new york</Name>
+					<Values>{0, 0, 1, 0, 1, 0, 0, 0}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/menu/los angeles</Name>
+					<Values>{1, 1, 0, 0, 0, 0, 0, 1}</Values>
+					<Active>1</Active>
+				</Sequence>
+				<Sequence>
+					<Name>myPanel/widget inside panel/menu/chicago</Name>
+					<Values>{0, 0, 0, 1, 0, 1, 1, 0}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/float slider</Name>
+				<Sequence>
+					<Name>myPanel/float slider</Name>
+					<Values>{0.697623, 0.947372, 0.478444, 0.212025, 0.512312, 0.43496, 0.364549, 0.966551}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/int slider</Name>
+				<Sequence>
+					<Name>myPanel/int slider</Name>
+					<Values>{0.825228, 0.607481, 0.930996, 0.254026, 0.418998, 0.0928265, 0.1353, 0.99461}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/double slider</Name>
+				<Sequence>
+					<Name>myPanel/double slider</Name>
+					<Values>{0.408218, 0.926223, 0.0301334, 0.45161, 0.206274, 0.845374, 0.205439, 0.808171}</Values>
+					<Active>1</Active>
+				</Sequence>
+			</SequenceGroup>
+			<SequenceGroup>
+				<Name>myPanel/pad</Name>
+			</SequenceGroup>
+		</Current>
+	</Sequencer>
+</Preset>

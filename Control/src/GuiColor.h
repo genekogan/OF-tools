@@ -2,7 +2,6 @@
 
 #include "ofBitmapFont.h"
 #include "Parameter.h"
-#include "GuiElement.h"
 #include "GuiSlider.h"
 #include "GuiMultiElement.h"
 
@@ -25,7 +24,6 @@ struct GuiColorEventArgs
 class GuiColor : public GuiMultiElement
 {
 public:
-    
     GuiColor(Parameter<ofFloatColor> *parameter);
     GuiColor(string name, ofFloatColor *color);
     GuiColor(string name);
@@ -41,9 +39,9 @@ public:
     
     ~GuiColor();
     
+    void getParameters(vector<ParameterBase*> & parameters);
     void setParameterValue(ofFloatColor color) {parameter->set(color);}
     ofFloatColor getParameterValue() {return parameter->get();}
-    void getParameters(vector<ParameterBase*> & parameters);
     
     void update();
     

@@ -72,7 +72,6 @@ protected:
     void mousePressed(ofMouseEventArgs &evt);
     void mouseDragged(ofMouseEventArgs &evt);
     void mouseReleased(ofMouseEventArgs &evt);
-    
     void keyPressed(ofKeyEventArgs &evt);
     
     void update(ofEventArgs &data);

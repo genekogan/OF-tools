@@ -45,31 +45,35 @@ public:
     
     bool getValue();
     void setValue(bool value, bool sendChangeNotification=false);
-    bool isDiscrete() {return true;}
 
     void lerpTo(float nextValue, int numFrames);
     
-    void getParameters(vector<ParameterBase*> & parameters);
-
     virtual void update();
     virtual void draw();
-
-    void setupGuiPositions();
-    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
-
-    void getXml(ofXml &xml);
-    void setFromXml(ofXml &xml);
     
     ofEvent<GuiButtonEventArgs> buttonEvent;
     
 protected:
     
+    bool isDiscrete() {return true;}
+
     void initializeButton();
+    void getParameters(vector<ParameterBase*> & parameters);
+    void setupGuiPositions();
     void updateParameterOscAddress();
 
     void setValueFromSequence(Sequence &sequence);
     void setSequenceFromValue(Sequence &sequence, int column);
     void setSequenceFromExplicitValue(Sequence &sequence, int column, float value);
+
+    virtual void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    string getOscAddress();
+    void sendOsc(ofxOscMessage &msg);
+    void receiveOsc(ofxOscMessage &msg);
+    bool valueChanged();
+
+    void getXml(ofXml &xml);
+    void setFromXml(ofXml &xml);
 
     Parameter<bool> *parameter;
     float stringWidth, stringHeight;
@@ -77,6 +81,7 @@ protected:
     
     float lerpNextValue;;
     int lerpFrame, lerpNumFrames;
+    bool changed;
 };
 
 
@@ -122,6 +127,8 @@ public:
     template <typename L, typename M>
     GuiButton(string name, L *listener, M method) : GuiButtonBase(name, listener, method) { }
     
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    
     bool mousePressed(int mouseX, int mouseY);
     bool mouseReleased(int mouseX, int mouseY);
     bool keyPressed(int key);
@@ -144,6 +151,8 @@ public:
     
     template <typename L, typename M>
     GuiToggle(string name, L *listener, M method) : GuiButtonBase(name, listener, method) { }
+    
+    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
     
     bool mousePressed(int mouseX, int mouseY);
     bool keyPressed(int key);

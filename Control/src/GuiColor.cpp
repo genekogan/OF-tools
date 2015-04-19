@@ -38,8 +38,7 @@ void GuiColor::setupColor()
     
     setCollapsible(true);
     setHeader(getName());
-
-    parameter->setOscAddress(getAddress());
+    updateParameterOscAddress();
 }
 
 void GuiColor::sliderChanged(GuiSliderEventArgs<float> &e)

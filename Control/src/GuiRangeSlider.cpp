@@ -3,8 +3,11 @@
 
 GuiRangeSliderBase::GuiRangeSliderBase(string name) : GuiElement(name)
 {
+    sliderLow = 0.333;
+    sliderHigh = 0.667;
     lerpFrame = 0;
     lerpNumFrames = 0;
+    toUpdateValueString = false;
 }
 
 void GuiRangeSliderBase::selectSlider(float sliderValue)

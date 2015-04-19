@@ -24,8 +24,6 @@ class GuiWidget : public GuiMultiElement
 public:
     GuiWidget(string name);
     GuiWidget();
-    
-    vector<GuiElement*> & getElementGroups() {return elementGroups;}
 
     GuiWidget * addWidget(GuiWidget *newWidget);
     GuiWidget * addWidget(string widgetName);
@@ -127,9 +125,10 @@ public:
     virtual void createOscManager(OscManager *osc) {}
     void makeTouchOscLayout(string filename);
 
+    vector<GuiElement*> & getElementGroups() {return elementGroups;}
     void getParameters(vector<ParameterBase*> & parameters);
     void setupGuiPositions();
-    void addElementToTouchOscLayout(TouchOscPage *page, float *y);
+    void addElementToTouchOscLayout(GuiElement *element, TouchOscPage *page, float *y);
     
     virtual void getXml(ofXml &xml);
     virtual void setFromXml(ofXml &xml);
@@ -138,6 +137,8 @@ private:
     
     void initializeElement(GuiElement *element, bool sendNotification=true);
     void updateParameterOscAddress();
+    void eventAddElement(GuiElement * &element);
+    void eventRemoveElement(GuiElement * &element);
     void widgetNewElementAdded(GuiElement* & newElement);
     
     vector<GuiElement*> elementGroups;

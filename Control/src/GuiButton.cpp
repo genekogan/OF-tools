@@ -21,13 +21,6 @@ GuiButtonBase::GuiButtonBase(string name) : GuiElement(name)
 GuiButtonBase::~GuiButtonBase()
 {
     delete parameter;
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
 }
 
 void GuiButtonBase::initializeButton()
@@ -37,6 +30,7 @@ void GuiButtonBase::initializeButton()
     lerpNumFrames = 0;
     lerpNextValue = 0.0;
     setLeftJustified(false);
+    changed = false;
 }
 
 void GuiButtonBase::updateParameterOscAddress()
@@ -47,8 +41,9 @@ void GuiButtonBase::updateParameterOscAddress()
 void GuiButtonBase::setValue(bool value, bool sendChangeNotification)
 {
     bool previous = parameter->get();
+    changed = (value != previous);
     parameter->set(value);
-    if (sendChangeNotification && (value != previous))
+    if (sendChangeNotification && changed)
     {
         GuiButtonEventArgs args(this, value);
         ofNotifyEvent(buttonEvent, args, this);
@@ -135,14 +130,6 @@ void GuiButtonBase::setupGuiPositions()
     stringHeight = ofBitmapStringGetBoundingBox(display, 0, 0).height;
 }
 
-void GuiButtonBase::addElementToTouchOscLayout(TouchOscPage *page, float *y)
-{
-    TouchOscToggle *toggle = page->addToggle(getName(), 0.05, *y, 0.9, 1);
-    toggle->setLocalOff(false);
-    toggle->setOscAddress(parameter->getOscAddress());
-    *y += 1.05;
-}
-
 void GuiButtonBase::getXml(ofXml &xml)
 {
     xml.addValue<bool>("Value", getValue());
@@ -151,6 +138,57 @@ void GuiButtonBase::getXml(ofXml &xml)
 void GuiButtonBase::setFromXml(ofXml &xml)
 {
     setValue(xml.getValue<bool>("Value"), true);
+}
+
+void GuiButton::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+    TouchOscButton *button = page->addButton(getName(), 0.05, *y, 0.9, 1);
+    TouchOscLabel *label = page->addLabel(getName(), 0.05, *y, 0.9, 1);
+    button->setOscAddress(parameter->getOscAddress());
+    label->setType(0);
+    label->setColor(RED);
+    *y += 1.04;
+}
+
+void GuiToggle::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+    TouchOscToggle *toggle = page->addToggle(getName(), 0.05, *y, 0.9, 1);
+    TouchOscLabel *label = page->addLabel(getName(), 0.05, *y, 0.9, 1);
+    toggle->setOscAddress(parameter->getOscAddress());
+    label->setType(0);
+    label->setColor(RED);
+    *y += 1.05;
+}
+
+void GuiButtonBase::addElementToTouchOscLayout(TouchOscPage *page, float *y)
+{
+
+}
+
+string GuiButtonBase::getOscAddress()
+{
+    return parameter->getOscAddress();
+}
+
+void GuiButtonBase::sendOsc(ofxOscMessage &msg)
+{
+    msg.addIntArg(parameter->get() ? 1 : 0);
+}
+
+void GuiButtonBase::receiveOsc(ofxOscMessage &msg)
+{
+    setValue(msg.getArgAsInt32(0) > 0.5);
+}
+
+bool GuiButtonBase::valueChanged()
+{
+    if (changed) {
+        changed = false;
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 bool GuiButton::mousePressed(int mouseX, int mouseY)

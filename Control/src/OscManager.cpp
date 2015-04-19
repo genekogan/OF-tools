@@ -3,13 +3,56 @@
 
 OscManager::OscManager()
 {
-    // initiate vars
+    panel.setName("OSC");
+    panel.addToggle("send", &sending, this, &OscManager::eventToggleSending);
+    panel.addTextBox("hostOut", &hostOut, this, &OscManager::eventEditHostOut);
+    panel.addTextBox("portOut", &portOutS, this, &OscManager::eventEditPortOut);
+    panel.addToggle("receive", &receiving, this, &OscManager::eventToggleReceiving);
+    panel.addTextBox("portIn", &portInS, this, &OscManager::eventEditPortIn);
+    
+    portIn = 9000;
+    portOut = 9001;
+    portInS = "9000";
+    portOutS = "9001";
+    hostOut = "localhost";
 }
 
 OscManager::~OscManager()
 {
 
 }
+
+void OscManager::eventToggleSending(GuiButtonEventArgs &evt)
+{
+    if (sending) {
+        setupSender(hostOut, portOut);
+    }
+}
+
+void OscManager::eventToggleReceiving(GuiButtonEventArgs &evt)
+{
+    if (receiving) {
+        setupReceiver(portIn);
+    }
+}
+
+void OscManager::eventEditHostOut(GuiTextBoxEventArgs &evt)
+{
+    sending = false;
+}
+
+void OscManager::eventEditPortOut(GuiTextBoxEventArgs &evt)
+{
+    sending = false;
+    portOut = ofToInt(portOutS);
+}
+
+void OscManager::eventEditPortIn(GuiTextBoxEventArgs &evt)
+{
+    receiving = false;
+    portIn = ofToInt(portInS);
+}
+
 
 bool OscManager::setupSender(string host, int portOut)
 {
@@ -21,7 +64,9 @@ bool OscManager::setupSender(string host, int portOut)
         sending = true;
         ofLog(OF_LOG_NOTICE, "Connect OSC Sender "+host+", port "+ofToString(portOut));
     }
-    catch(runtime_error &e) {
+    catch(runtime_error &e)
+    {
+        sending = false;
         ofLog(OF_LOG_ERROR, ofToString(e.what()));
     }
     return sending;
@@ -36,7 +81,9 @@ bool OscManager::setupReceiver(int portIn)
         receiving = true;
         ofLog(OF_LOG_NOTICE, "Connect OSC Receiver, port "+ofToString(portIn));
     }
-    catch(runtime_error &e) {
+    catch(runtime_error &e)
+    {
+        receiving = false;
         ofLog(OF_LOG_ERROR, ofToString(e.what()));
     }
     return receiving;
@@ -45,39 +92,51 @@ bool OscManager::setupReceiver(int portIn)
 void OscManager::addWidget(GuiWidget & widget)
 {
     widget.createOscManager(this);
-    vector<ParameterBase*> parameters;
-    widget.getParameters(parameters);
-    for (auto p : parameters)
-    {
-        if (rParameters.count(p->getOscAddress()) == 0) {
-            rParameters[p->getOscAddress()] = p;
-        }
-        else {
-            ofLog(OF_LOG_WARNING, "Parameter at "+p->getOscAddress()+" already registered with receiver");
-        }
+    for (auto element : widget.getElements()) {
+        addElementToOscManager(element);
     }
 }
 
-void OscManager::addParameterToSender(ParameterBase *parameter)
+void OscManager::addElementToOscManager(GuiElement * element)
 {
-    vector<ParameterBase*>::iterator it = sParameters.begin();
+    if (element->isMultiElement())
+    {
+        for (auto e : ((GuiMultiElement *) element)->getElements()) {
+            addElementToOscManager(e);
+        }
+    }
+    else
+    {
+        if (rParameters.count(element->getOscAddress()) == 0) {
+            rParameters[element->getOscAddress()] = element;
+        }
+        else {
+            ofLog(OF_LOG_WARNING, "Parameter at "+element->getOscAddress()+" already registered with receiver");
+        }
+
+    }
+}
+
+void OscManager::addElementToSender(GuiElement *element)
+{
+    vector<GuiElement*>::iterator it = sParameters.begin();
     for (; it != sParameters.end(); ++it)
     {
-        if (*it == parameter)
+        if (*it == element)
         {
-            ofLog(OF_LOG_WARNING, "Parameter at "+parameter->getOscAddress()+" already registered with sender");
+            ofLog(OF_LOG_WARNING, "Parameter at "+element->getOscAddress()+" already registered with sender");
             return;
         }
     }
-    sParameters.push_back(parameter);
+    sParameters.push_back(element);
 }
 
-void OscManager::removeParameterFromSender(ParameterBase *parameter)
+void OscManager::removeElementFromSender(GuiElement *element)
 {
-    vector<ParameterBase*>::iterator it = sParameters.begin();
+    vector<GuiElement*>::iterator it = sParameters.begin();
     while (it != sParameters.end())
     {
-        if (*it == parameter) {
+        if (*it == element) {
             sParameters.erase(it);
         }
         else {
@@ -103,7 +162,6 @@ void OscManager::receiveOscMessages()
         ofxOscMessage msg;
         receiver.getNextMessage(&msg);
         string address = msg.getAddress();
-        cout << "address:: " << address << endl;
         if (rParameters.count(address) > 0) {
             rParameters[address]->receiveOsc(msg);
         }
@@ -117,6 +175,7 @@ void OscManager::sendOscMessages()
         if (p->valueChanged())
         {
             ofxOscMessage msg;
+            msg.setAddress(p->getOscAddress());
             p->sendOsc(msg);
             sender.sendMessage(msg);
         }

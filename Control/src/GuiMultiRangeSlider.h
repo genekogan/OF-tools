@@ -74,6 +74,15 @@ private:
     void createRangeSliders();
     void initializeRangeSliders();
     void updateParameterOscAddress();
+    
+    
+//    string getOscAddress() { }
+//    void sendOsc(ofxOscMessage &msg) { }
+//    void receiveOsc(ofxOscMessage &msg) { }
+//    bool valueChanged() {}
+
+    
+    
     void rangeSliderChanged(GuiRangeSliderEventArgs<float> &e);
     
     Parameter<T> *parameterLow, *parameterHigh;

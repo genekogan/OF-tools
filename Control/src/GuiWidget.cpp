@@ -17,9 +17,24 @@ void GuiWidget::initializeElement(GuiElement *element, bool sendNotification)
     if (sendNotification) {
         elementGroups.push_back(element);
     }
+    if (element->isMultiElement())
+    {
+        ofAddListener(((GuiMultiElement *) element)->newElementEvent, this, &GuiWidget::eventAddElement);
+        ofAddListener(((GuiMultiElement *) element)->removeElementEvent, this, &GuiWidget::eventRemoveElement);
+    }
     if (elements.size() > 1) {
         setCollapsible(true);
     }
+}
+
+void GuiWidget::eventAddElement(GuiElement * &element)
+{
+    ofNotifyEvent(newElementEvent, element, this);
+}
+
+void GuiWidget::eventRemoveElement(GuiElement * &element)
+{
+    ofNotifyEvent(removeElementEvent, element, this);
 }
 
 GuiWidget * GuiWidget::addWidget(GuiWidget *newWidget)
@@ -145,10 +160,6 @@ void GuiWidget::setupGuiPositions()
     }
 }
 
-void GuiWidget::addElementToTouchOscLayout(TouchOscPage *page, float *y)
-{
-}
-
 void GuiWidget::attachWidget(GuiWidget *other)
 {
     attachedWidgets.push_back(other);
@@ -158,7 +169,8 @@ void GuiWidget::attachWidget(GuiWidget *other)
 void GuiWidget::detachWidget(GuiWidget *other)
 {
     vector<GuiWidget*>::iterator it = attachedWidgets.begin();
-    while (it != attachedWidgets.end()) {
+    while (it != attachedWidgets.end())
+    {
         if (*it == other) {
             attachedWidgets.erase(it);
         }
@@ -170,40 +182,37 @@ void GuiWidget::detachWidget(GuiWidget *other)
 
 void GuiWidget::makeTouchOscLayout(string filename)
 {
-    
-//    for (auto e : elementGroups) {
-  //      e->updateParameterOscAddress();
-    //}
-    
     TouchOsc touchOsc;
-    
-    touchOsc.setScale(320, 480);
+    touchOsc.setScale(320, 560);
     touchOsc.setDefaultColor(GREEN);
     
-    TouchOscPage *page1 = touchOsc.addPage("myPage");
-    
-    
+    TouchOscPage *page1 = touchOsc.addPage("widget");
     float y = 0;
-    
-    for (auto e : elementGroups) {
-        
-        e->addElementToTouchOscLayout(page1, &y);
-        cout << y << endl;
+    for (auto e : elements) {
+        addElementToTouchOscLayout(e, page1, &y);
     }
     
-    for (auto w : page1->getWidgets()) {
+    for (auto w : page1->getWidgets())
+    {
         w->y = ofMap(w->y, 0, y, 0, 0.9);
         w->h = 0.9 * w->h / y;
     }
+    touchOsc.save(filename);
+}
 
-    
-    
-    
-    
-    
-    touchOsc.save("myTouchOscLayout");
-    
-    
+void GuiWidget::addElementToTouchOscLayout(GuiElement *element, TouchOscPage *page, float *y)
+{
+    if (element->isMultiElement())
+    {
+        for (auto e : ((GuiMultiElement *) element)->getElements()) {
+            addElementToTouchOscLayout(e, page, y);
+        }
+    }
+    else
+    {
+        element->updateParameterOscAddress();
+        element->addElementToTouchOscLayout(page, y);
+    }
 }
 
 void GuiWidget::getXml(ofXml &xml)

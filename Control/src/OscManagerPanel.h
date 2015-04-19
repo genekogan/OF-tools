@@ -27,7 +27,7 @@ public:
     
 protected:
     
-    struct ElementOscGroup
+    struct ElementOsc
     {
         GuiElement *element;
         OscManager *osc;
@@ -36,29 +36,32 @@ protected:
         GuiToggle *tSend;
         string address;
         bool sending;
-
-        ElementOscGroup(GuiElement *element, OscManager *osc);
+        
+        ElementOsc(GuiElement *element, OscManager *osc);
         void eventSetAddress(GuiTextBoxEventArgs &evt);
         void eventSetSending(GuiButtonEventArgs &evt);
         void updateAddress();
     };
     
+    struct ElementOscGroup
+    {
+        GuiElement *element;
+        OscManager *osc;
+        
+        vector<ElementOsc*> elements;
+        ElementOscGroup(GuiElement *element, OscManager *osc);
+    };
+    
     void setupOscManagerPanel();
     void addElement(GuiElement* & newElement);
     void removeElement(GuiElement* & element);
-    
-    map<GuiElement*,ElementOscGroup*> groups;   // needs to be ptr?
+    void eventMakeTouchOscLayout(GuiButtonEventArgs &evt);
+
+    map<GuiElement*,ElementOscGroup*> groups;
     GuiWidget * panel;
     OscManager * osc;
     int oscManagerWidth;
-    
     GuiButton *tTouchOsc;
-    
-    void eventMakeTouchOscLayout(GuiButtonEventArgs &evt) {
-        
-        panel->makeTouchOscLayout("myTouchOscLayout");
-
-    }
 };
 
 

@@ -8,6 +8,7 @@ class ofApp : public ofBaseApp
 {
     
 public:
+    
     void setup();
     void update();
     void draw();
@@ -26,31 +27,24 @@ public:
     
     void keyPressed(int key) {
         if (key=='q') {
-            //panel.savePreset("/Users/Gene/Desktop/testXml2.xml");
+            //panel->savePreset("/Users/Gene/Desktop/testXml2.xml");
         }
         else if (key=='w') {
-            //panel.loadPreset("/Users/Gene/Desktop/testXml2.xml");
+            //panel->loadPreset("/Users/Gene/Desktop/testXml2.xml");
         }
         
         else if (key=='1') {
-            panel.removeElement("float slider");
+            panel->removeElement("float slider");
         }
         else if (key=='2') {
             cout << "==== KEY 2 ===== " <<endl;
-            panel.removeElement("widget inside panel");
+            panel->removeElement("widget inside panel");
             cout << "==== KEY 2 ===== " <<endl;
-        }
-        
-        else if (key=='3') {
-//            vector<ParameterBase*> params;
-//            panel.getParameters(params);
-            oscManager.addWidget(panel);
-            
         }
     }
     
     
-    GuiPanel panel;
+    GuiPanel *panel;
     GuiWidget widget;
     
     bool button, toggle;

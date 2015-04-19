@@ -125,22 +125,27 @@ void Gui2dPad::removePoint(int idx)
     points.erase(points.begin() + idx);
 }
 
+void Gui2dPad::clearPoints()
+{
+    vector<Gui2dPadPoint*>::iterator it = points.begin();
+    while (it != points.end())
+    {
+        delete *it;
+        points.erase(it);
+    }
+    points.clear();
+}
+
 Gui2dPad::~Gui2dPad()
 {
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
+    clearPoints();
 }
 
 void Gui2dPad::setParent(GuiElement *parent)
 {
     this->parent = parent;
-    hasParent = true;
-    setCollapsible(true);
+    hasParent = (parent != NULL);
+    setCollapsible(hasParent);
 }
 
 void Gui2dPad::setupPad(ofPoint min, ofPoint max)
@@ -426,6 +431,10 @@ void Gui2dPad::setFromXml(ofXml &xml)
             idx++;
         }
         while(idx < xml.getNumChildren());
+        
+        while (idx < points.size()) {
+            removePoint(idx);
+        }
     }
     xml.setToParent();
 }

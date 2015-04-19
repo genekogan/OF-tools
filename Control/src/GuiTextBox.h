@@ -3,7 +3,6 @@
 #include "ofBitmapFont.h"
 #include "Parameter.h"
 #include "GuiElement.h"
-//#include "Sequence.h"
 
 
 class GuiTextBox;

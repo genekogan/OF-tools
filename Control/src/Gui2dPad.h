@@ -58,6 +58,7 @@ public:
     
     ~Gui2dPad();
     
+    
     void setParent(GuiElement *parent);
     
     void setMin(ofPoint min);
@@ -69,7 +70,8 @@ public:
     Gui2dPadPoint * addPoint(ofPoint *value);
     Gui2dPadPoint * addPoint();
     void removePoint(int idx);
-    
+    void clearPoints();
+
     bool getDrawConnectedPoints() {return connectPoints;}
     void setDrawConnectedPoints(bool connectPoints) {this->connectPoints = connectPoints;}
     
@@ -79,14 +81,14 @@ public:
     bool mouseDragged(int mouseX, int mouseY);
     bool keyPressed(int key);
     
-    void setValue(int idx, ofPoint padValue);
     ofPoint getValue(int idx) {return points[idx]->padValue;}
+    void setValue(int idx, ofPoint padValue);
     
+    void lerpTo(int idx, ofPoint nextValue, int numFrames);
+
     ofPoint getParameterValue(int idx) {return points[idx]->parameter->get();}
     int getNumberOfPoints() {return points.size();}
     void getParameters(vector<ParameterBase*> & parameters);
-    
-    void lerpTo(int idx, ofPoint nextValue, int numFrames);
     
     void update();
     void draw();

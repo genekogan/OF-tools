@@ -11,7 +11,6 @@ public:
     
     virtual ~ParameterBase()
     {
-        
         //
         //
         //
@@ -48,9 +47,9 @@ public:
     template<class T> T getMax();
 
     // osc
-    virtual bool valueChanged() {}
-    virtual void sendOsc(ofxOscMessage &m) {}
-    virtual void receiveOsc(ofxOscMessage &m) {}
+//    virtual bool valueChanged() {}
+//    virtual void sendOsc(ofxOscMessage &m) {}
+//    virtual void receiveOsc(ofxOscMessage &m) {}
     
     // xml
 //    virtual void getXml(ofXml &xml) {}
@@ -107,8 +106,8 @@ public:
     void setMax(T max) {maxValue=max;}
     
     // osc
-    void sendOsc(ofxOscMessage &m);
-    void receiveOsc(ofxOscMessage &m);
+//    void sendOsc(ofxOscMessage &m);
+//    void receiveOsc(ofxOscMessage &m);
     
     /*
     // xml
@@ -123,7 +122,7 @@ protected:
     T minValue, maxValue;
 };
 
-
+/*
 // send osc templates
 
 template<typename T> void Parameter<T>::sendOsc(ofxOscMessage &m) { }
@@ -242,7 +241,7 @@ template<> inline void Parameter<string>::receiveOsc(ofxOscMessage &m)
 
 
 // get xml templates
-
+*/
 /*
 template<typename T> void Parameter<T>::getXml(ofXml &xml) { }
 

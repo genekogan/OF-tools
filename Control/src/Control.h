@@ -62,7 +62,7 @@
  
 TO-DO
 =====
-saving sequencer sets
+x saving sequencer sets
 examples
  - widget
  - panel

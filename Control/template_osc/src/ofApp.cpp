@@ -4,6 +4,8 @@
 void ofApp::setup(){
     
     // a widget is a collection of gui elements
+    panel = new GuiPanel();
+    panel->setName("myPanel");
     
     widget.setName("a widget");
     widget.setPosition(810, 10);
@@ -42,18 +44,18 @@ void ofApp::setup(){
     // a panel is a super-widget with some extra functionality, including
     // ability to embed widgets, a sequencer, presets, and osc functionality
     
-    panel.setPosition(10, 10);
-    panel.setName("a panel");
+    panel->setPosition(10, 10);
+    //panel->setName("a panel");
     
     // you can add gui elements to a panel just as you can to a widget.
     // these sliders also has an event notifier
-    panel.addMultiSlider("slider w/ notifier", &vec2slider, ofVec2f(0, 0), ofVec2f(10, 10), this, &ofApp::sliderEvent);
-    panel.addColor("color w/ notifier", &color2, this, &ofApp::colorEvent);
+    panel->addMultiSlider("slider w/ notifier", &vec2slider, ofVec2f(0, 0), ofVec2f(10, 10), this, &ofApp::sliderEvent);
+    panel->addColor("color w/ notifier", &color2, this, &ofApp::colorEvent);
     
     // you can embed a widget inside a panel
     
     
-    //GuiWidget *innerWidget = panel.addWidget("widget inside panel");
+    //GuiWidget *innerWidget = panel->addWidget("widget inside panel");
     GuiWidget *innerWidget = new GuiWidget("widget inside panel");
     innerWidget->addButton("button", &button);
     innerWidget->addToggle("another toggle", this, &ofApp::panelToggleEvent);
@@ -74,14 +76,14 @@ void ofApp::setup(){
     menu3->addToggle("chicago");
     
     // sliders can have different types
-    panel.addSlider("float slider", &floatSlider, 0.0f, 10.0f);
-    panel.addSlider("int slider", &intSlider, 5, 12);
-    panel.addSlider("double slider", &doubleSlider, 5.0, 23.0);
+    panel->addSlider("float slider", &floatSlider, 0.0f, 10.0f);
+    panel->addSlider("int slider", &intSlider, 5, 12);
+    panel->addSlider("double slider", &doubleSlider, 5.0, 23.0);
     
     
-    panel.addWidget(innerWidget);
+    panel->addWidget(innerWidget);
     
-    Gui2dPad *pad = panel.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
+    Gui2dPad *pad = panel->add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
     pad->setDrawConnectedPoints(true);
     
     
@@ -99,66 +101,29 @@ void ofApp::setup(){
     // misc notes -- uncomment to try
     
     // you can embed an existing widget into a panel:
-    //panel.addWidget(&widget);
+    //panel->addWidget(&widget);
     
     // setAutoUpdate toggles automatic updating and mouse/keyboard interaction
     // if it is set to off, you are responsible for the update, mouseMoved,
     // mousePressed, mouseDragged, mouseReleased, keyPressed functions yourself.
     // setAutoDraw toggles automatic drawing -- if false, you are responsible for drawing widget
-    //panel.setAutoUpdate(false);
-    //panel.setAutoDraw(false);
+    //panel->setAutoUpdate(false);
+    //panel->setAutoDraw(false);
     
     
-    //panel.savePreset("/Users/Gene/Desktop/testXml.xml");
+    //panel->savePreset("/Users/Gene/Desktop/testXml.xml");
     
     
     //ofExit();
+    oscManager.addWidget(*panel);
     
     
-    
-    //osc.setupSender("localhost", 12346);
-    //osc.setupReceiver(12345);
-    
-    //osc.addParameterToSender(v);
-    //osc.addParameterToReceiver(v2);
-    
-    //osc.addParametersToSender(panel.getParameters());
-    
-    
-    //osc.setup();
-    
-    /*
-     vector<ParameterBase*> pm = panel.getParameters();
-     for (auto p : pm) {
-     cout << p->getName() << " ---- " << p->getOscAddress() << endl;
-     }
-     
-     
-     osc.addParameters(panel.getName(), panel.getParameters());
-     osc.addParameters(widget.getName(), widget.getParameters());
-     
-     osc.addParameter(v);
-     osc.addParameter(v2);
-     */
-    
-    //  osc.setPosition(450, 10);
-    
-    
-    
-    oscManager.addWidget(panel);
-    
-    oscManager.setupReceiver(12346);
-    oscManager.setupSender("localhost", 12345);
-    
-
+    oscManager.getControl().setPosition(500, 400);
     
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    oscManager.update();
-    
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
@@ -166,9 +131,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //osc.draw(); // why not auto
-
-    
     ofDrawBitmapString("click 'n' key while mouse hovering over 2d pad to add another point", 10, ofGetHeight() - 60);
     ofCircle(600, 500, 100);
 }

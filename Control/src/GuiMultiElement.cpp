@@ -21,17 +21,7 @@ GuiMultiElement::GuiMultiElement(string name) : GuiElement(name)
 
 GuiMultiElement::~GuiMultiElement()
 {
-    //clearElements();
-    
-    // why does this double erase "parameters"?
-    
-    //
-    //
-    // who should delete parameter?
-    //
-    //
-    //
-    //
+    clearElements();
 }
 
 GuiElement * GuiMultiElement::getElement(string name)
@@ -81,6 +71,7 @@ void GuiMultiElement::clearElements()
     vector<GuiElement*>::iterator it = elements.begin();
     while (it != elements.end())
     {
+        ofNotifyEvent(removeElementEvent, *it, this);
         delete *it;
         elements.erase(it);
     }
@@ -143,6 +134,9 @@ void GuiMultiElement::setupGuiPositions()
 
 void GuiMultiElement::addElementToTouchOscLayout(TouchOscPage *page, float *y)
 {
+    for (auto e : elements) {
+        addElementToTouchOscLayout(page, y);
+    }
 }
 
 void GuiMultiElement::initializeElement(GuiElement *element, bool sendNotification)

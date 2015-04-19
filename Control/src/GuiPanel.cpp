@@ -30,6 +30,12 @@ void GuiPanel::setPosition(int x, int y)
     }
 }
 
+void GuiPanel::setName(string name)
+{
+    GuiWidget::setName(name);
+    refreshPresetMenu();
+}
+
 void GuiPanel::enableControlRow()
 {
     if (!controlRow)
@@ -39,7 +45,7 @@ void GuiPanel::enableControlRow()
         
         tOsc = new GuiToggle("osc", &bOsc, this, &GuiPanel::eventToggleOscManager);
         tSeq = new GuiToggle("seq", &bSeq, this, &GuiPanel::eventToggleSequencer);
-        tXml = new GuiToggle("xml", &bXml);
+        tXml = new GuiToggle("xml", &bXml, this, &GuiPanel::eventTogglePresets);
         tOsc->setParent(this);
         tSeq->setParent(this);
         tXml->setParent(this);
@@ -55,9 +61,25 @@ void GuiPanel::enableControlRow()
         meta->setPosition(rectangle.x + rectangle.width + 4, rectangle.y);
         meta->setAutoUpdate(false);
         meta->setAutoDraw(false);
-        
         meta->addButton("save me", this, &GuiPanel::savePresetPrompt);
-        meta->addButton("load me", this, &GuiPanel::loadPresetPrompt);
+        menuPresets = meta->addMenu("load preset", this, &GuiPanel::loadPresetPrompt);
+        refreshPresetMenu();
+    }
+}
+
+void GuiPanel::refreshPresetMenu()
+{
+    menuPresets->clearToggles();
+    
+    ofDirectory dir;
+    dir.allowExt("xml");
+    dir.open("presets/"+getName()+"/");
+    dir.listDir();
+    vector<string> presetList;
+    for(int i = 0; i < dir.size(); i++)
+    {
+        presetList.push_back(dir.getName(i));
+        menuPresets->addToggle(dir.getName(i));
     }
 }
 
@@ -71,7 +93,10 @@ void GuiPanel::disableControlRow()
         bOsc = false;
         bSeq = false;
         bXml = false;
-        
+
+        delete menuPresets;
+        delete meta;
+
         delete tOsc;
         delete tSeq;
         delete tXml;
@@ -80,9 +105,11 @@ void GuiPanel::disableControlRow()
         
         if (sequencerMade) {
             delete sequencer;
+            sequencerMade = false;
         }
         if (oscManagerMade) {
             delete oscManager;
+            oscManagerMade = false;
         }
     }
 }
@@ -146,10 +173,6 @@ void GuiPanel::setupGuiPositions()
     if (oscManagerMade) {
         oscManager->setupGuiPositions();
     }
-}
-
-void GuiPanel::addElementToTouchOscLayout(TouchOscPage *page, float *y)
-{
 }
 
 void GuiPanel::update()
@@ -323,36 +346,56 @@ void GuiPanel::eventToggleSequencer(GuiButtonEventArgs &e)
     if (!sequencerMade) {
         createSequencer();
     }
+    if (bSeq)
+    {
+        bOsc = false;
+        bXml = false;
+    }
 }
 
 void GuiPanel::eventToggleOscManager(GuiButtonEventArgs &e)
 {
+    if (bOsc)
+    {
+        bSeq = false;
+        bXml = false;
+    }
+}
 
+void GuiPanel::eventTogglePresets(GuiButtonEventArgs &e)
+{
+    if (bXml)
+    {
+        bOsc = false;
+        bSeq = false;
+    }
 }
 
 void GuiPanel::savePresetPrompt(GuiButtonEventArgs &e)
 {
-    savePreset("/Users/Gene/Desktop/testXml.xml");
+    string name = ofSystemTextBoxDialog("Preset name");
+    savePreset(name);
 }
 
-void GuiPanel::loadPresetPrompt(GuiButtonEventArgs &e)
+void GuiPanel::loadPresetPrompt(GuiMenuEventArgs &e)
 {
-    loadPreset("/Users/Gene/Desktop/testXml.xml");
+    loadPreset(e.toggle->getName());
 }
 
-void GuiPanel::savePreset(string path)
+void GuiPanel::savePreset(string name)
 {
     ofXml xml;
     xml.addChild("Preset");
     xml.setTo("Preset");
     getXml(xml);
-    xml.save(path);
+    xml.save("presets/"+getName()+"/"+name+".xml");
+    menuPresets->addToggle(name);
 }
 
-void GuiPanel::loadPreset(string path)
+void GuiPanel::loadPreset(string name)
 {
     ofXml xml;
-    xml.load(path);
+    xml.load("presets/"+getName()+"/"+name);
     xml.setTo("Preset");
     setFromXml(xml);
 }
