@@ -56,7 +56,6 @@ public:
     
     GuiPanel & getPanel() {return panel;}
 
-    
 private:
     
     void updateUsers();
@@ -70,13 +69,13 @@ private:
     
     inline bool isNewSkeletonDataAvailable(ofxOpenNIUser & user);
     
-    void eventSetTrackingUsers(GuiElementEventArgs & e);
-    void eventSetTrackingContours(GuiElementEventArgs & e);
-    void eventSetTrackingUserFeatures(GuiElementEventArgs & e);
-    void eventSetMaxUsers(GuiElementEventArgs & e);
-    void eventToggleCalibrationModule(GuiElementEventArgs & e);
-    void eventDepthMaskEdited(GuiElementEventArgs &e);
-    void eventSetupMask(GuiElementEventArgs & e);
+    void eventSetTrackingUsers(GuiButtonEventArgs & e);
+    void eventSetTrackingContours(GuiButtonEventArgs & e);
+    void eventSetTrackingUserFeatures(GuiButtonEventArgs & e);
+    void eventSetMaxUsers(GuiSliderEventArgs<int> & e);
+    void eventToggleCalibrationModule(GuiButtonEventArgs & e);
+    void eventDepthMaskEdited(Gui2dPadEventArgs &e);
+    void eventSetupMask(GuiButtonEventArgs & e);
     void eventUser(ofxOpenNIUserEvent & event);
 
     // calibration
@@ -84,10 +83,10 @@ private:
     void testCalibration();
     void drawCalibration();
     
-    void eventAddPointPairs(GuiElementEventArgs & b);
-    void eventCalibrate(GuiElementEventArgs & b);
-    void eventSaveCalibration(GuiElementEventArgs & b);
-    void eventLoadCalibration(GuiElementEventArgs & b);
+    void eventAddPointPairs(GuiButtonEventArgs & b);
+    void eventCalibrate(GuiButtonEventArgs & b);
+    void eventSaveCalibration(GuiButtonEventArgs & b);
+    void eventLoadCalibration(GuiButtonEventArgs & b);
 
     // kinect
     int kinectWidth, kinectHeight;
@@ -138,6 +137,10 @@ private:
     
     // gui
     GuiPanel panel;
+    GuiWidget *panelCalibration;
+    GuiWidget *panelTracking;
+    GuiWidget *panelUsers;
+    GuiToggle *toggleCalibrate;
     
     // calibration module
     CalibrationModule calibration;

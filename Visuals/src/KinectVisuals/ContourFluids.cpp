@@ -1,45 +1,11 @@
 #include "ContourFluids.h"
 
 
-
-Contour2::Contour2(vector<ofVec2f> & points, ofPoint center, int label)
-{
-    this->points = points;
-    this->center = center;
-    this->label = label;
-    age = 0;
-    color = ofColor(ofRandom(60,255), ofRandom(60,255), ofRandom(60,255));
-}
-
-void Contour2::setPoints(vector<ofVec2f> & points, ofPoint center)
-{
-    this->points = points;
-    this->center = center;
-}
-
-void Contour2::draw()
-{
-    ofPushStyle();
-    ofNoFill();
-    ofSetLineWidth(2);
-    ofSetColor(color);
-    ofBeginShape();
-    for (int j=0; j<points.size(); j++) {
-        ofVertex(points[j].x, points[j].y);
-    }
-    ofEndShape();
-    ofPopStyle();
-}
-
-
 void ContourFluids::setup(int width, int height)
 {
-    this->width = width;
-    this->height = height;
-
+    ContourVisual::setup(width, height);
 
     panel.setName("fluids");
-    panel.setPosition(0, 360);
     panel.addSlider("simplify", &simplify, 0.0f, 100.0f);
     panel.addSlider("numContourPts", &numContourPts, 3, 100);
     panel.addSlider("skip", &skip, 1, 100);
@@ -57,7 +23,7 @@ void ContourFluids::setup(int width, int height)
     numContourPts = 10;
     displaceLerp = 0.1;
     skip = 5;
-
+    maxUsers = 3;
     
     
     // hold previous joints
@@ -115,9 +81,10 @@ void ContourFluids::setup(int width, int height)
     strength = 4.8;
 }
 
-void ContourFluids::update()
+void ContourFluids::update(OpenNI & openNi)
 {
-    
+    ContourVisual::update(openNi);
+
     for (int i=0; i<pContourPoints.size(); i++) {
         while (pContourPoints[i].size() < numContourPts) {
             pContourPoints[i].push_back(ofVec2f(0,0));
@@ -188,75 +155,8 @@ void ContourFluids::update()
 
 void ContourFluids::draw()
 {
-    
-    //    ofBackgroundGradient(ofColor::gray, ofColor::black, OF_GRADIENT_LINEAR);
     fluid.draw();
     
-    
-    //renderContours();
-    /*
-     ofSetColor(255);
-     for (int i=0; i<pContourPoints.size(); i++) {
-     for (int j=0; j<pContourPoints[i].size(); j++) {
-     ofLine(pContourPoints[i][j].x, pContourPoints[i][j].y, pContourPoints[i][j].x + displace[i][j].x, pContourPoints[i][j].y + displace[i][j].y);
-     }
-     }
-     */
-   
+    //eraseContours();
 }
 
-void ContourFluids::recordContours(OpenNI & openNi)
-{
-    ContourFinder & contourFinder = openNi.getContourFinder();
-    RectTracker & tracker = contourFinder.getTracker();
-    
-    currentContours.clear();
-    labels.clear();
-    
-    calibrated = true;
-    
-    for(int i = 0; i < openNi.getNumContours(); i++)
-    {
-        vector<cv::Point> points = contourFinder.getContour(i);
-        int label = contourFinder.getLabel(i);
-        ofPoint center = toOf(contourFinder.getCenter(i));
-        int age = tracker.getAge(label);
-        vector<cv::Point> fitPoints = contourFinder.getFitQuad(i);
-        cv::RotatedRect fitQuad = contourFinder.getFitEllipse(i);
-        
-        bool contourExists = false;
-        for (int c=0; c<contours.size(); c++)
-        {
-            if (label == contours[c]->label)
-            {
-                if (calibrated)
-                {
-                    vector<ofVec2f> calibratedContour;
-                    openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                    currentContours.push_back(calibratedContour);
-                    contours[c]->setPoints(calibratedContour, center);
-                }
-                else {
-                    contours[c]->setPoints((vector<ofVec2f> &) contourFinder.getContour(i), center);
-                }
-                contourExists = true;
-                break;
-            }
-        }
-        if (!contourExists)
-        {
-            if (calibrated)
-            {
-                vector<ofVec2f> calibratedContour;
-                openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                contours.push_back(new Contour2(calibratedContour, center, label));
-            }
-            else {
-                contours.push_back(new Contour2((vector<ofVec2f> &) contourFinder.getContour(i), center, label));
-            }
-        }
-        labels.push_back(label);
-    }
-
-    
-}

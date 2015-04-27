@@ -36,8 +36,8 @@ void ofApp::setup(){
     menu->addToggle("chicago");
 
     // 2d pad
-//    Gui2dPad *pad = widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
-//    pad->setDrawConnectedPoints(true);
+    //Gui2dPad *pad = widget.add2dPad("pad", &padValue, ofPoint(0, 0), ofPoint(20, 12));
+    //pad->setDrawConnectedPoints(true);
     
     // a panel is a super-widget with some extra functionality, including
     // ability to embed widgets, a sequencer, presets, and osc functionality

@@ -15,5 +15,5 @@ public:
 
     AudioUnitController au;
     
-    MidiSequencer *midi;
+    //MidiSequencer *midi;
 };

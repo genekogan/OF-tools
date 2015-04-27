@@ -32,7 +32,7 @@ void Streak::draw()
 {
     float size = ofMap(abs(age - 0.5 * maxAge), 0.5 * maxAge, 0, 0, maxThickness);
     float alph = ofMap(abs(age - 0.5 * maxAge), 0.5 * maxAge, 0, 1, strokeAlpha);
-    ofSetColor(255*color.r, 255*color.g, 255*color.b, alph);
+    ofSetColor(255 * color.r, 255 * color.g, 255 * color.b, alph);
     ofEllipse(pos.x, pos.y, size, size);
 }
 

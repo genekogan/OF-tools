@@ -3,67 +3,43 @@
 #include "ofMain.h"
 #include "ofxBox2d.h"
 #include "OpenNI.h"
+#include "ContourVisual.h"
 
 
 
-
-class Contour3
-{
-public:
-    Contour3(vector<ofVec2f> & points, ofPoint center, int label);
-    void setPoints(vector<ofVec2f> & points, ofPoint center);
-    void draw();
-    
-    vector<ofVec2f> points;
-    ofPoint center;
-    int label;
-    int age;
-    ofColor color;
-};
-
-
-
-
-class ContourStars
+class ContourStars : public ContourVisual
 {
 public:
     void setup(int width, int height);
-    void update();
+    void update(OpenNI & openNi);
     void draw();
     
-    void recordContours(OpenNI & openNi);
-    
-    GuiPanel & getPanel() {return panel;}
-
 private:
     
-    GuiPanel panel;
+    struct IdCircle
+    {
+        ofPtr<ofxBox2dCircle> circle;
+        int idx;
+        IdCircle(ofPtr<ofxBox2dCircle> circle, int idx) {
+            this->circle = circle;
+            this->idx = idx;
+        }
+    };
     
-    // tracking
-    vector<Contour3 *> contours;
-    vector<vector<ofVec2f> > currentContours;
-    bool calibrated;
-    int width, height;
+    void clearCircles(GuiButtonEventArgs & evt);
     
-    
-    vector<int> labels;
-    
-    
-    
-    // physics
     ofxBox2d box2d;
-	vector<ofPtr<ofxBox2dCircle> > circles;
-	vector<ofPolyline> lines;
+    
+    //vector<ofPtr<ofxBox2dCircle> > circles;
+    vector<IdCircle*> circles;
+    
+    vector<ofPolyline> lines;
     vector<ofPtr<ofxBox2dEdge> > edges;
     int rate;
     float tolerance;
     float circleDensity, circleBounce, circleFriction;
-    ofImage img;
 
-    
-    
-    
+    vector<ofImage> img;
     
     ofFloatColor contourColor;
-    int contourSmoothness;
 };

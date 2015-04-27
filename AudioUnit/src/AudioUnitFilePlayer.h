@@ -17,7 +17,7 @@ public:
 private:
     
     void setupParameterGui();
-    void eventPlay(GuiElementEventArgs &e);
+    void eventPlay(GuiButtonEventArgs &e);
     
     ofxAudioUnitFilePlayer *player;
     float position;

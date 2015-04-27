@@ -53,7 +53,6 @@ void OscManager::eventEditPortIn(GuiTextBoxEventArgs &evt)
     portIn = ofToInt(portInS);
 }
 
-
 bool OscManager::setupSender(string host, int portOut)
 {
     try
@@ -162,6 +161,12 @@ void OscManager::receiveOscMessages()
         ofxOscMessage msg;
         receiver.getNextMessage(&msg);
         string address = msg.getAddress();
+        
+        cout << "RCV " << address << endl;
+        for (int i=0; i<msg.getNumArgs(); i++) {
+            cout << " -> " << cout << msg.getArgAsFloat(i) << endl;
+        }
+        
         if (rParameters.count(address) > 0) {
             rParameters[address]->receiveOsc(msg);
         }

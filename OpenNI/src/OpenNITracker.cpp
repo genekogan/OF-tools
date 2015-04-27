@@ -10,6 +10,7 @@ OpenNI::OpenNI()
 	grayThreshFar.allocate(kinectWidth, kinectHeight);
     rgbImage.allocate(kinectWidth, kinectHeight);
     
+    calibrating = false;
     trackingContours = false;
     trackingUsers = false;
     depthMaskEnabled = false;
@@ -33,8 +34,39 @@ OpenNI::OpenNI()
     
     panel.disableControlRow();
     panel.setName("OpenNI");
+    toggleCalibrate = panel.addToggle("calibrate", &calibrating, this, &OpenNI::eventToggleCalibrationModule);
     panel.addToggle("track contours", &trackingContours, this, &OpenNI::eventSetTrackingContours);
     panel.addToggle("track users", &trackingUsers, this, &OpenNI::eventSetTrackingUsers);
+    
+    panelCalibration = panel.addWidget("calibration");
+    panelCalibration->add2dPad("chessboard", &calibration.getChessboard().position, ofPoint(0, 0), ofPoint(ofGetWidth(), ofGetHeight()));
+    panelCalibration->addSlider("size", &calibration.getChessboard().size, 3, ofGetWidth());
+    panelCalibration->addButton("add point", this, &OpenNI::eventAddPointPairs);
+    panelCalibration->addButton("calibrate", this, &OpenNI::eventCalibrate);
+    panelCalibration->addButton("save", this, &OpenNI::eventSaveCalibration);
+    panelCalibration->addButton("load", this, &OpenNI::eventLoadCalibration);
+
+    panelTracking = panel.addWidget("contour tracking");
+    panelTracking->addToggle("setup mask", &depthMaskEnabled, this, &OpenNI::eventSetupMask);
+    panelTracking->addSlider("farThreshold", &farThreshold, 0, 255);
+    panelTracking->addSlider("nearThreshold", &nearThreshold, 0, 255);
+    panelTracking->addSlider("minArea", &minArea, 0, 100000);
+    panelTracking->addSlider("maxArea", &maxArea, 2500, 150000);
+    panelTracking->addSlider("threshold", &threshold, 0, 255);
+    panelTracking->addSlider("persistence", &persistence, 0, 100);
+    panelTracking->addSlider("maxDistance", &maxDistance, 0, 100);
+    panelTracking->addSlider("smoothingRate", &smoothingRate, 0, 100);
+    panelTracking->addToggle("simplified", &simplified);
+    panelTracking->addSlider("delay", &delay, 0, numFrames);
+    
+    panelUsers = panel.addWidget("track users");
+    panelUsers->addSlider("max users", &maxUsers, 1, 10, this, &OpenNI::eventSetMaxUsers);
+    panelUsers->setCollapsible(true);
+
+    toggleCalibrate->setActive(false);
+    panelCalibration->setActive(false);
+    panelTracking->setActive(false);
+    panelUsers->setActive(false);
 }
 
 OpenNI::~OpenNI()
@@ -71,10 +103,7 @@ void OpenNI::setTrackingUsers(bool trackingUsers)
     this->trackingUsers = trackingUsers;
     if (trackingUsers)
     {
-        GuiWidget *widget = panel.addWidget("user tracking");
-        widget->addToggle("track features", &trackingUserFeatures, this, &OpenNI::eventSetTrackingUserFeatures);
-        widget->addSlider("max users", &maxUsers, 1, 8, this, &OpenNI::eventSetMaxUsers);
-        
+        panelUsers->setActive(true);
         kinect.addUserGenerator();
         kinect.setMaxNumUsers(maxUsers);
         kinect.setUseMaskPixelsAllUsers(false);
@@ -84,7 +113,7 @@ void OpenNI::setTrackingUsers(bool trackingUsers)
     else
     {
         setTrackingUserFeatures(false);
-        panel.removeElement("user tracking");
+        panelUsers->setActive(false);
         kinect.removeUserGenerator();
     }
 }
@@ -99,8 +128,7 @@ void OpenNI::setTrackingUserFeatures(bool trackingUserFeatures)
             it->second->setFeatureTrackingEnabled(true);
         }
     }
-    else
-    {
+    else {
         clearUsers();
     }
 }
@@ -108,25 +136,7 @@ void OpenNI::setTrackingUserFeatures(bool trackingUserFeatures)
 void OpenNI::setTrackingContours(bool trackingContours)
 {
     this->trackingContours = trackingContours;
-    if (trackingContours)
-    {
-        GuiWidget *widget = panel.addWidget("contour tracking");
-        widget->addToggle("setup mask", &depthMaskEnabled, this, &OpenNI::eventSetupMask);
-        widget->addSlider("farThreshold", &farThreshold, 0, 255);
-        widget->addSlider("nearThreshold", &nearThreshold, 0, 255);
-        widget->addSlider("minArea", &minArea, 0, 100000);
-        widget->addSlider("maxArea", &maxArea, 2500, 150000);
-        widget->addSlider("threshold", &threshold, 0, 255);
-        widget->addSlider("persistence", &persistence, 0, 100);
-        widget->addSlider("maxDistance", &maxDistance, 0, 100);
-        widget->addSlider("smoothingRate", &smoothingRate, 0, 100);
-        widget->addToggle("simplified", &simplified);
-        widget->addSlider("delay", &delay, 0, numFrames);
-    }
-    else
-    {
-        panel.removeElement("contour tracking");
-    }
+    panelTracking->setActive(trackingContours);
 }
 
 ofVec3f OpenNI::getWorldCoordinateAt(int x, int y)
@@ -153,7 +163,7 @@ void OpenNI::getCalibratedContour(int idx, vector<ofVec2f> & calibratedPoints, i
     for (float j = 0; j < vertices.size(); j++)
     {
         projectedPoint.set(kpt.getProjectedPoint(getWorldCoordinateAt(vertices[j].x, vertices[j].y)));
-        mappedPoint.set(width * projectedPoint.x, height * projectedPoint.y);
+        mappedPoint.set(width * projectedPoint.x, height - height * projectedPoint.y);
         calibratedPoints.push_back(mappedPoint);
     }
 }
@@ -228,7 +238,8 @@ void OpenNI::updateContours()
     int idx = (idxHistory - 1 - delay + numFrames) % numFrames;
     grayImage.setFromPixels(depthHistory[idx]);
     
-    if (depthMaskEnabled) {
+    if (depthMaskEnabled)
+    {
         cvMask.setFromPixels(maskImage.getPixels(), kinectWidth, kinectHeight);
         cvInRangeS(cvMask.getCvImage(), cvScalarAll(250), cvScalarAll(255), cvGrayMask.getCvImage());
         cvSet(grayImage.getCvImage(), cvScalarAll(0), cvGrayMask.getCvImage());
@@ -334,7 +345,7 @@ void OpenNI::applyDepthMask()
     maskImage.setFromPixels(maskPixels);
 }
 
-void OpenNI::eventSetupMask(GuiElementEventArgs & e)
+void OpenNI::eventSetupMask(GuiButtonEventArgs & e)
 {
     if (depthMaskEnabled)
     {
@@ -346,13 +357,13 @@ void OpenNI::eventSetupMask(GuiElementEventArgs & e)
         maskFBO.allocate(kinectWidth, kinectHeight, GL_RGB);    // fbo for drawing a new mask
         
         maskPad = new Gui2dPad("mask", ofPoint(0, 0), ofPoint(kinectWidth, kinectHeight));
-        maskPad->setList(false);
+        maskPad->setCollapsible(false);
         maskPad->setDrawConnectedPoints(true);
         maskPad->setRectangle(ofRectangle(200, 0, kinectWidth, kinectHeight));
         maskPad->setColorBackground(ofColor(0, 0, 0, 0));
         maskPad->setColorForeground(ofColor(0, 255, 0));
         maskPad->setAutoDraw(false);
-        ofAddListener(maskPad->elementEvent, this, &OpenNI::eventDepthMaskEdited);
+        ofAddListener(maskPad->padEvent, this, &OpenNI::eventDepthMaskEdited);
     }
     else
     {
@@ -370,27 +381,27 @@ inline bool OpenNI::isNewSkeletonDataAvailable(ofxOpenNIUser & user)
     return (user.getJoint(JOINT_TORSO).getWorldPosition() != ofPoint(0,0,0) && (users.count(user.getXnID()) || user.getJoint(JOINT_TORSO).getWorldPosition() != users[user.getXnID()]->getPosition(0) ));
 }
 
-void OpenNI::eventSetTrackingUsers(GuiElementEventArgs & b)
+void OpenNI::eventSetTrackingUsers(GuiButtonEventArgs & b)
 {
     setTrackingUsers(trackingUsers);
 }
 
-void OpenNI::eventSetMaxUsers(GuiElementEventArgs & e)
+void OpenNI::eventSetMaxUsers(GuiSliderEventArgs<int> & e)
 {
     kinect.setMaxNumUsers(maxUsers);
 }
 
-void OpenNI::eventSetTrackingContours(GuiElementEventArgs & b)
+void OpenNI::eventSetTrackingContours(GuiButtonEventArgs & b)
 {
     setTrackingContours(trackingContours);
 }
 
-void OpenNI::eventSetTrackingUserFeatures(GuiElementEventArgs & b)
+void OpenNI::eventSetTrackingUserFeatures(GuiButtonEventArgs & b)
 {
     setTrackingUserFeatures(trackingUserFeatures);
 }
 
-void OpenNI::eventToggleCalibrationModule(GuiElementEventArgs & b)
+void OpenNI::eventToggleCalibrationModule(GuiButtonEventArgs & b)
 {
     if (calibrating) {
         startCalibrationModule();
@@ -400,7 +411,7 @@ void OpenNI::eventToggleCalibrationModule(GuiElementEventArgs & b)
     }
 }
 
-void OpenNI::eventDepthMaskEdited(GuiElementEventArgs &e)
+void OpenNI::eventDepthMaskEdited(Gui2dPadEventArgs &e)
 {
     applyDepthMask();
 }
@@ -442,10 +453,10 @@ void OpenNI::eventUser(ofxOpenNIUserEvent & event)
 void OpenNI::enableCalibration(ofxSecondWindow & window)
 {
     this->window = &window;
-    panel.addToggle("calibrate", &calibrating, this, &OpenNI::eventToggleCalibrationModule);
+    toggleCalibrate->setActive(true);
 }
 
-void OpenNI::eventAddPointPairs(GuiElementEventArgs & e)
+void OpenNI::eventAddPointPairs(GuiButtonEventArgs & e)
 {
     vector<cv::Point2f> & cvPoints = calibration.getChessboardCorners();
     vector<ofVec3f> worldPoints;
@@ -459,17 +470,17 @@ void OpenNI::eventAddPointPairs(GuiElementEventArgs & e)
     calibration.addPointPairs(worldPoints);
 }
 
-void OpenNI::eventCalibrate(GuiElementEventArgs & e)
+void OpenNI::eventCalibrate(GuiButtonEventArgs & e)
 {
     calibration.calibrate(kpt);
 }
 
-void OpenNI::eventSaveCalibration(GuiElementEventArgs & e)
+void OpenNI::eventSaveCalibration(GuiButtonEventArgs & e)
 {
     calibration.saveCalibration(kpt);
 }
 
-void OpenNI::eventLoadCalibration(GuiElementEventArgs & e)
+void OpenNI::eventLoadCalibration(GuiButtonEventArgs & e)
 {
     calibration.loadCalibration(kpt);
 }
@@ -490,19 +501,11 @@ void OpenNI::startCalibrationModule()
     setTrackingContours(false);
     calibrating = true;
     
-    GuiWidget *widget = panel.addWidget("calibration");
-    widget->addSlider("x", &calibration.getChessboard().x, 0, window->getWidth());
-    widget->addSlider("y", &calibration.getChessboard().y, 0, window->getHeight());
-    widget->addSlider("size", &calibration.getChessboard().size, 10, 800);
-    widget->addButton("add point", this, &OpenNI::eventAddPointPairs);
-    widget->addButton("calibrate", this, &OpenNI::eventCalibrate);
-    widget->addButton("testing", &calibration.getTesting());
-    widget->addButton("save", this, &OpenNI::eventSaveCalibration);
-    widget->addButton("load", this, &OpenNI::eventLoadCalibration);
-    
     kinect.addImageGenerator();
     calibration.setup(window->getWidth(), window->getHeight());
     updateCalibration();
+    
+    panelCalibration->setActive(true);
 }
 
 void OpenNI::stopCaibrationModule()
@@ -511,7 +514,7 @@ void OpenNI::stopCaibrationModule()
     calibration.stop();
     
     kinect.removeImageGenerator();
-    panel.removeElement("calibration");
+    panelCalibration->setActive(false);
 }
 
 void OpenNI::updateCalibration()

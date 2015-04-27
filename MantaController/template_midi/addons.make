@@ -1,0 +1,4 @@
+ofxOsc
+ofxConvexHull
+ofxManta
+ofxMidi

@@ -1,60 +1,21 @@
 #include "ContourStars.h"
 
-
-
-
-//----------
+/*
 static bool shouldRemove(ofPtr<ofxBox2dBaseShape>shape) {
-    //return !ofRectangle(0, -400, ofGetWidth(), ofGetHeight()+400).inside(shape.get()->getPosition());
-    return !ofRectangle(0, -400, 1280, 800+400).inside(shape.get()->getPosition());
+    return !ofRectangle(0, -400, ofGetWidth(), ofGetHeight()+400).inside(shape.get()->getPosition());
 }
-
-
-
-Contour3::Contour3(vector<ofVec2f> & points, ofPoint center, int label)
-{
-    this->points = points;
-    this->center = center;
-    this->label = label;
-    age = 0;
-    color = ofColor(ofRandom(60,255), ofRandom(60,255), ofRandom(60,255));
-}
-
-void Contour3::setPoints(vector<ofVec2f> & points, ofPoint center)
-{
-    this->points = points;
-    this->center = center;
-}
-
-void Contour3::draw()
-{
-    ofPushStyle();
-    ofNoFill();
-    ofSetLineWidth(2);
-    ofSetColor(color);
-    ofBeginShape();
-    for (int j=0; j<points.size(); j++) {
-        ofVertex(points[j].x, points[j].y);
-    }
-    ofEndShape();
-    ofPopStyle();
-}
-
+ */
 
 
 
 void ContourStars::setup(int width, int height)
 {
-    this->width = width;
-    this->height = height;
-    
-    
+    ContourVisual::setup(width, height);
+
     contourColor = ofFloatColor(1.0, 0.8, 0.1, 0.7);
     contourSmoothness = 2;
-    
-    
+
     panel.setName("stars");
-    panel.setPosition(0, 360);
     panel.addSlider("rate", &rate, 1, 20);
     panel.addSlider("tolerance", &tolerance, 0.0f, 100.0f);
     panel.addSlider("circleDensity", &circleDensity, 0.0f, 1.0f);
@@ -62,15 +23,19 @@ void ContourStars::setup(int width, int height)
     panel.addSlider("circleFriction", &circleFriction, 0.0f, 1.0f);
     panel.addColor("contour color", &contourColor);
     panel.addSlider("contour smooth", &contourSmoothness, 1, 10);
-//    panel.addEvent("clear", this, &ContourStars::clearCircles);
+    panel.addButton("clear", this, &ContourStars::clearCircles);
 
+    ofImage img1, img2, img3;
     
-    
-    img.loadImage("/Users/Gene/Code/openFrameworks/templates/KinectProjectorToolkit/kpt-box2d/bin/data/star.png");
-    //img.loadImage("/Users/Gene/Desktop/cat_png_by_dbszabo1-d3dn2c8.png");
-    //img.loadImage("/Users/Gene/Desktop/shazeb.png");
-    
-    img.resize(40, 40);
+    img1.loadImage("/Users/gene/Downloads/lisa_chung.png");
+    img2.loadImage("/Users/gene/Downloads/gene-kogan.png");
+    img3.loadImage("/Users/gene/Downloads/colin-serious-twitter.png");
+    img1.resize(40, 40);
+    img2.resize(40, 40);
+    img3.resize(40, 40);
+    img.push_back(img1);
+    img.push_back(img2);
+    img.push_back(img3);
     
 	box2d.init();
 	box2d.setGravity(0, 5);
@@ -83,8 +48,10 @@ void ContourStars::setup(int width, int height)
     circleFriction = 0.1;
 }
 
-void ContourStars::update()
-{cout << "update " << ofGetFrameNum() << endl;
+void ContourStars::update(OpenNI & openNi)
+{
+    ContourVisual::update(openNi);
+    
     lines.clear();
     edges.clear();
     
@@ -108,18 +75,33 @@ void ContourStars::update()
         ofPtr<ofxBox2dCircle> circle = ofPtr<ofxBox2dCircle>(new ofxBox2dCircle);
         circle.get()->setPhysics(circleDensity, circleBounce, circleFriction);
         circle.get()->setup(box2d.getWorld(), ofRandom(width), -20, ofRandom(15, 40));
-		circles.push_back(circle);
+//		circles.push_back(circle);
+        circles.push_back(new IdCircle(circle, ofRandom(img.size())));
 	}
 	
     // update box2d
-    ofRemove(circles, shouldRemove);
+    //ofRemove(circles, shouldRemove);
+    
+    vector<IdCircle*>::iterator it = circles.begin();
+    while (it != circles.end())
+    {
+        if ( !ofRectangle(0, -200, width+400, height+400).inside((*it)->circle->getPosition()) )
+        {
+            (*it)->circle->destroy();
+            circles.erase(it);
+        }
+        else {
+            ++it;
+        }
+    }
+    
     box2d.update();
-
 }
 
 void ContourStars::draw()
 {
-
+    ofClear(0, 0);
+    
     ofPushStyle();
     ofEnableAlphaBlending();
     for(int i = 0; i < currentContours.size(); i++) {
@@ -132,85 +114,38 @@ void ContourStars::draw()
         ofEndShape();
     }
     ofPopStyle();
-    ofSetColor(255);
-
+    
+    
     for (int i=0; i<circles.size(); i++)
     {
         ofPushMatrix();
         ofPushStyle();
 
 		ofFill();
-		ofSetHexColor(0xc0dd3b);
-		
-        ofVec2f pos = circles[i].get()->getPosition();
-        float rad = circles[i].get()->getRadius();
-        float ang = circles[i].get()->getRotation();
+		//ofSetHexColor(0xc0dd3b);
+		ofSetColor(255);
+        
+        ofVec2f pos = circles[i]->circle.get()->getPosition();
+        float rad = circles[i]->circle.get()->getRadius();
+        float ang = circles[i]->circle.get()->getRotation();
         
         ofSetRectMode(OF_RECTMODE_CENTER);
         ofTranslate(pos.x, pos.y);
         ofRotate(ang);
         ofEnableBlendMode(OF_BLENDMODE_ADD);
-        img.draw(0, 0, 2*rad, 2*rad);
+        
+        
+        
+        img[circles[i]->idx % 3].draw(0, 0, 2*rad, 2*rad);
         ofDisableBlendMode();
         ofPopStyle();
         ofPopMatrix();
-        
 	}
-
-
+    
+    //eraseContours();
 }
 
-void ContourStars::recordContours(OpenNI & openNi)
+void ContourStars::clearCircles(GuiButtonEventArgs & evt)
 {
-    ContourFinder & contourFinder = openNi.getContourFinder();
-    RectTracker & tracker = contourFinder.getTracker();
-    
-    currentContours.clear();
-    labels.clear();
-    
-    calibrated = true;
-    
-    for(int i = 0; i < openNi.getNumContours(); i++)
-    {
-        vector<cv::Point> points = contourFinder.getContour(i);
-        int label = contourFinder.getLabel(i);
-        ofPoint center = toOf(contourFinder.getCenter(i));
-        int age = tracker.getAge(label);
-        vector<cv::Point> fitPoints = contourFinder.getFitQuad(i);
-        cv::RotatedRect fitQuad = contourFinder.getFitEllipse(i);
-        
-        bool contourExists = false;
-        for (int c=0; c<contours.size(); c++)
-        {
-            if (label == contours[c]->label)
-            {
-                if (calibrated)
-                {
-                    vector<ofVec2f> calibratedContour;
-                    openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                    currentContours.push_back(calibratedContour);
-                    contours[c]->setPoints(calibratedContour, center);
-                }
-                else {
-                    contours[c]->setPoints((vector<ofVec2f> &) contourFinder.getContour(i), center);
-                }
-                contourExists = true;
-                break;
-            }
-        }
-        if (!contourExists)
-        {
-            if (calibrated)
-            {
-                vector<ofVec2f> calibratedContour;
-                openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                contours.push_back(new Contour3(calibratedContour, center, label));
-            }
-            else {
-                contours.push_back(new Contour3((vector<ofVec2f> &) contourFinder.getContour(i), center, label));
-            }
-        }
-        labels.push_back(label);
-    }
-
+    circles.clear();
 }

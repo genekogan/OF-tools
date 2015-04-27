@@ -2,19 +2,20 @@
 
 #include "ofMain.h"
 #include "OpenNI.h"
+#include "ofxSecondWindow.h"
 
 
 class ofApp : public ofBaseApp{
-
+    
 public:
     void setup();
     void update();
     void draw();
-
+    
     void exit();
     
     void keyPressed(int key);
-	
+    
     int id;
     float *x;
     ofPoint *p;
@@ -23,5 +24,6 @@ public:
     
     ofPoint head, ctr;
     
+    ofxSecondWindow window;
     
 };

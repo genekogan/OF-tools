@@ -36,6 +36,9 @@ public:
     
     void lerpTo(float nextValue, int numFrames);
     
+    virtual void setMin(float min) { }
+    virtual void setMax(float max) { }
+    
     virtual void update();
     virtual void draw();
     
@@ -100,6 +103,9 @@ public:
     
     T getParameterValue() {return parameter->get();}
     void getParameters(vector<ParameterBase*> & parameters);
+
+    void setMin(float min);
+    void setMax(float max);
 
     void update();
     
@@ -299,11 +305,29 @@ void GuiSlider<T>::update()
     GuiSliderBase::update();
     if (previous != parameter->get())
     {
-        this->sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
+        GuiSliderBase::setValue(ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0));
         updateValueString();
         adjustSliderValue();
         previous = parameter->get();
     }
+}
+
+template<typename T>
+void GuiSlider<T>::setMin(float min)
+{
+    parameter->setMin(min);
+    sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
+    updateValueString();
+    adjustSliderValue();
+}
+
+template<typename T>
+void GuiSlider<T>::setMax(float max)
+{
+    parameter->setMax(max);
+    sliderValue = ofClamp((parameter->get() - parameter->getMin()) / (parameter->getMax() - parameter->getMin()), 0.0, 1.0);
+    updateValueString();
+    adjustSliderValue();
 }
 
 template<typename T> inline void GuiSlider<T>::adjustSliderValue() { }

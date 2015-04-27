@@ -35,9 +35,12 @@
 		B085C6921ADA0E300019D7AB /* GuiTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C6781ADA0E300019D7AB /* GuiTextBox.cpp */; };
 		B085C6931ADA0E300019D7AB /* GuiWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C67A1ADA0E300019D7AB /* GuiWidget.cpp */; };
 		B085C6941ADA0E300019D7AB /* MidiSequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C67C1ADA0E300019D7AB /* MidiSequencer.cpp */; };
-		B085C6951ADA0E300019D7AB /* OscManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C67E1ADA0E300019D7AB /* OscManager.cpp */; };
 		B085C6961ADA0E300019D7AB /* Sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C6811ADA0E300019D7AB /* Sequence.cpp */; };
 		B085C6971ADA0E300019D7AB /* Sequencer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B085C6831ADA0E300019D7AB /* Sequencer.cpp */; };
+		B0D3FBDF1AED5C23002614C8 /* TouchOSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0D3FBDD1AED5C23002614C8 /* TouchOSC.cpp */; };
+		B0D3FBE41AED5C36002614C8 /* OscManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0D3FBE01AED5C36002614C8 /* OscManager.cpp */; };
+		B0D3FBE51AED5C36002614C8 /* OscManagerPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0D3FBE21AED5C36002614C8 /* OscManagerPanel.cpp */; };
+		B0D3FBE81AED5C43002614C8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0D3FBE61AED5C43002614C8 /* Base64.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -156,13 +159,19 @@
 		B085C67B1ADA0E300019D7AB /* GuiWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiWidget.h; path = ../src/GuiWidget.h; sourceTree = "<group>"; };
 		B085C67C1ADA0E300019D7AB /* MidiSequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MidiSequencer.cpp; path = ../src/MidiSequencer.cpp; sourceTree = "<group>"; };
 		B085C67D1ADA0E300019D7AB /* MidiSequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MidiSequencer.h; path = ../src/MidiSequencer.h; sourceTree = "<group>"; };
-		B085C67E1ADA0E300019D7AB /* OscManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscManager.cpp; path = ../src/OscManager.cpp; sourceTree = "<group>"; };
-		B085C67F1ADA0E300019D7AB /* OscManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscManager.h; path = ../src/OscManager.h; sourceTree = "<group>"; };
 		B085C6801ADA0E300019D7AB /* Parameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parameter.h; path = ../src/Parameter.h; sourceTree = "<group>"; };
 		B085C6811ADA0E300019D7AB /* Sequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sequence.cpp; path = ../src/Sequence.cpp; sourceTree = "<group>"; };
 		B085C6821ADA0E300019D7AB /* Sequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sequence.h; path = ../src/Sequence.h; sourceTree = "<group>"; };
 		B085C6831ADA0E300019D7AB /* Sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Sequencer.cpp; path = ../src/Sequencer.cpp; sourceTree = "<group>"; };
 		B085C6841ADA0E300019D7AB /* Sequencer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sequencer.h; path = ../src/Sequencer.h; sourceTree = "<group>"; };
+		B0D3FBDD1AED5C23002614C8 /* TouchOSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TouchOSC.cpp; path = ../src/TouchOSC.cpp; sourceTree = "<group>"; };
+		B0D3FBDE1AED5C23002614C8 /* TouchOSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchOSC.h; path = ../src/TouchOSC.h; sourceTree = "<group>"; };
+		B0D3FBE01AED5C36002614C8 /* OscManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscManager.cpp; path = ../src/OscManager.cpp; sourceTree = "<group>"; };
+		B0D3FBE11AED5C36002614C8 /* OscManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscManager.h; path = ../src/OscManager.h; sourceTree = "<group>"; };
+		B0D3FBE21AED5C36002614C8 /* OscManagerPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscManagerPanel.cpp; path = ../src/OscManagerPanel.cpp; sourceTree = "<group>"; };
+		B0D3FBE31AED5C36002614C8 /* OscManagerPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscManagerPanel.h; path = ../src/OscManagerPanel.h; sourceTree = "<group>"; };
+		B0D3FBE61AED5C43002614C8 /* Base64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Base64.cpp; path = ../src/Base64.cpp; sourceTree = "<group>"; };
+		B0D3FBE71AED5C43002614C8 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Base64.h; path = ../src/Base64.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -323,6 +332,8 @@
 		B085C65B1ADA0E260019D7AB /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B0D3FBE61AED5C43002614C8 /* Base64.cpp */,
+				B0D3FBE71AED5C43002614C8 /* Base64.h */,
 				B085C65C1ADA0E300019D7AB /* Bpm.cpp */,
 				B085C65D1ADA0E300019D7AB /* Bpm.h */,
 				B085C65E1ADA0E300019D7AB /* Control.h */,
@@ -357,13 +368,17 @@
 				B085C67B1ADA0E300019D7AB /* GuiWidget.h */,
 				B085C67C1ADA0E300019D7AB /* MidiSequencer.cpp */,
 				B085C67D1ADA0E300019D7AB /* MidiSequencer.h */,
-				B085C67E1ADA0E300019D7AB /* OscManager.cpp */,
-				B085C67F1ADA0E300019D7AB /* OscManager.h */,
 				B085C6801ADA0E300019D7AB /* Parameter.h */,
 				B085C6811ADA0E300019D7AB /* Sequence.cpp */,
 				B085C6821ADA0E300019D7AB /* Sequence.h */,
 				B085C6831ADA0E300019D7AB /* Sequencer.cpp */,
 				B085C6841ADA0E300019D7AB /* Sequencer.h */,
+				B0D3FBE01AED5C36002614C8 /* OscManager.cpp */,
+				B0D3FBE11AED5C36002614C8 /* OscManager.h */,
+				B0D3FBE21AED5C36002614C8 /* OscManagerPanel.cpp */,
+				B0D3FBE31AED5C36002614C8 /* OscManagerPanel.h */,
+				B0D3FBDD1AED5C23002614C8 /* TouchOSC.cpp */,
+				B0D3FBDE1AED5C23002614C8 /* TouchOSC.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -550,6 +565,7 @@
 				B04C13D91AB2D43900B4BC9F /* ofxOscParameterSync.cpp in Sources */,
 				B085C68F1ADA0E300019D7AB /* GuiPanel.cpp in Sources */,
 				B085C6851ADA0E300019D7AB /* Bpm.cpp in Sources */,
+				B0D3FBE51AED5C36002614C8 /* OscManagerPanel.cpp in Sources */,
 				B085C6871ADA0E300019D7AB /* GuiBase.cpp in Sources */,
 				B04C13D81AB2D43900B4BC9F /* ofxOscMessage.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
@@ -560,11 +576,12 @@
 				B04C13DA1AB2D43900B4BC9F /* ofxOscReceiver.cpp in Sources */,
 				B085C6881ADA0E300019D7AB /* GuiButton.cpp in Sources */,
 				B085C6901ADA0E300019D7AB /* GuiRangeSlider.cpp in Sources */,
+				B0D3FBE81AED5C43002614C8 /* Base64.cpp in Sources */,
 				B04C13E21AB2D43900B4BC9F /* OscTypes.cpp in Sources */,
-				B085C6951ADA0E300019D7AB /* OscManager.cpp in Sources */,
 				B085C68E1ADA0E300019D7AB /* GuiMultiSlider.cpp in Sources */,
 				B04C13DB1AB2D43900B4BC9F /* ofxOscSender.cpp in Sources */,
 				B085C6961ADA0E300019D7AB /* Sequence.cpp in Sources */,
+				B0D3FBE41AED5C36002614C8 /* OscManager.cpp in Sources */,
 				B04C13DF1AB2D43900B4BC9F /* OscOutboundPacketStream.cpp in Sources */,
 				B04C13DC1AB2D43900B4BC9F /* IpEndpointName.cpp in Sources */,
 				B04C13DE1AB2D43900B4BC9F /* UdpSocket.cpp in Sources */,
@@ -575,6 +592,7 @@
 				B085C68D1ADA0E300019D7AB /* GuiMultiRangeSlider.cpp in Sources */,
 				B04C13E01AB2D43900B4BC9F /* OscPrintReceivedElements.cpp in Sources */,
 				B085C6891ADA0E300019D7AB /* GuiColor.cpp in Sources */,
+				B0D3FBDF1AED5C23002614C8 /* TouchOSC.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

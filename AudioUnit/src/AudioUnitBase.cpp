@@ -27,12 +27,12 @@ void AudioUnitBase::setPan(float pan)
     mixer->setPan(pan, channel);
 }
 
-void AudioUnitBase::eventSetVolume(GuiElementEventArgs &e)
+void AudioUnitBase::eventSetVolume(GuiSliderEventArgs<float> &e)
 {
     setVolume(volume);
 }
 
-void AudioUnitBase::eventSetPan(GuiElementEventArgs &e)
+void AudioUnitBase::eventSetPan(GuiSliderEventArgs<float> &e)
 {
     setPan(pan);
 }

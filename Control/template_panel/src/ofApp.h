@@ -41,6 +41,13 @@ public:
             panel.removeElement("widget inside panel");
             cout << "==== KEY 2 ===== " <<endl;
         }
+        
+        else if (key=='3') {
+            panel.removeElement("multi choice menu");
+        }
+        else if (key=='4') {
+            widget.removeElement("menu");
+        }
     }
     
 

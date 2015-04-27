@@ -15,7 +15,7 @@
 #include "Subdivide.h"
 
 
-#define SUBDIVIDE
+#define RIVERS
 
 
 class ofApp : public ofBaseApp

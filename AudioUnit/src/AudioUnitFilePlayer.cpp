@@ -18,7 +18,7 @@ void AudioUnitFilePlayer::setupParameterGui()
     panel.disableControlRow();
 }
 
-void AudioUnitFilePlayer::eventPlay(GuiElementEventArgs &e)
+void AudioUnitFilePlayer::eventPlay(GuiButtonEventArgs &e)
 {
     e.value == 1.0 ? player->playAtSampleTime(player->getLength() * position) : player->stop();
 }

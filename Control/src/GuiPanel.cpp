@@ -62,13 +62,37 @@ void GuiPanel::enableControlRow()
         meta->setAutoUpdate(false);
         meta->setAutoDraw(false);
         meta->addButton("save me", this, &GuiPanel::savePresetPrompt);
+        
         menuPresets = meta->addMenu("load preset", this, &GuiPanel::loadPresetPrompt);
+        
+        
         refreshPresetMenu();
     }
 }
 
 void GuiPanel::refreshPresetMenu()
 {
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    
+    return;
+    
     menuPresets->clearToggles();
     
     ofDirectory dir;
@@ -76,10 +100,16 @@ void GuiPanel::refreshPresetMenu()
     dir.open("presets/"+getName()+"/");
     dir.listDir();
     vector<string> presetList;
+    
+    cout << "get -> "<<("presets/"+getName()+"/" )<<" " << dir.size() << endl;
+    
     for(int i = 0; i < dir.size(); i++)
     {
         presetList.push_back(dir.getName(i));
-        menuPresets->addToggle(dir.getName(i));
+        cout << " == toggle " << dir.getName(i) << endl;
+        GuiToggle *temp = menuPresets->addToggle(dir.getName(i));
+        
+        cout << " -=== " << ofRectangle(temp->getRectangle()) << endl;
     }
 }
 
@@ -94,20 +124,28 @@ void GuiPanel::disableControlRow()
         bSeq = false;
         bXml = false;
 
-        delete menuPresets;
-        delete meta;
-
         delete tOsc;
         delete tSeq;
         delete tXml;
+
+        delete menuPresets;
         
-        delete meta;
-        
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        // this is causing runtime error
+        //delete meta;
+
         if (sequencerMade) {
             delete sequencer;
             sequencerMade = false;
         }
-        if (oscManagerMade) {
+        if (oscManagerMade)
+        {
             delete oscManager;
             oscManagerMade = false;
         }
@@ -150,7 +188,8 @@ void GuiPanel::setupGuiPositions()
                 tSeq->setSize(width - 8, 15);
                 tXml->setSize(width - 8, 15);
             }
-            else {
+            else
+            {
                 int width = rectangle.width / 2.0;
                 tOsc->setRectangle(0, 0, 0, 0);
                 tSeq->setPosition(rectangle.x + 4, rectangle.y + headerHeight + 5);
@@ -245,7 +284,7 @@ bool GuiPanel::mouseMoved(int mouseX, int mouseY)
 {
     if (controlRow)
     {
-        if (tOsc->mouseMoved(mouseX, mouseY)) return true;
+        if (oscManagerMade && tOsc->mouseMoved(mouseX, mouseY)) return true;
         if (tSeq->mouseMoved(mouseX, mouseY)) return true;
         if (tXml->mouseMoved(mouseX, mouseY)) return true;
     }
@@ -265,7 +304,7 @@ bool GuiPanel::mousePressed(int mouseX, int mouseY)
 {
     if (controlRow)
     {
-        if (tOsc->mousePressed(mouseX, mouseY)) return true;
+        if (oscManagerMade && tOsc->mousePressed(mouseX, mouseY)) return true;
         if (tSeq->mousePressed(mouseX, mouseY)) return true;
         if (tXml->mousePressed(mouseX, mouseY)) return true;
     }
@@ -285,7 +324,7 @@ bool GuiPanel::mouseDragged(int mouseX, int mouseY)
 {
     if (controlRow)
     {
-        if (tOsc->mouseDragged(mouseX, mouseY)) return true;
+        if (oscManagerMade && tOsc->mouseDragged(mouseX, mouseY)) return true;
         if (tSeq->mouseDragged(mouseX, mouseY)) return true;
         if (tXml->mouseDragged(mouseX, mouseY)) return true;
     }
@@ -305,7 +344,7 @@ bool GuiPanel::mouseReleased(int mouseX, int mouseY)
 {
     if (controlRow)
     {
-        if (tOsc->mouseReleased(mouseX, mouseY)) return true;
+        if (oscManagerMade && tOsc->mouseReleased(mouseX, mouseY)) return true;
         if (tSeq->mouseReleased(mouseX, mouseY)) return true;
         if (tXml->mouseReleased(mouseX, mouseY)) return true;
     }
@@ -325,7 +364,7 @@ bool GuiPanel::keyPressed(int key)
 {
     if (controlRow)
     {
-        if (tOsc->keyPressed(key)) return true;
+        if (oscManagerMade && tOsc->keyPressed(key)) return true;
         if (tSeq->keyPressed(key)) return true;
         if (tXml->keyPressed(key)) return true;
     }

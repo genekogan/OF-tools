@@ -27,8 +27,8 @@ protected:
 
     virtual void setupParameterGui() { }
     
-    void eventSetVolume(GuiElementEventArgs &e);
-    void eventSetPan(GuiElementEventArgs &e);
+    void eventSetVolume(GuiSliderEventArgs<float> &e);
+    void eventSetPan(GuiSliderEventArgs<float> &e);
 
     string name;
     float volume;

@@ -6,6 +6,19 @@
 #include "Control.h"
 
 
+struct AudioUnitInstrumentParameter
+{
+    ofxAudioUnitSampler *instrument;
+    string name;
+    int idx, clumpId;
+    float *value;
+    float min, max;
+    float pmin, pmax;
+    AudioUnitInstrumentParameter(AudioUnitParameterInfo &parameter, GuiWidget *parentWidget, ofxAudioUnitSampler *instrument, int idx);
+    void setValue(float value);
+    void parameterChanged(GuiSliderEventArgs<float> &e);
+};
+
 
 class AudioUnitInstrument : public AudioUnitBase
 {
@@ -30,25 +43,18 @@ public:
     
     ofxAudioUnit * getAudioUnit() {return instrument;}
     ofxAudioUnitSampler * getAudioUnitSampler() {return instrument;}
+    vector<AudioUnitInstrumentParameter*> & getParameters() {return parameters;}
     
     void setMidiSequencer(MidiSequencer * midi_);
     void createMidiSequencer();
-    void blah() {cout<<"blah"<<endl;}
-private:
     
-    struct AudioUnitInstrumentParameter
-    {
-        ofxAudioUnitSampler *instrument;
-        int idx;
-        float *value;
-        AudioUnitInstrumentParameter(AudioUnitParameterInfo &parameter, GuiWidget *parentWidget, ofxAudioUnitSampler *instrument, int idx);
-        void parameterChanged(GuiElementEventArgs &e);
-    };
+
+private:
     
     void midiEvent(MidiEventArgs & e);
 
-    void eventShowUI(GuiElementEventArgs &e);
-    void eventShowMidi(GuiElementEventArgs &e);
+    void eventShowUI(GuiButtonEventArgs &e);
+    void eventShowMidi(GuiButtonEventArgs &e);
     void setupParameterGui();
 
     vector<AudioUnitInstrumentParameter*> parameters;

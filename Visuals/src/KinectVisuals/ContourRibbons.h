@@ -2,21 +2,7 @@
 
 #include "ofMain.h"
 #include "OpenNI.h"
-
-
-class Contour
-{
-public:
-    Contour(vector<ofVec2f> & points, ofPoint center, int label);
-    void setPoints(vector<ofVec2f> & points, ofPoint center);
-    void draw();
-    
-    vector<ofVec2f> points;
-    ofPoint center;
-    int label;
-    int age;
-    ofColor color;
-};
+#include "ContourVisual.h"
 
 
 class Ribbon
@@ -59,37 +45,20 @@ private:
 };
 
 
-
-class ContourRibbons
+class ContourRibbons : public ContourVisual
 {
 public:
     void setup(int width, int height);
-    void update();
+    void update(OpenNI & openNi);
     void draw();
     
-    void recordContours(OpenNI & openNi);
-    
-    GuiPanel & getPanel() {return panel;}
-
 private:
     
     void manageContours();
     void manageRibbons();
-    void renderRibbons();
-
-    GuiPanel panel;
-
-    // tracking
-    vector<Contour *> contours;
-    vector<vector<ofVec2f> > currentContours;
-    bool calibrated;
-    int width, height;
     
-    // ribbons
     vector<Ribbon *> ribbons;
-    vector<int> labels;
-    
-    // ribbons
+
     int maxAgeMin, maxAgeMax;
     int speedMin, speedMax;
     int lengthMin, lengthMax;
@@ -105,5 +74,6 @@ private:
     bool curved, match;
     int numNew;
     int frameSkip;
+    ofFloatColor bgColor;
     
 };

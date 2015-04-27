@@ -17,7 +17,7 @@ class CalibrationModule
 {
 public:
     struct Chessboard {
-        int x, y;
+        ofPoint position;
         int cols, rows;
         int size;
     };
@@ -42,8 +42,6 @@ public:
     void saveCalibration(ofxKinectProjectorToolkit &kpt);
 
     void draw(ofxSecondWindow *projector);
-    
-    
     
 private:
     

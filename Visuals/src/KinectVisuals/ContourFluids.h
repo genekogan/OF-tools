@@ -4,49 +4,17 @@
 #include "ofxFX.h"
 #include "ofxFluid.h"
 #include "OpenNI.h"
+#include "ContourVisual.h"
 
 
-
-class Contour2
-{
-public:
-    Contour2(vector<ofVec2f> & points, ofPoint center, int label);
-    void setPoints(vector<ofVec2f> & points, ofPoint center);
-    void draw();
-    
-    vector<ofVec2f> points;
-    ofPoint center;
-    int label;
-    int age;
-    ofColor color;
-};
-
-
-class ContourFluids
+class ContourFluids : public ContourVisual
 {
 public:
     void setup(int width, int height);
-    void update();
+    void update(OpenNI & openNi);
     void draw();
     
-    void recordContours(OpenNI & openNi);
-    
-    GuiPanel & getPanel() {return panel;}
-
-    
 private:
-    
-    GuiPanel panel;
-
-    // tracking
-    vector<Contour2 *> contours;
-    vector<vector<ofVec2f> > currentContours;
-    bool calibrated;
-    int width, height;
-    
-    
-    vector<int> labels;
-    
     
     ofxFluid fluid;
     vector<vector<ofVec2f> > pContourPoints;
@@ -55,10 +23,9 @@ private:
     float displaceLerp;
     int numContourPts;
     int skip;
-    int maxUsers = 3;
+    int maxUsers;
     float dissipation, velDissipation;
     float displacement;
     float strength;
     float gravityX, gravityY;
-
 };

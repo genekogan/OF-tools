@@ -1,35 +1,5 @@
 #include "ContourRibbons.h"
 
-
-Contour::Contour(vector<ofVec2f> & points, ofPoint center, int label)
-{
-    this->points = points;
-    this->center = center;
-    this->label = label;
-    age = 0;
-    color = ofColor(ofRandom(60,255), ofRandom(60,255), ofRandom(60,255));
-}
-
-void Contour::setPoints(vector<ofVec2f> & points, ofPoint center)
-{
-    this->points = points;
-    this->center = center;
-}
-
-void Contour::draw()
-{
-    ofPushStyle();
-    ofNoFill();
-    ofSetLineWidth(2);
-    ofSetColor(color);
-    ofBeginShape();
-    for (int j=0; j<points.size(); j++) {
-        ofVertex(points[j].x, points[j].y);
-    }
-    ofEndShape();
-    ofPopStyle();
-}
-
 Ribbon::Ribbon(Contour *contour,
                int maxAge, int speed, int length, int skip,
                int margin, float noiseFactor, float ageFactor,
@@ -119,6 +89,7 @@ void Ribbon::draw()
             points[i].y = ofLerp(points[i].y, contour->points[lookup[i]].y +
                                  margin * ofSignedNoise(i * noiseFactor, ageFactor * age, 10), lerpRate);
         }
+        
         curved ? ofCurveVertex(points[i].x, points[i].y) : ofVertex(points[i].x, points[i].y);
     }
     ofEndShape();
@@ -127,8 +98,7 @@ void Ribbon::draw()
 
 void ContourRibbons::setup(int width, int height)
 {
-    this->width = width;
-    this->height = height;
+    ContourVisual::setup(width, height);
     
     frameSkip = 3;
     numNew = 1;
@@ -148,8 +118,9 @@ void ContourRibbons::setup(int width, int height)
     lerpRateMin = 0.4;      lerpRateMax = 0.6;
     updateRateMin = 1;      updateRateMax = 1;
     
+    bgColor = ofFloatColor(0.0, 1.0);
+    
     panel.setName("ribbons");
-    panel.setPosition(0, 360);
     panel.addSlider("numNew", &numNew, 1, 10);
     panel.addSlider("frameSkip", &frameSkip, 1, 10);
     panel.addRangeSlider("maxAge", &maxAgeMin, &maxAgeMax, 5, 100);
@@ -166,12 +137,15 @@ void ContourRibbons::setup(int width, int height)
     panel.addSlider("dilate", &dilate, 0.0f, 2.0f);
     panel.addToggle("curved", &curved);
     panel.addToggle("match", &match);
+    panel.addColor("bgColor", &bgColor);
     
     calibrated = false;
 }
 
-void ContourRibbons::update()
+void ContourRibbons::update(OpenNI & openNi)
 {
+    ContourVisual::update(openNi);
+    
     manageContours();
     manageRibbons();
 }
@@ -241,67 +215,12 @@ void ContourRibbons::manageRibbons()
     }
 }
 
-void ContourRibbons::recordContours(OpenNI & openNi)
-{
-    ContourFinder & contourFinder = openNi.getContourFinder();
-    RectTracker & tracker = contourFinder.getTracker();
-    
-    currentContours.clear();
-    labels.clear();
-    
-    calibrated = true;
-    
-    for(int i = 0; i < openNi.getNumContours(); i++)
-    {
-        vector<cv::Point> points = contourFinder.getContour(i);
-        int label = contourFinder.getLabel(i);
-        ofPoint center = toOf(contourFinder.getCenter(i));
-        int age = tracker.getAge(label);
-        vector<cv::Point> fitPoints = contourFinder.getFitQuad(i);
-        cv::RotatedRect fitQuad = contourFinder.getFitEllipse(i);
-        
-        bool contourExists = false;
-        for (int c=0; c<contours.size(); c++)
-        {
-            if (label == contours[c]->label)
-            {
-                if (calibrated)
-                {
-                    vector<ofVec2f> calibratedContour;
-                    openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                    currentContours.push_back(calibratedContour);
-                    contours[c]->setPoints(calibratedContour, center);
-                }
-                else {
-                    contours[c]->setPoints((vector<ofVec2f> &) contourFinder.getContour(i), center);
-                }
-                contourExists = true;
-                break;
-            }
-        }
-        if (!contourExists)
-        {
-            if (calibrated)
-            {
-                vector<ofVec2f> calibratedContour;
-                openNi.getCalibratedContour(i, calibratedContour, width, height, 2.0);
-                contours.push_back(new Contour(calibratedContour, center, label));
-            }
-            else {
-                contours.push_back(new Contour((vector<ofVec2f> &) contourFinder.getContour(i), center, label));
-            }
-        }
-        labels.push_back(label);
-    }
-}
-
 void ContourRibbons::draw()
 {
-    renderRibbons();
-}
-
-void ContourRibbons::renderRibbons()
-{
+    ofSetColor(bgColor);
+    ofFill();
+    ofRect(0, 0, width, height);
+    ofNoFill();
     for (int i=0; i<ribbons.size(); i++)
     {
         ribbons[i]->update();

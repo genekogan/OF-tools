@@ -1,3 +1,6 @@
 ofxOpenCv
+ofxOsc
 ofxCv
+ofxKinectProjectorToolkit
 ofxOpenNI
+ofxSecondWindow

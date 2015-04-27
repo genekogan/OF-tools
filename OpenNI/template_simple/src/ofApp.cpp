@@ -4,9 +4,10 @@
 void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     
-    kinect.setup("/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
-    //kinect.setup("/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/ml.oni");
+    kinect.setup("/Users/gene/Downloads/hometest_single.oni");
+    window.setup("projector", 800, 20, 800, 600, false);
     
+    kinect.enableCalibration(window);
     kinect.setTrackingUsers(true);
     kinect.setTrackingUserFeatures(true);
 }
@@ -30,7 +31,7 @@ void ofApp::update(){
     ctr.x = ofMap(ctr.x, -500, 500, 0, 1);
     ctr.y = ofMap(ctr.y, 0, 1000, 0, 1);
     ctr.z = ofMap(ctr.z, 0, 2300, 0, 1);
-
+    
     //cout << "CTR IS " << ofToString(ctr) << endl;
 }
 

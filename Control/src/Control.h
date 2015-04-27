@@ -35,6 +35,7 @@
 #include "OscManager.h"
 #include "OscManagerPanel.h"
 
+#include "MidiSequencer.h"
 // midi sequencer?
 
 

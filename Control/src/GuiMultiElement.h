@@ -36,6 +36,18 @@ public:
     bool mouseReleased(int mouseX, int mouseY);
     bool mouseDragged(int mouseX, int mouseY);
     bool keyPressed(int key);
+
+    void setHeaderColor(ofColor headerColor) {this->headerColor = headerColor;}
+    void setHeaderHeight(int headerHeight) {this->headerHeight = headerHeight;}
+    void setControllerHeight(int controllerHeight) {this->controllerHeight = controllerHeight;}
+    void setMarginX(int marginX) {this->marginX = marginX;}
+    void setMarginY(int marginY) {this->marginY = marginY;}
+
+    ofColor getHeaderColor() {return headerColor;}
+    int getHeaderHeight() {return headerHeight;}
+    int getControllerHeight() {return controllerHeight;}
+    int getMarginX() {return marginX;}
+    int getMarginY() {return marginY;}
     
     virtual void update();
     virtual void draw();

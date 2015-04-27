@@ -6,8 +6,7 @@ CalibrationModule::CalibrationModule()
     chessboard.size = 300;
     chessboard.cols = 5;
     chessboard.rows = 4;
-    chessboard.x = 0;
-    chessboard.y = 0;
+    chessboard.position = ofPoint(0, 0);
 }
 
 void CalibrationModule::setup(int width, int height)
@@ -32,7 +31,7 @@ void CalibrationModule::drawChessboard()
     
     ofSetColor(0);
     ofFill();
-    ofTranslate(chessboard.x, chessboard.y);
+    ofTranslate(chessboard.position.x, chessboard.position.y);
     for (int j = 0; j < chessboard.rows; j++)
     {
         for (int i = 0; i < chessboard.cols; i++)
@@ -41,8 +40,8 @@ void CalibrationModule::drawChessboard()
             int y0 = ofMap(j, 0, chessboard.rows, 0, chessboard.size);
             if (j > 0 && i > 0)
             {
-                ofVec2f pp(ofMap(chessboard.x + x0, 0, fboChessboard.getWidth(), 0, 1),
-                           ofMap(chessboard.y + y0, 0, fboChessboard.getHeight(), 0, 1));
+                ofVec2f pp(ofMap(chessboard.position.x + x0, 0, fboChessboard.getWidth(), 0, 1),
+                           ofMap(chessboard.position.y + y0, 0, fboChessboard.getHeight(), 0, 1));
                 currentProjectorPoints.push_back(pp);
             }
             if ((i+j) % 2 == 0) {
@@ -101,15 +100,14 @@ void CalibrationModule::searchForCorners(ofxCvColorImage & rgbImage)
         cornerSubPix(gray, cvPoints, cv::Size(11, 11), cv::Size(-1, -1),
                      cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
         drawChessboardCorners(cvRgbImage, patternSize, cv::Mat(cvPoints), foundChessboard);
-    }*/
+    }
+     */
 }
 
 void CalibrationModule::draw(ofxSecondWindow *projector)
 {
     ofPushStyle();
-    
-    
-    
+
     cv::Size patternSize = cv::Size(chessboard.cols-1, chessboard.rows-1);
     if (foundChessboard)
     {
@@ -119,9 +117,6 @@ void CalibrationModule::draw(ofxSecondWindow *projector)
                      cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
         drawChessboardCorners(cvRgbImage, patternSize, cv::Mat(cvPoints), foundChessboard);
     }
-
-    
-    
     
     ofSetColor(0);
     if (testing)

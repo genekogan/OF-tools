@@ -1,13 +1,12 @@
 #pragma once
-/*
+
 #include "ofMain.h"
 #include "GuiSlider.h"
 #include "GuiRangeSlider.h"
-#include "GuiWidgetBase.h"
 #include "GuiMenu.h"
+#include "GuiWidget.h"
 #include "Bpm.h"
 #include "Sequence.h"
-
 
 
 struct MidiEventArgs
@@ -18,8 +17,7 @@ struct MidiEventArgs
     MidiEventArgs(int type, int note, int velocity);
 };
 
-
-class MidiSequencer : public GuiWidgetBase
+class MidiSequencer : public GuiWidget
 {
 public:
 
@@ -72,14 +70,14 @@ private:
     void drawToolbar();
     
     void eventBeat();
-    void eventSelectRoot(GuiElementEventArgs &e);
-    void eventSelectKey(GuiElementEventArgs &e);
-    void eventPlay(GuiElementEventArgs &e);
-    void eventPause(GuiElementEventArgs &e);
-    void eventStop(GuiElementEventArgs &e);
-    void eventSetBpm(GuiElementEventArgs &e);
-    void eventSetPeriod(GuiElementEventArgs &e);
-    void eventSetTimeView(GuiElementEventArgs &e);
+    void eventSelectRoot(GuiMenuEventArgs &e);
+    void eventSelectKey(GuiMenuEventArgs &e);
+    void eventPlay(GuiButtonEventArgs &e);
+    void eventPause(GuiButtonEventArgs &e);
+    void eventStop(GuiButtonEventArgs &e);
+    void eventSetBpm(GuiSliderEventArgs<int> &e);
+    void eventSetPeriod(GuiSliderEventArgs<int> &e);
+    void eventSetTimeView(GuiRangeSliderEventArgs<float> &e);
     
     GuiMenu *keySelect;
     GuiMenu *rootSelect;
@@ -135,4 +133,3 @@ private:
     int timeScrollHeight;
 };
 
-*/

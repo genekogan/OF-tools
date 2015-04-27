@@ -6,7 +6,7 @@ void ofApp::setup(){
     
     projector.setup("projector", ofGetScreenWidth(), 0, 1280, 800, true);
     
-    kinect.setup("/Users/Gene/Code/openFrameworks/templates/Kinect/openni_oniRecording/bin/data/alecsroom.oni");
+    kinect.setup("/Users/gene/Desktop/Parsons/cvVideos/hometest_single.oni");
     kinect.enableCalibration(projector);
 
     

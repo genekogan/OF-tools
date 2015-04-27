@@ -23,6 +23,15 @@ public:
     
     void update();
     
+    
+    void blah() {
+        
+        ofxOscMessage msg;
+        msg.setAddress("/live/state");
+        sender.sendMessage(msg);
+        cout << "AWNS SNSNS " << endl;
+    }
+    
 private:
 
     void eventToggleSending(GuiButtonEventArgs &evt);

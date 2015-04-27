@@ -4,7 +4,7 @@
 #include "Scene.h"
 
 
-#define FORCE_RESOLUTION 256
+#define FORCE_RESOLUTION 16
 
 
 class Streak
@@ -33,6 +33,9 @@ public:
     void update();
     void draw(int x, int y);
 
+    ofVec2f force[FORCE_RESOLUTION][FORCE_RESOLUTION];
+    
+    
 private:
     
     void setupForceField(GuiButtonEventArgs &evt);
@@ -52,6 +55,6 @@ private:
     int colorVar;
     
     vector<Streak> streaks;
-    ofVec2f force[FORCE_RESOLUTION][FORCE_RESOLUTION];
+    //ofVec2f force[FORCE_RESOLUTION][FORCE_RESOLUTION];
     float noiseSeed;
 };

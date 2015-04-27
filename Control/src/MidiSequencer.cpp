@@ -1,12 +1,13 @@
 #include "MidiSequencer.h"
 
-/*
+
 MidiEventArgs::MidiEventArgs(int type, int note, int velocity)
 {
     this->type = type;
     this->note = note;
     this->velocity = velocity;
 }
+
 
 MidiSequencer::MidiSequencerEvent::MidiSequencerEvent(int note, int velocity, int start, int end) : GuiElement("midiEvent")
 {
@@ -24,7 +25,7 @@ void MidiSequencer::MidiSequencerEvent::draw()
     ofRect(rectangle);
 }
 
-MidiSequencer::MidiSequencer(string name) : GuiWidgetBase(name)
+MidiSequencer::MidiSequencer(string name) : GuiWidget(name)
 {
     cout << "CREATE MIDI SEQUENCER " << name << " " << this <<endl;
     
@@ -55,7 +56,7 @@ MidiSequencer::MidiSequencer(string name) : GuiWidgetBase(name)
     mouseOverGrid = false;
     mouseOverKeyboard = false;
     mouseOverVelocity = false;
-    
+
     string roots[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     rootSelect = new GuiMenu("select key", vector<string>(roots, roots + 12), this, &MidiSequencer::eventSelectRoot);
     rootSelect->setAutoUpdate(false);
@@ -69,7 +70,7 @@ MidiSequencer::MidiSequencer(string name) : GuiWidgetBase(name)
     keySelect->setAutoDraw(false);
     keySelect->setAutoClose(true);
     keySelect->setCollapsed(true);
-    
+
     play = new GuiButton("play", this, &MidiSequencer::eventPlay);
     pause = new GuiButton("pause", this, &MidiSequencer::eventPause);
     stop = new GuiButton("stop", this, &MidiSequencer::eventStop);
@@ -180,15 +181,16 @@ void MidiSequencer::setMidiEventRectangle(MidiSequencerEvent *event)
 {
     if (event->note < noteMin || event->note > noteMax ||
         (float) event->start / numBeats > end || (float) event->end / numBeats < start) {
-        event->setRectangle(0, 0, 0, 0);
+        event->setPosition(0, 0);
+        event->setSize(0, 0);
     }
     else
     {
-        
-        event->setRectangle(rectGrid.x + rectGrid.width * ofClamp((float) event->start / numBeats - start, 0.0, 1.0) / (end - start),
-                            rectGrid.y + (noteMax - event->note) * rowHeight,
-                            rectGrid.width * (min(end, (float) event->end / numBeats) - max(start, (float) event->start / numBeats)) / (end - start),
-                            rowHeight);
+        event->setPosition(rectGrid.x + rectGrid.width * ofClamp((float) event->start / numBeats - start, 0.0, 1.0) / (end - start),
+                           rectGrid.y + (noteMax - event->note) * rowHeight);
+        event->setSize(rectGrid.width * (min(end, (float) event->end / numBeats) - max(start, (float) event->start / numBeats)) / (end - start),
+                       rowHeight);
+
     }
 }
 
@@ -314,17 +316,17 @@ void MidiSequencer::eventBeat()
     }
 }
 
-void MidiSequencer::eventSelectRoot(GuiElementEventArgs &e)
+void MidiSequencer::eventSelectRoot(GuiMenuEventArgs &e)
 {
-    root = e.cell;
+    root = e.index;
 }
 
-void MidiSequencer::eventSelectKey(GuiElementEventArgs &e)
+void MidiSequencer::eventSelectKey(GuiMenuEventArgs &e)
 {
-    key = e.name == "major" ? 1 : 0;
+    key = e.toggle->getName() == "major" ? 1 : 0;
 }
 
-void MidiSequencer::eventPlay(GuiElementEventArgs &e)
+void MidiSequencer::eventPlay(GuiButtonEventArgs &e)
 {
     if (active) {
         beat = 0;
@@ -334,12 +336,12 @@ void MidiSequencer::eventPlay(GuiElementEventArgs &e)
     }
 }
 
-void MidiSequencer::eventPause(GuiElementEventArgs &e)
+void MidiSequencer::eventPause(GuiButtonEventArgs &e)
 {
     setActive(!active);
 }
 
-void MidiSequencer::eventStop(GuiElementEventArgs &e)
+void MidiSequencer::eventStop(GuiButtonEventArgs &e)
 {
     setActive(false);
     beat = 0;
@@ -350,17 +352,17 @@ void MidiSequencer::eventStop(GuiElementEventArgs &e)
     }
 }
 
-void MidiSequencer::eventSetBpm(GuiElementEventArgs &e)
+void MidiSequencer::eventSetBpm(GuiSliderEventArgs<int> &e)
 {
     setBpm(bpm);
 }
 
-void MidiSequencer::eventSetPeriod(GuiElementEventArgs &e)
+void MidiSequencer::eventSetPeriod(GuiSliderEventArgs<int> &e)
 {
     setPeriod(measures);
 }
 
-void MidiSequencer::eventSetTimeView(GuiElementEventArgs &e)
+void MidiSequencer::eventSetTimeView(GuiRangeSliderEventArgs<float> &e)
 {
     setTimeDisplayRange(start, end);
 }
@@ -531,10 +533,6 @@ void MidiSequencer::drawVelocity()
 
 void MidiSequencer::drawToolbar()
 {
-    if (ofGetKeyPressed(OF_KEY_TAB)) {
-        cout << "start/end " << start << "/" << end << ", rows " << numRows << ", numBeats " << numBeats << " rowHeight/colWidth " << rowHeight << "," <<colWidth << endl;
-    }
-
     // draw toolbar
     ofSetColor(0, 0, 200);
     ofRect(rectToolbar);
@@ -565,7 +563,7 @@ void MidiSequencer::drawToolbar()
 
 bool MidiSequencer::mouseMoved(int mouseX, int mouseY)
 {
-    GuiWidgetBase::mouseMoved(mouseX, mouseY);
+    GuiWidget::mouseMoved(mouseX, mouseY);
     mouseOverGrid = rectGrid.inside(mouseX, mouseY);
     mouseOverKeyboard = rectKeyboard.inside(mouseX, mouseY);
     mouseOverVelocity = rectVelocity.inside(mouseX, mouseY);
@@ -610,7 +608,7 @@ bool MidiSequencer::mouseMoved(int mouseX, int mouseY)
 
 bool MidiSequencer::mousePressed(int mouseX, int mouseY)
 {
-    if (GuiWidgetBase::mousePressed(mouseX, mouseY)) return true;
+    if (GuiWidget::mousePressed(mouseX, mouseY)) return true;
     if (mouseOver)
     {
         if      (rootSelect->mousePressed(mouseX, mouseY)) return true;
@@ -662,7 +660,7 @@ bool MidiSequencer::mousePressed(int mouseX, int mouseY)
 
 bool MidiSequencer::mouseDragged(int mouseX, int mouseY)
 {
-    GuiWidgetBase::mouseDragged(mouseX, mouseY);
+    GuiWidget::mouseDragged(mouseX, mouseY);
     if (mouseDragging)
     {
         if      (rootSelect->mouseDragged(mouseX, mouseY)) return true;
@@ -743,7 +741,7 @@ bool MidiSequencer::mouseDragged(int mouseX, int mouseY)
 
 bool MidiSequencer::mouseReleased(int mouseX, int mouseY)
 {
-    if (GuiWidgetBase::mouseReleased(mouseX, mouseY)) return true;
+    if (GuiWidget::mouseReleased(mouseX, mouseY)) return true;
     if (mouseOver)
     {
         if      (rootSelect->mouseReleased(mouseX, mouseY)) return true;
@@ -879,14 +877,23 @@ bool MidiSequencer::keyPressed(int key)
 void MidiSequencer::setupGuiPositions()
 {
     rectToolbar.set(rectangle.x, rectangle.y, rectangle.width, toolbarHeight);
-    rootSelect->setRectangle(rectToolbar.x + 110, rectToolbar.y + 5, 100, 14);
-    keySelect->setRectangle(rectToolbar.x + 230, rectToolbar.y + 5, 100, 14);
-    play->setRectangle(rectToolbar.x + 350, rectToolbar.y + 8, 60, 14);
-    pause->setRectangle(rectToolbar.x + 420, rectToolbar.y + 8, 60, 14);
-    stop->setRectangle(rectToolbar.x + 490, rectToolbar.y + 8, 60, 14);
-    sBpm->setRectangle(rectToolbar.x + 560, rectToolbar.y + 8, 100, 14);
-    sPeriod->setRectangle(rectToolbar.x + 670, rectToolbar.y + 8, 100, 14);
-    
+
+    rootSelect->setPosition(rectToolbar.x + 110, rectToolbar.y);
+    keySelect->setPosition(rectToolbar.x + 230, rectToolbar.y);
+    play->setPosition(rectToolbar.x + 350, rectToolbar.y);
+    pause->setPosition(rectToolbar.x + 420, rectToolbar.y);
+    stop->setPosition(rectToolbar.x + 490, rectToolbar.y);
+    sBpm->setPosition(rectToolbar.x + 560, rectToolbar.y);
+    sPeriod->setPosition(rectToolbar.x + 670, rectToolbar.y);
+
+    rootSelect->setSize(100, 14);
+    keySelect->setSize(100, 14);
+    play->setSize(60, 14);
+    pause->setSize(60, 14);
+    stop->setSize(60, 14);
+    sBpm->setSize(100, 14);
+    sPeriod->setSize(100, 14);
+
     if (collapsed)
     {
         rectTimebar.set(0, 0, 0, 0);
@@ -897,22 +904,19 @@ void MidiSequencer::setupGuiPositions()
     }
     else
     {
-        rectTimebar.set(rectangle.x + keyboardWidth + 2 * marginInner, rectangle.y + toolbarHeight + marginInner, rectangle.width - keyboardWidth - 3 * marginInner, timeScrollHeight);
-        rTime->setRectangle(rectTimebar.x, rectTimebar.y + 2, rectTimebar.width, rectTimebar.height - 4);
-        rectGrid.set(rectangle.x + keyboardWidth + 2 * marginInner, rectangle.y + timeScrollHeight + toolbarHeight + marginInner, rectangle.width - keyboardWidth - 3 * marginInner, rectangle.height - velocityHeight - timeScrollHeight - toolbarHeight - 3 * marginInner);
-        rectVelocity.set(rectangle.x + keyboardWidth + 2 * marginInner, rectangle.y + rectangle.height - velocityHeight - marginInner, rectangle.width - keyboardWidth - 3 * marginInner, velocityHeight);
-        rectKeyboard.set(rectangle.x + marginInner, rectangle.y + timeScrollHeight + toolbarHeight + marginInner, keyboardWidth, rectangle.height - velocityHeight - timeScrollHeight - toolbarHeight - 3 * marginInner);
+        rectTimebar.set(rectangle.x + keyboardWidth + 2 * marginX, rectangle.y + toolbarHeight + marginY, rectangle.width - keyboardWidth - 3 * marginX, timeScrollHeight);
+        rTime->setPosition(rectTimebar.x, rectTimebar.y + 2);
+        rTime->setSize(rectTimebar.width, rectTimebar.height - 4);
+        rectGrid.set(rectangle.x + keyboardWidth + 2 * marginX, rectangle.y + timeScrollHeight + toolbarHeight + marginY, rectangle.width - keyboardWidth - 3 * marginX, rectangle.height - velocityHeight - timeScrollHeight - toolbarHeight - 3 * marginY);
+        rectVelocity.set(rectangle.x + keyboardWidth + 2 * marginX, rectangle.y + rectangle.height - velocityHeight - marginY, rectangle.width - keyboardWidth - 3 * marginX, velocityHeight);
+        rectKeyboard.set(rectangle.x + marginX, rectangle.y + timeScrollHeight + toolbarHeight + marginY, keyboardWidth, rectangle.height - velocityHeight - timeScrollHeight - toolbarHeight - 3 * marginY);
     }
 
     colWidth = rectGrid.width / (numBeats * (end - start));
     rowHeight = rectGrid.height / numRows;
-    
-    cout << "row height is " << rowHeight << " : " << rectGrid.height << "/ "<<numRows << endl;
     
     for (auto m : events) {
         setMidiEventRectangle(m);
     }
     setMidiEventRectangle(newEvent);
 }
-
-*/

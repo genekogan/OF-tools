@@ -1,0 +1,9 @@
+ofxOpenCv
+ofxOsc
+ofxBox2d
+ofxCv
+ofxFluid
+ofxFX
+ofxKinectProjectorToolkit
+ofxOpenNI
+ofxSecondWindow

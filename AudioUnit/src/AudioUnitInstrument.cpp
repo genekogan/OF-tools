@@ -1,17 +1,29 @@
 #include "AudioUnitInstrument.h"
 
 
-AudioUnitInstrument::AudioUnitInstrumentParameter::AudioUnitInstrumentParameter(AudioUnitParameterInfo &parameter, GuiWidget *parentWidget, ofxAudioUnitSampler *instrument, int idx)
+AudioUnitInstrumentParameter::AudioUnitInstrumentParameter(AudioUnitParameterInfo &parameter, GuiWidget *parentWidget, ofxAudioUnitSampler *instrument, int idx)
 {
     this->instrument = instrument;
+    this->name = parameter.name;
     this->idx = idx;
+    this->clumpId = parameter.clumpID;
+    this->min = parameter.minValue;
+    this->max = parameter.maxValue;
+    pmin = min;
+    pmax = max;
     value = new float(parameter.defaultValue);
-    parentWidget->addSlider(parameter.name, value, parameter.minValue, parameter.maxValue, this, &AudioUnitInstrumentParameter::parameterChanged);
+    parentWidget->addSlider(parameter.name, value, min, max, this, &AudioUnitInstrumentParameter::parameterChanged);
 }
 
-void AudioUnitInstrument::AudioUnitInstrumentParameter::parameterChanged(GuiElementEventArgs &e)
+void AudioUnitInstrumentParameter::setValue(float value)
 {
-    instrument->setParameter(idx, 0, e.value);
+    *this->value = value;
+    instrument->setParameter(idx, 0, value);
+}
+
+void AudioUnitInstrumentParameter::parameterChanged(GuiSliderEventArgs<float> &e)
+{
+    setValue(e.value);
 }
 
 AudioUnitInstrument::AudioUnitInstrument(string name, OSType s1, OSType s2, OSType s3, GuiPanel & mainPanel) : AudioUnitBase(name)
@@ -87,9 +99,10 @@ void AudioUnitInstrument::setMidiSequencer(MidiSequencer * midi_)
     }
     this->midi = midi_;
     hasMidiSequencer = true;
-    midi->setRectangle(panel.getRectangle().x + panel.getRectangle().width + panel.getMarginOuterX(), panel.getRectangle().y, MIDISEQUENCER_DEFAULT_WIDTH, MIDISEQUENCER_DEFAULT_HEIGHT);
+    midi->setPosition(panel.getRectangle().x + panel.getRectangle().width + panel.getMarginX(), panel.getRectangle().y);
+    midi->setSize(MIDISEQUENCER_DEFAULT_WIDTH, MIDISEQUENCER_DEFAULT_HEIGHT);
     ofAddListener(midi->midiEvent, this, &AudioUnitInstrument::midiEvent);
-    panel.addBoundWidget(midi);
+    panel.attachWidget(midi);
 }
 
 void AudioUnitInstrument::createMidiSequencer()
@@ -107,12 +120,12 @@ void AudioUnitInstrument::midiEvent(MidiEventArgs & e)
     }
 }
 
-void AudioUnitInstrument::eventShowUI(GuiElementEventArgs &e)
+void AudioUnitInstrument::eventShowUI(GuiButtonEventArgs &e)
 {
     instrument->showUI();
 }
 
-void AudioUnitInstrument::eventShowMidi(GuiElementEventArgs &e)
+void AudioUnitInstrument::eventShowMidi(GuiButtonEventArgs &e)
 {
     if (midiVisible && !hasMidiSequencer) {
         createMidiSequencer();
